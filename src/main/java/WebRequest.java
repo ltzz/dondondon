@@ -175,15 +175,16 @@ public class WebRequest {
         }
     }
 
-    void getTimeline() {
+    String getTimeline() {
         String token = Akan.TOKEN;
         String url = Akan.MASTODON_HOST + "/api/v1/timelines/home";
         var headers = new HashMap<String,String>();
         headers.put("Authorization", "Bearer " + token);
-        requestGET(url, headers);
+        var responseBody = requestGET(url, headers);
+        return responseBody;
     }
 
-    static void requestGET(String URLStr, HashMap<String,String> headers){
+    static String requestGET(String URLStr, HashMap<String,String> headers){
         HttpURLConnection connection = null;
         InputStream in = null;
         BufferedReader reader = null;
@@ -215,6 +216,7 @@ public class WebRequest {
                     output.append(line);
                 }
                 System.out.println(output.toString());
+                return output.toString();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -233,5 +235,6 @@ public class WebRequest {
                 e.printStackTrace();
             }
         }
+        return "";
     }
 }

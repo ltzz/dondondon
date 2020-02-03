@@ -31,7 +31,7 @@ public class Main extends Application {
         // settings.save();
         // settings.load();
 
-        webRequest.getTimeline();
+        Mastodon.parseTimeline(webRequest.getTimeline());
         // develop: webRequestSample.registerClient();
         // String token = webRequest.getAccessToken();
 
