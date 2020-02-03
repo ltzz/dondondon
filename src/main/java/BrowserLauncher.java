@@ -1,5 +1,3 @@
-package dondondon;
-
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;

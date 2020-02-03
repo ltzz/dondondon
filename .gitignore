@@ -1,6 +1,7 @@
 gradle/
 .gradle/
 build/
+out/
 .idea/*
 !.idea/gradle.xml
 !.idea/misc.xml

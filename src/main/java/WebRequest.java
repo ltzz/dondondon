@@ -1,5 +1,3 @@
-package dondondon;
-
 import javafx.scene.control.TextInputDialog;
 
 import java.io.*;
@@ -8,19 +6,17 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Optional;
 
-import static dondondon.Akan.*;
-
 public class WebRequest {
 
     final String CLIENT_NAME = "test_client";
-    final String RegisterURL = MASTODON_HOST + "/api/v1/apps";
-    final String TokenURL = MASTODON_HOST + "/oauth/token";
+    final String RegisterURL = Akan.MASTODON_HOST + "/api/v1/apps";
+    final String TokenURL = Akan.MASTODON_HOST + "/oauth/token";
 
     String getAuthorizeURL(String host){
         try {
             return host
                 + "/oauth/authorize?"
-                + "client_id=" + CLIENT_ID
+                + "client_id=" + Akan.CLIENT_ID
                 + "&response_type=code"
                 + "&redirect_uri=urn:ietf:wg:oauth:2.0:oob"
                 + "&scope=read"
@@ -39,7 +35,7 @@ public class WebRequest {
         BufferedReader reader = null;
         OutputStream out = null;
 
-        BrowserLauncher.launch(getAuthorizeURL(MASTODON_HOST));
+        BrowserLauncher.launch(getAuthorizeURL(Akan.MASTODON_HOST));
 
         TextInputDialog dialog = new TextInputDialog("コードを入れてください");
         Optional<String> msg = dialog.showAndWait();
@@ -61,8 +57,8 @@ public class WebRequest {
             connection.setDoOutput(true);
 
 
-            String parameterString = new String("client_id=" + CLIENT_ID
-                    + "&client_secret=" + CLIENT_SECRET
+            String parameterString = new String("client_id=" + Akan.CLIENT_ID
+                    + "&client_secret=" + Akan.CLIENT_SECRET
                     + "&grant_type=authorization_code&code=" + authCode
                     + "&redirect_uri=urn:ietf:wg:oauth:2.0:oob");
             PrintWriter printWriter = new PrintWriter(connection.getOutputStream());
@@ -180,8 +176,8 @@ public class WebRequest {
     }
 
     void getTimeline() {
-        String token = TOKEN;
-        String url = MASTODON_HOST + "/api/v1/timelines/home";
+        String token = Akan.TOKEN;
+        String url = Akan.MASTODON_HOST + "/api/v1/timelines/home";
         var headers = new HashMap<String,String>();
         headers.put("Authorization", "Bearer " + token);
         requestGET(url, headers);
