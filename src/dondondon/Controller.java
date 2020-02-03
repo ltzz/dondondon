@@ -20,7 +20,7 @@ public class Controller implements Initializable {
         public String contentText;
         public String contentDate;
 
-        TootContent(String UserName, String contentText, String z){
+        TootContent(String UserName, String contentText, String contentDate){
             this.userName = UserName;
             this.contentText = contentText;
             this.contentDate = contentDate; // TODO
@@ -34,7 +34,8 @@ public class Controller implements Initializable {
     }
 
     ObservableList<TootContent> contentList = FXCollections.observableArrayList(
-            new TootContent("user1", "aaa", ""),
+            // TODO: image viewでuser icon
+            new TootContent("user1", "aaa", "2020-01-01"),
             new TootContent("user2", "bbb", ""),
             new TootContent("user3", "あああ", "")
     );

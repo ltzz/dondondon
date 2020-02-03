@@ -21,7 +21,21 @@ public class Main extends Application {
         primaryStage.show();
         MainWindow mainWindow = new MainWindow("test", 400, 500);
 
+
+        Settings settings = new Settings();
+
         var controller = new Controller();
+
+
+        var webRequest = new WebRequest();
+
+
+        // settings.save();
+        // settings.load();
+
+        webRequest.getTimeline();
+        // develop: webRequestSample.registerClient();
+        // String token = webRequest.getAccessToken();
 
 
     }
