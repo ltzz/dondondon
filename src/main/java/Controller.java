@@ -1,56 +1,74 @@
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
 
 public class Controller implements Initializable {
     @FXML private TableView<TootContent> tableView;
 
-    @FXML private TableColumn<TootContent, String> userNameCol;
-    @FXML private TableColumn<TootContent, String> contentTextCol;
-    @FXML private TableColumn<TootContent, String> contentDateCol;
+    public static class TootContent{
+        public StringProperty userName = new SimpleStringProperty();
+        public StringProperty contentText = new SimpleStringProperty();;
+        public StringProperty contentDate = new SimpleStringProperty();;
 
-    public class TootContent{
-        public String userName;
-        public String contentText;
-        public String contentDate;
-
-        TootContent(String UserName, String contentText, String contentDate){
-            this.userName = UserName;
-            this.contentText = contentText;
-            this.contentDate = contentDate; // TODO
+        TootContent(String userName, String contentText, String contentDate){
+            this.userName.set(userName);
+            this.contentText.set(contentText);
+            this.contentDate.set(contentDate); // TODO
         }
-        public String getUserName(){ return userName; }
-        public String getContentText(){ return contentText; }
-        public String getContentDate(){ return contentDate; }
-        public void setName(String userName){ this.userName = userName; }
-        public void setHome(String contentText){ this.contentText = contentText; }
-        public void setAge(String contentDate){ this.contentDate = contentDate; }
+        public StringProperty userNameProperty(){ return userName; }
+        public StringProperty contentTextProperty(){ return contentText; }
+        public StringProperty contentDateProperty(){ return contentDate; }
     }
 
-    ObservableList<TootContent> contentList = FXCollections.observableArrayList(
-            // TODO: image viewでuser icon
-            new TootContent("user1", "aaa", "2020-01-01"),
-            new TootContent("user2", "bbb", ""),
-            new TootContent("user3", "あああ", "")
-    );
+    public static class TootCell extends TableRow<TootContent> {
+        @Override
+        protected void updateItem(TootContent tootContent, boolean empty){
+            super.updateItem(tootContent, empty);
+        }
+    }
 
+    ObservableList<TootContent> data = FXCollections.observableArrayList();;
+
+            // TODO: image viewでuser icon
     @Override
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
-        change();
+        if(tableView != null) {
+
+            tableView.setRowFactory(new Callback<TableView<TootContent>, TableRow<TootContent>>() {
+                @Override
+                public TableRow<TootContent> call(TableView<TootContent> tootCellTableView) {
+                    return new TootCell();
+                }
+            });
+            ObservableList<TootContent> tootContents = createTootContents(); // TODO:
+            tableView.setItems(tootContents);
+
+        }
+
     }
 
-    public void change(){
+    public ObservableList<TootContent> createTootContents(){
+        var webRequest = new WebRequest();
+        var timelineData = Mastodon.parseTimeline(webRequest.getTimeline());
+        for (Mastodon.TLContent tldata : timelineData) {
+            timelineAdd(tldata.username, tldata.contentText, tldata.date);
+        }
+        return data;
+    }
 
-        if(tableView != null) {
-            tableView.itemsProperty().setValue(contentList);
-            tableView.setItems(contentList);
-            userNameCol.setCellValueFactory(new PropertyValueFactory<>("userName"));
-            contentTextCol.setCellValueFactory(new PropertyValueFactory<>("contentText"));
-            contentDateCol.setCellValueFactory(new PropertyValueFactory<>("contentDate"));
+    public void timelineAdd(String username, String contentText, String contentDate){
+        if(data != null){
+            data.add(new TootContent(username, contentText, contentDate));
         }
     }
 }

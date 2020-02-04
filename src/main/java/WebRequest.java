@@ -207,7 +207,7 @@ public class WebRequest {
 
                 in = connection.getInputStream();
 
-                reader = new BufferedReader(new InputStreamReader(in));
+                reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
                 StringBuilder output = new StringBuilder();
                 String line;

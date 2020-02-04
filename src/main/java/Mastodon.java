@@ -1,7 +1,9 @@
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jsoup.Jsoup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Mastodon {
@@ -75,13 +77,34 @@ public class Mastodon {
 
     }
 
-    static void parseTimeline(String json){
+    // 汎用タイムライン項目データクラス
+    public static class TLContent{ //TODO: あとで別クラスへ
+        public String username;
+        public String contentText;
+        public String date;
+        TLContent(String username, String contentText, String date){
+            this.username = username;
+            this.contentText = contentText;
+            this.date = date;
+        }
+    }
+
+    static List<TLContent> parseTimeline(String json){
         try {
             ObjectMapper mapper = new ObjectMapper();
             List<Toot> toots = mapper.readValue(json, new TypeReference<List<Toot>>() {});
-            toots.forEach(toot -> System.out.println(toot.content));
+
+            List<TLContent> listForTL = new ArrayList<>();
+            toots.forEach(toot -> {
+                //String text = toot.content;
+                String text = Jsoup.parse(toot.content).text();
+                System.out.println(text);
+                listForTL.add(new TLContent(toot.account.display_name, text, toot.created_at));
+            });
+            return listForTL;
         }catch (Exception e){
             e.printStackTrace();
         }
+        return List.of();
     }
 }
