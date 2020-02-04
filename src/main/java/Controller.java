@@ -3,22 +3,32 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 
+import java.util.HashSet;
+
 public class Controller implements Initializable {
+
+    Mastodon mastodon;
+
     @FXML private TableView<TootContent> tableView;
+
+    @FXML
+    protected void onMenuItemReload(ActionEvent evt) {
+        ObservableList<TootContent> tootContents = createTootContents(); // TODO:
+        tableView.setItems(tootContents);
+    }
 
     public static class TootContent{
         public StringProperty userName = new SimpleStringProperty();
-        public StringProperty contentText = new SimpleStringProperty();;
-        public StringProperty contentDate = new SimpleStringProperty();;
+        public StringProperty contentText = new SimpleStringProperty();
+        public StringProperty contentDate = new SimpleStringProperty();
 
         TootContent(String userName, String contentText, String contentDate){
             this.userName.set(userName);
@@ -42,6 +52,7 @@ public class Controller implements Initializable {
             // TODO: image viewでuser icon
     @Override
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
+        this.mastodon = new Mastodon();
         if(tableView != null) {
 
             tableView.setRowFactory(new Callback<TableView<TootContent>, TableRow<TootContent>>() {
@@ -59,7 +70,8 @@ public class Controller implements Initializable {
 
     public ObservableList<TootContent> createTootContents(){
         var webRequest = new WebRequest();
-        var timelineData = Mastodon.parseTimeline(webRequest.getTimeline());
+        var timelineData = mastodon.diffTimeline();
+
         for (Mastodon.TLContent tldata : timelineData) {
             timelineAdd(tldata.username, tldata.contentText, tldata.date);
         }

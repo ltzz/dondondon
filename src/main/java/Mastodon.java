@@ -4,9 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsoup.Jsoup;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Mastodon {
+
+    HashSet<String> receivedTootIds;
+
+    Mastodon(){
+        this.receivedTootIds = new HashSet<>();
+    }
+
 
     public static class Account{
         public String id;
@@ -59,6 +68,7 @@ public class Mastodon {
         public String content;
         public Account account;
         @JsonIgnore
+        public Object pinned;
         public Object card;
         @JsonIgnore
         public Object poll;
@@ -89,19 +99,33 @@ public class Mastodon {
         }
     }
 
-    static List<TLContent> parseTimeline(String json){
+    List<TLContent> diffTimeline(){
+        var webRequest = new WebRequest();
+        webRequest.getTimeline();
+        var toots = getHomeTimelineDto(webRequest.getTimeline());
+        var filteredToots = toots.stream().filter(toot -> !receivedTootIds.contains(toot.id)).collect(Collectors.toList());
+        var received = toots.stream().map(toot -> toot.id).collect(Collectors.toSet());
+        receivedTootIds.addAll(received);
+        return tootToTLContent(filteredToots);
+    }
+
+    static List<TLContent> tootToTLContent(List<Toot> toots){
+        List<TLContent> listForTL = new ArrayList<>();
+        toots.forEach(toot -> {
+            //String text = toot.content;
+            String text = Jsoup.parse(toot.content).text();
+            System.out.println(text);
+            listForTL.add(new TLContent(toot.account.display_name, text, toot.created_at));
+        });
+        return listForTL;
+    }
+
+    List<Toot> getHomeTimelineDto(String json){
         try {
             ObjectMapper mapper = new ObjectMapper();
             List<Toot> toots = mapper.readValue(json, new TypeReference<List<Toot>>() {});
 
-            List<TLContent> listForTL = new ArrayList<>();
-            toots.forEach(toot -> {
-                //String text = toot.content;
-                String text = Jsoup.parse(toot.content).text();
-                System.out.println(text);
-                listForTL.add(new TLContent(toot.account.display_name, text, toot.created_at));
-            });
-            return listForTL;
+            return toots;
         }catch (Exception e){
             e.printStackTrace();
         }
