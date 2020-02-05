@@ -12,9 +12,13 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("ui_main.fxml"));
         primaryStage.setTitle("${CLIENT_NAME}");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        var scene = new Scene(root, 400, 500);
+        scene.getStylesheets().add("dark.css");
+        primaryStage.setScene(scene);
         primaryStage.show();
-        MainWindow mainWindow = new MainWindow("test", 400, 500);
+
+        // こっちのスレッドのアプリケーションはいったん無効化
+        // MainWindow mainWindow = new MainWindow("test", 400, 500);
 
 
         Settings settings = new Settings();

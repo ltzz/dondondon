@@ -15,15 +15,26 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.HBox?>
 <VBox fx:controller="Controller"
       xmlns:fx="http://javafx.com/fxml">
     <MenuBar>
         <Menu text="全般">
             <items>
-                <MenuItem text="リロード" onAction="#onMenuItemReload"/>
+                <MenuItem text="読み込み" onAction="#onMenuItemReload"/>
+                <Menu text="自動読み込み">
+                    <fx:define>
+                        <ToggleGroup fx:id="reloadPeriod"></ToggleGroup>
+                    </fx:define>
+                    <RadioMenuItem text="なし" onAction="#onMenuItemReloadPeriodNone" selected="true" toggleGroup="$reloadPeriod" />
+                    <RadioMenuItem text="1分" onAction="#onMenuItemReloadPeriod1Min" toggleGroup="$reloadPeriod" />
+                </Menu>
             </items>
         </Menu>
-        <Menu text="バージョン"/>
+        <Menu text="バージョン"><MenuItem text="バージョン" onAction="#onMenuItemVersion"/></Menu>
     </MenuBar>
     <GridPane alignment="center" hgap="10" vgap="10">
         <rowConstraints>
@@ -36,29 +47,32 @@
         </columnConstraints>
         <children>
             <TabPane>
-                <Tab text="default">
+                <Tab text="default" closable="false">
                     <TableView fx:id="tableView" editable="false">
                         <columnResizePolicy>
-                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                            <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY" />
                         </columnResizePolicy>
                         <columns>
-                            <TableColumn fx:id="iconCol" text="icon">
+                            <TableColumn fx:id="iconCol" text="icon" maxWidth="50">
                                 <cellValueFactory><PropertyValueFactory property="icon" /></cellValueFactory>
                             </TableColumn>
-                            <TableColumn fx:id="userNameCol" text="userName">
+                            <TableColumn fx:id="userNameCol" text="userName" maxWidth="100">
                                 <cellValueFactory><PropertyValueFactory property="userName" /></cellValueFactory>
                             </TableColumn>
-                            <TableColumn fx:id="contentTextCol" text="contentText">
+                            <TableColumn fx:id="contentTextCol" text="contentText" prefWidth="200">
                                 <cellValueFactory><PropertyValueFactory property="contentText" /></cellValueFactory>
                             </TableColumn>
-                            <TableColumn fx:id="contentDateCol" text="contentDate">
+                            <TableColumn fx:id="contentDateCol" text="contentDate" prefWidth="100">
                                 <cellValueFactory><PropertyValueFactory property="contentDate" /></cellValueFactory>
                             </TableColumn>
                         </columns>
                     </TableView>
                 </Tab>
             </TabPane>
-            <WebView GridPane.rowIndex="1"></WebView>
+            <HBox GridPane.rowIndex="1">
+                <WebView fx:id="webView"></WebView>
+                <MenuButton><items><MenuItem text="お気に入り"></MenuItem></items></MenuButton>
+            </HBox>
             <TextArea GridPane.rowIndex="2"></TextArea>
         </children>
     </GridPane>

@@ -1,0 +1,12 @@
+.toot-row {
+  -fx-background-color: #2B2B2B;
+  -fx-text-background-color: #A9B7C6;
+}
+
+.toot-row:hover{
+  -fx-background-color: #303030;
+}
+
+.toot-row:selected{
+  -fx-background-color: #333333;
+}
