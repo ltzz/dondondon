@@ -1,35 +1,24 @@
-import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.ImageView;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import javafx.util.Callback;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.web.WebView;
+
 
 public class Controller implements Initializable {
 
-    TimelineGenerator timelineGenerator;
-    ReloadTask reloadTask;
+    @FXML
+    private AnchorPane tableView;
+    @FXML
+    private TableViewController tableViewController;
 
-    @FXML private TableView<TimelineGenerator.TootContent> tableView;
     @FXML private WebView webView;
 
     @FXML
     protected void onMenuItemReload(ActionEvent evt) {
-        ObservableList<TimelineGenerator.TootContent> tootContents = timelineGenerator.createTootContents(); // TODO:
-        tableView.setItems(tootContents);
+        tableViewController.tabRefresh();
     }
 
     @FXML
@@ -45,12 +34,12 @@ public class Controller implements Initializable {
 
     @FXML
     protected void onMenuItemReloadPeriodNone(ActionEvent evt) {
-        reloadTask.stop();
+        tableViewController.reloadTaskStop();
     }
 
     @FXML
     protected void onMenuItemReloadPeriod1Min(ActionEvent evt) {
-        reloadTask.start();
+        tableViewController.reloadTaskStart();
     }
 
 
@@ -65,38 +54,9 @@ public class Controller implements Initializable {
     // TODO: filter ██
     @Override
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
-        this.timelineGenerator = new TimelineGenerator(new Mastodon());
-        this.reloadTask = new ReloadTask(tableView,timelineGenerator);
-        WebEngine webEngine = webView.getEngine();
 
-        final String contentHeader = "<!DOCTYPE html><html lang=\"ja\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-16\"></head><body><style>span{font-family: 'Segoe UI Emoji';}</style><div>";
-        final String EMOJI_TEST = "<span style=\"border: 1px #cccccc solid;\">絵文字でねえ🍑💯</span>";
-        final String contentFooter = "<br></div>"+EMOJI_TEST+"</body></html>";
-        ObservableList selectedCells = tableView.getSelectionModel().getSelectedCells();
-
-        selectedCells.addListener(new ListChangeListener() {
-            @Override
-            public void onChanged(Change c) {
-                var tootContent = tableView.getSelectionModel().getSelectedItem();
-                webEngine.loadContent(contentHeader + tootContent.contentText.get() + contentFooter,"text/html");
-            }
-        });
-
-        if(tableView != null) {
-
-            tableView.setRowFactory(new Callback<TableView<TimelineGenerator.TootContent>, TableRow<TimelineGenerator.TootContent>>() {
-                @Override
-                public TableRow<TimelineGenerator.TootContent> call(TableView<TimelineGenerator.TootContent> tootCellTableView) {
-                    var tootCell = new TootCell();
-                    tootCell.getStyleClass().add("toot-row");
-                    return tootCell;
-                }
-            });
-            ObservableList<TimelineGenerator.TootContent> tootContents = timelineGenerator.createTootContents(); // TODO:
-            tableView.setItems(tootContents);
-
-        }
-
+        tableViewController.tabRefresh();
+        tableViewController.registerWebViewOutput(webView);
     }
 
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="TableViewController"
+            prefHeight="400.0" prefWidth="600.0">
+    <TableView fx:id="tableView" editable="false" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" >
+        <columnResizePolicy>
+            <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY" />
+        </columnResizePolicy>
+        <columns>
+            <TableColumn fx:id="iconCol" text="icon" maxWidth="50">
+                <cellValueFactory><PropertyValueFactory property="icon" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="userNameCol" text="userName" maxWidth="100">
+                <cellValueFactory><PropertyValueFactory property="userName" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="contentTextCol" text="contentText" prefWidth="200">
+                <cellValueFactory><PropertyValueFactory property="contentText" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="contentDateCol" text="contentDate" prefWidth="100">
+                <cellValueFactory><PropertyValueFactory property="contentDate" /></cellValueFactory>
+            </TableColumn>
+        </columns>
+    </TableView>
+</AnchorPane>

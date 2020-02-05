@@ -48,25 +48,7 @@
         <children>
             <TabPane>
                 <Tab text="default" closable="false">
-                    <TableView fx:id="tableView" editable="false">
-                        <columnResizePolicy>
-                            <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY" />
-                        </columnResizePolicy>
-                        <columns>
-                            <TableColumn fx:id="iconCol" text="icon" maxWidth="50">
-                                <cellValueFactory><PropertyValueFactory property="icon" /></cellValueFactory>
-                            </TableColumn>
-                            <TableColumn fx:id="userNameCol" text="userName" maxWidth="100">
-                                <cellValueFactory><PropertyValueFactory property="userName" /></cellValueFactory>
-                            </TableColumn>
-                            <TableColumn fx:id="contentTextCol" text="contentText" prefWidth="200">
-                                <cellValueFactory><PropertyValueFactory property="contentText" /></cellValueFactory>
-                            </TableColumn>
-                            <TableColumn fx:id="contentDateCol" text="contentDate" prefWidth="100">
-                                <cellValueFactory><PropertyValueFactory property="contentDate" /></cellValueFactory>
-                            </TableColumn>
-                        </columns>
-                    </TableView>
+                    <fx:include fx:id="tableView" source="tableview.fxml" />
                 </Tab>
             </TabPane>
             <HBox GridPane.rowIndex="1">
