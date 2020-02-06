@@ -19,13 +19,16 @@
             <TableColumn fx:id="iconCol" text="icon" maxWidth="50">
                 <cellValueFactory><PropertyValueFactory property="icon" /></cellValueFactory>
             </TableColumn>
-            <TableColumn fx:id="userNameCol" text="userName" maxWidth="100">
+            <TableColumn fx:id="tootIdCol" text="tootId" maxWidth="200" prefWidth="0">
+                <cellValueFactory><PropertyValueFactory property="tootId" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="userNameCol" text="userName" maxWidth="200">
                 <cellValueFactory><PropertyValueFactory property="userName" /></cellValueFactory>
             </TableColumn>
-            <TableColumn fx:id="contentTextCol" text="contentText" prefWidth="200">
+            <TableColumn fx:id="contentTextCol" text="contentText" prefWidth="300">
                 <cellValueFactory><PropertyValueFactory property="contentText" /></cellValueFactory>
             </TableColumn>
-            <TableColumn fx:id="contentDateCol" text="contentDate" prefWidth="100">
+            <TableColumn fx:id="contentDateCol" text="contentDate" prefWidth="100" maxWidth="200">
                 <cellValueFactory><PropertyValueFactory property="contentDate" /></cellValueFactory>
             </TableColumn>
         </columns>

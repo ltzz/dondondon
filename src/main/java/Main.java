@@ -6,7 +6,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import misc.MastodonAuth;
 import misc.Settings;
-import connection.WebRequest;
 
 public class Main extends Application {
 
@@ -16,7 +15,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("layout/ui_main.fxml"));
         primaryStage.setTitle("${CLIENT_NAME}");
-        var scene = new Scene(root, 500, 500);
+        var scene = new Scene(root, 600, 500);
         scene.getStylesheets().add("dark.css");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -29,16 +28,15 @@ public class Main extends Application {
 
         var controller = new Controller();
 
-
-        var mastodonAuth = new MastodonAuth();
-
-
         // settings.save();
         // settings.load();
 
-        // For Developper: String clientResponce = mastodonAuth.registerClient();
-        String token = mastodonAuth.getAccessToken();
-
+        if(false) { // For Developper:
+            var mastodonAuth = new MastodonAuth();
+            MastodonAuth.ClientRegisterResponse clientResponse = mastodonAuth.registerClient();
+            MastodonAuth.AccessTokenResponse accessTokenResponse = mastodonAuth.getAccessToken(clientResponse.client_id, clientResponse.client_secret);
+            System.out.println(accessTokenResponse.access_token); // Akan.javaに書く
+        }
 
     }
 

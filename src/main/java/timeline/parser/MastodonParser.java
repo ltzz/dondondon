@@ -108,7 +108,7 @@ public class MastodonParser {
             //String text = toot.content;
             String text = Jsoup.parse(toot.content).text();
             System.out.println(text);
-            listForTL.add(new TimelineGenerator.TLContent(toot.account.display_name, text, toot.created_at));
+            listForTL.add(new TimelineGenerator.TLContent(toot.id, toot.account.display_name, text, toot.created_at));
         });
         return listForTL;
     }

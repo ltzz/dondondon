@@ -1,5 +1,6 @@
 package controller;
 
+import connection.MastodonAPI;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,6 +18,8 @@ public class Controller implements Initializable {
     private AnchorPane tableView;
     @FXML
     private TableViewController tableViewController;
+    @FXML
+    private TextArea textArea;
 
     @FXML private WebView webView;
 
@@ -46,6 +49,15 @@ public class Controller implements Initializable {
         tableViewController.reloadTaskStart();
     }
 
+    @FXML
+    protected void onButtonInputTextPost(ActionEvent evt) {
+        String text = textArea.getText();
+        MastodonAPI mastodonAPI = new MastodonAPI();
+        if(!text.isEmpty()) {
+            mastodonAPI.postStatus(text);
+            textArea.setText(""); // TODO: 成功時にクリア
+        }
+    }
 
     public static class TootCell extends TableRow<TimelineGenerator.TootContent> {
         @Override

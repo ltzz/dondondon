@@ -30,7 +30,8 @@ public class TableViewController implements Initializable {
     }
 
     public void registerWebViewOutput(WebView webView){
-        final String contentHeader = "<!DOCTYPE html><html lang=\"ja\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-16\"><style>*{background-color: #2B2B2B;color: #A9B7C6;font-family: Meiryo,\"メイリオ\",'Segoe UI Emoji',sans-serif;font-weight:500;}</style></head><body><div>";
+        final String styleString = "<style>html{font-size: 12px;background-color: #2B2B2B; color: #A9B7C6;font-family: Meiryo,\"メイリオ\",'Segoe UI Emoji',sans-serif;font-weight:500;}</style>";
+        final String contentHeader = "<!DOCTYPE html><html lang=\"ja\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-16\">" + styleString + "</head><body><div>";
         // final String EMOJI_TEST = "<span style=\"border: 1px #cccccc solid;\">絵文字でねえ🍑💯</span>";
         final String EMOJI_TEST = "";
         final String contentFooter = "<br></div>"+EMOJI_TEST+"</body></html>";

@@ -13,10 +13,12 @@ public class TimelineGenerator {
 
     // 汎用タイムライン項目データクラス
     public static class TLContent{
+        public String tootId;
         public String username;
         public String contentText;
         public String date;
-        public TLContent(String username, String contentText, String date){
+        public TLContent(String tootId, String username, String contentText, String date){
+            this.tootId = tootId;
             this.username = username;
             this.contentText = contentText;
             this.date = date;
@@ -24,15 +26,18 @@ public class TimelineGenerator {
     }
 
     public static class TootContent{
+        public StringProperty tootId = new SimpleStringProperty();
         public StringProperty userName = new SimpleStringProperty();
         public StringProperty contentText = new SimpleStringProperty();
         public StringProperty contentDate = new SimpleStringProperty();
 
-        TootContent(String userName, String contentText, String contentDate){
+        TootContent(String tootId, String userName, String contentText, String contentDate){
+            this.tootId.set(tootId);
             this.userName.set(userName);
             this.contentText.set(contentText);
             this.contentDate.set(contentDate); // TODO
         }
+        public StringProperty tootIdProperty(){ return tootId; }
         public StringProperty userNameProperty(){ return userName; }
         public StringProperty contentTextProperty(){ return contentText; }
         public StringProperty contentDateProperty(){ return contentDate; }
@@ -49,16 +54,16 @@ public class TimelineGenerator {
         var timelineData = mastodonParser.diffTimeline();
 
         for (TLContent tldata : timelineData) {
-            timelineAdd(tldata.username, tldata.contentText, tldata.date);
+            timelineAdd(tldata.tootId, tldata.username, tldata.contentText, tldata.date);
         }
         data.sort(Comparator.comparing(tootContent -> tootContent.contentDate.get()));
         Collections.reverse(data); // FIXME: 同時刻の投稿が実行するたびに逆順になる
         return data;
     }
 
-    public void timelineAdd(String username, String contentText, String contentDate){
+    public void timelineAdd(String tootId, String username, String contentText, String contentDate){
         if(data != null){
-            data.add(new TootContent(username, contentText, contentDate));
+            data.add(new TootContent(tootId,username, contentText, contentDate));
         }
     }
 }

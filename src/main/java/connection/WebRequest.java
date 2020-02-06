@@ -10,7 +10,12 @@ import java.util.Optional;
 
 public class WebRequest {
 
+
     public static String requestPOST(String URLStr, String parameterString){
+        return requestPOST(URLStr, new HashMap<>(), parameterString);
+    }
+
+    public static String requestPOST(String URLStr, HashMap<String,String> headers, String parameterString){
         HttpURLConnection connection = null;
         InputStream in = null;
         BufferedReader reader = null;
@@ -20,13 +25,17 @@ public class WebRequest {
             //接続するURLを指定する
             URL url = new URL(URLStr);
             connection = (HttpURLConnection) url.openConnection();
+
+            for(var entry: headers.entrySet()) {
+                connection.setRequestProperty(entry.getKey(), entry.getValue());
+            }
+
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
 
             PrintWriter printWriter = new PrintWriter(connection.getOutputStream());
             printWriter.print(parameterString);
             printWriter.close();
-
             connection.connect();
 
             // POSTデータ送信処理
@@ -103,7 +112,6 @@ public class WebRequest {
                 while ((line = reader.readLine()) != null) {
                     output.append(line);
                 }
-                System.out.println(output.toString());
                 return output.toString();
             }
         } catch (Exception e) {
