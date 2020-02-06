@@ -1,3 +1,5 @@
+package misc;
+
 import javafx.scene.control.TextInputDialog;
 
 import java.io.*;
@@ -15,12 +17,12 @@ public class WebRequest {
     String getAuthorizeURL(String host){
         try {
             return host
-                + "/oauth/authorize?"
-                + "client_id=" + Akan.CLIENT_ID
-                + "&response_type=code"
-                + "&redirect_uri=urn:ietf:wg:oauth:2.0:oob"
-                + "&scope=read"
-            ;
+                    + "/oauth/authorize?"
+                    + "client_id=" + Akan.CLIENT_ID
+                    + "&response_type=code"
+                    + "&redirect_uri=urn:ietf:wg:oauth:2.0:oob"
+                    + "&scope=read"
+                    ;
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -238,3 +240,4 @@ public class WebRequest {
         return "";
     }
 }
+

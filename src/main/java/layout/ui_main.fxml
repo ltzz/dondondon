@@ -19,7 +19,7 @@
 <?import javafx.scene.control.RadioMenuItem?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.HBox?>
-<VBox fx:controller="Controller"
+<VBox fx:controller="controller.Controller"
       xmlns:fx="http://javafx.com/fxml">
     <MenuBar>
         <Menu text="全般">
@@ -27,7 +27,7 @@
                 <MenuItem text="読み込み" onAction="#onMenuItemReload"/>
                 <Menu text="自動読み込み">
                     <fx:define>
-                        <ToggleGroup fx:id="reloadPeriod"></ToggleGroup>
+                        <ToggleGroup fx:id="reloadPeriod"/>
                     </fx:define>
                     <RadioMenuItem text="なし" onAction="#onMenuItemReloadPeriodNone" selected="true" toggleGroup="$reloadPeriod" />
                     <RadioMenuItem text="1分" onAction="#onMenuItemReloadPeriod1Min" toggleGroup="$reloadPeriod" />

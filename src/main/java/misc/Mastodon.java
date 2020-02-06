@@ -1,3 +1,5 @@
+package misc;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,10 +14,9 @@ public class Mastodon {
 
     HashSet<String> receivedTootIds;
 
-    Mastodon(){
+    public Mastodon(){
         this.receivedTootIds = new HashSet<>();
     }
-
 
     public static class Account{
         public String id;

@@ -1,8 +1,20 @@
+package misc;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.TextInputDialog;
+import org.jsoup.Jsoup;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Settings {
 
@@ -10,7 +22,7 @@ public class Settings {
     final int MAX_INSTANCES = 10;
     List<InstanceSetting> instanceSettings;
 
-    Settings(){
+    public Settings(){
         instanceSettings = new ArrayList<InstanceSetting>();
     }
 

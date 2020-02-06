@@ -1,3 +1,5 @@
+package misc;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -47,3 +49,4 @@ public class TimelineGenerator {
         }
     }
 }
+
