@@ -2,14 +2,8 @@ package misc;
 
 import javafx.scene.control.TextInputDialog;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.util.HashMap;
 import java.util.Optional;
 
-import static connection.WebRequest.requestGET;
 import static connection.WebRequest.requestPOST;
 
 public class MastodonAuth {
@@ -35,11 +29,6 @@ public class MastodonAuth {
 
     public String getAccessToken(){
 
-        HttpURLConnection connection = null;
-        InputStream in = null;
-        BufferedReader reader = null;
-        OutputStream out = null;
-
         BrowserLauncher.launch(getAuthorizeURL(Akan.MASTODON_HOST));
 
         TextInputDialog dialog = new TextInputDialog("コードを入れてください");
@@ -63,8 +52,8 @@ public class MastodonAuth {
         return response;
     }
 
-    void registerClient() {
-        String parameterString = new String("client_name=" + CLIENT_NAME + "&redirect_uris=urn:ietf:wg:oauth:2.0:oob&scopes-read"); // TODO: "scopes=read write follow"
+    public void registerClient() {
+        String parameterString = new String("client_name=" + CLIENT_NAME + "&redirect_uris=urn:ietf:wg:oauth:2.0:oob&scope=read write follow"); // TODO: "scopes=read write follow"
         String response = requestPOST(RegisterURL, parameterString);
         System.out.println(response);
     }

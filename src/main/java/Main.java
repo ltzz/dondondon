@@ -36,8 +36,8 @@ public class Main extends Application {
         // settings.save();
         // settings.load();
 
-        // develop: mastodonAuth.registerClient();
-//        String token = mastodonAuth.getAccessToken();
+        // For Developper: String clientResponce = mastodonAuth.registerClient();
+        String token = mastodonAuth.getAccessToken();
 
 
     }

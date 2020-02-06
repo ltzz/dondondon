@@ -1,4 +1,4 @@
-package timeline;
+package timeline.parser;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import connection.WebRequest;
 import misc.Akan;
 import org.jsoup.Jsoup;
+import timeline.TimelineGenerator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,11 +16,11 @@ import java.util.stream.Collectors;
 
 import static connection.WebRequest.requestGET;
 
-public class Mastodon {
+public class MastodonParser {
 
     HashSet<String> receivedTootIds;
 
-    public Mastodon(){
+    public MastodonParser(){
         this.receivedTootIds = new HashSet<>();
     }
 
@@ -93,19 +94,7 @@ public class Mastodon {
 
     }
 
-    // 汎用タイムライン項目データクラス
-    public static class TLContent{ //TODO: あとで別クラスへ
-        public String username;
-        public String contentText;
-        public String date;
-        TLContent(String username, String contentText, String date){
-            this.username = username;
-            this.contentText = contentText;
-            this.date = date;
-        }
-    }
-
-    public List<TLContent> diffTimeline(){
+    public List<TimelineGenerator.TLContent> diffTimeline(){
         var toots = getHomeTimelineDto(getTimeline());
         var filteredToots = toots.stream().filter(toot -> !receivedTootIds.contains(toot.id)).collect(Collectors.toList());
         var received = toots.stream().map(toot -> toot.id).collect(Collectors.toSet());
@@ -113,13 +102,13 @@ public class Mastodon {
         return tootToTLContent(filteredToots);
     }
 
-    static List<TLContent> tootToTLContent(List<Toot> toots){
-        List<TLContent> listForTL = new ArrayList<>();
+    static List<TimelineGenerator.TLContent> tootToTLContent(List<Toot> toots){
+        List<TimelineGenerator.TLContent> listForTL = new ArrayList<>();
         toots.forEach(toot -> {
             //String text = toot.content;
             String text = Jsoup.parse(toot.content).text();
             System.out.println(text);
-            listForTL.add(new TLContent(toot.account.display_name, text, toot.created_at));
+            listForTL.add(new TimelineGenerator.TLContent(toot.account.display_name, text, toot.created_at));
         });
         return listForTL;
     }

@@ -9,7 +9,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
-import timeline.Mastodon;
+import timeline.parser.MastodonParser;
 import misc.ReloadTask;
 import timeline.TimelineGenerator;
 
@@ -56,7 +56,7 @@ public class TableViewController implements Initializable {
 
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
 
-        this.timelineGenerator = new TimelineGenerator(new Mastodon());
+        this.timelineGenerator = new TimelineGenerator(new MastodonParser());
         this.reloadTask = new ReloadTask(tableView, timelineGenerator);
 
         tabRefresh();

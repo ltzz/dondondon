@@ -4,11 +4,24 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import timeline.parser.MastodonParser;
 
 import java.util.Collections;
 import java.util.Comparator;
 
 public class TimelineGenerator {
+
+    // 汎用タイムライン項目データクラス
+    public static class TLContent{
+        public String username;
+        public String contentText;
+        public String date;
+        public TLContent(String username, String contentText, String date){
+            this.username = username;
+            this.contentText = contentText;
+            this.date = date;
+        }
+    }
 
     public static class TootContent{
         public StringProperty userName = new SimpleStringProperty();
@@ -25,17 +38,17 @@ public class TimelineGenerator {
         public StringProperty contentDateProperty(){ return contentDate; }
     }
 
-    Mastodon mastodon;
+    MastodonParser mastodonParser;
     ObservableList<TootContent> data = FXCollections.observableArrayList();
 
-    public TimelineGenerator(Mastodon mastodon){
-        this.mastodon = mastodon;
+    public TimelineGenerator(MastodonParser mastodonParser){
+        this.mastodonParser = mastodonParser;
     }
 
     public ObservableList<TootContent> createTootContents(){
-        var timelineData = mastodon.diffTimeline();
+        var timelineData = mastodonParser.diffTimeline();
 
-        for (Mastodon.TLContent tldata : timelineData) {
+        for (TLContent tldata : timelineData) {
             timelineAdd(tldata.username, tldata.contentText, tldata.date);
         }
         data.sort(Comparator.comparing(tootContent -> tootContent.contentDate.get()));
