@@ -7,7 +7,7 @@ import javafx.scene.control.*;
 
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebView;
-import misc.TimelineGenerator;
+import timeline.TimelineGenerator;
 import misc.Version;
 
 

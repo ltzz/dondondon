@@ -1,6 +1,5 @@
 package controller;
 
-import controller.Controller;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,15 +9,14 @@ import javafx.scene.control.TableView;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
-import misc.Mastodon;
+import timeline.Mastodon;
 import misc.ReloadTask;
-import misc.TimelineGenerator;
+import timeline.TimelineGenerator;
 
 public class TableViewController implements Initializable {
     @FXML
     private TableView<TimelineGenerator.TootContent> tableView;
 
-    private WebView webView;
     private ReloadTask reloadTask;
     private TimelineGenerator timelineGenerator;
 
@@ -33,7 +31,8 @@ public class TableViewController implements Initializable {
 
     public void registerWebViewOutput(WebView webView){
         final String contentHeader = "<!DOCTYPE html><html lang=\"ja\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-16\"><style>*{background-color: #2B2B2B;color: #A9B7C6;font-family: Meiryo,\"メイリオ\",'Segoe UI Emoji',sans-serif;font-weight:500;}</style></head><body><div>";
-        final String EMOJI_TEST = "<span style=\"border: 1px #cccccc solid;\">絵文字でねえ🍑💯</span>";
+        // final String EMOJI_TEST = "<span style=\"border: 1px #cccccc solid;\">絵文字でねえ🍑💯</span>";
+        final String EMOJI_TEST = "";
         final String contentFooter = "<br></div>"+EMOJI_TEST+"</body></html>";
         ObservableList selectedCells = tableView.getSelectionModel().getSelectedCells();
 

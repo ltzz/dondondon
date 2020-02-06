@@ -1,14 +1,19 @@
-package misc;
+package timeline;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import connection.WebRequest;
+import misc.Akan;
 import org.jsoup.Jsoup;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static connection.WebRequest.requestGET;
 
 public class Mastodon {
 
@@ -100,10 +105,8 @@ public class Mastodon {
         }
     }
 
-    List<TLContent> diffTimeline(){
-        var webRequest = new WebRequest();
-        webRequest.getTimeline();
-        var toots = getHomeTimelineDto(webRequest.getTimeline());
+    public List<TLContent> diffTimeline(){
+        var toots = getHomeTimelineDto(getTimeline());
         var filteredToots = toots.stream().filter(toot -> !receivedTootIds.contains(toot.id)).collect(Collectors.toList());
         var received = toots.stream().map(toot -> toot.id).collect(Collectors.toSet());
         receivedTootIds.addAll(received);
@@ -119,6 +122,15 @@ public class Mastodon {
             listForTL.add(new TLContent(toot.account.display_name, text, toot.created_at));
         });
         return listForTL;
+    }
+
+    private String getTimeline() {
+        String token = Akan.TOKEN;
+        String url = Akan.MASTODON_HOST + "/api/v1/timelines/home";
+        var headers = new HashMap<String,String>();
+        headers.put("Authorization", "Bearer " + token);
+        var responseBody = requestGET(url, headers);
+        return responseBody;
     }
 
     List<Toot> getHomeTimelineDto(String json){

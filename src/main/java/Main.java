@@ -4,8 +4,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import misc.MastodonAuth;
 import misc.Settings;
-import misc.WebRequest;
+import connection.WebRequest;
 
 public class Main extends Application {
 
@@ -29,14 +30,14 @@ public class Main extends Application {
         var controller = new Controller();
 
 
-        var webRequest = new WebRequest();
+        var mastodonAuth = new MastodonAuth();
 
 
         // settings.save();
         // settings.load();
 
-        // develop: webRequestSample.registerClient();
-        // String token = webRequest.getAccessToken();
+        // develop: mastodonAuth.registerClient();
+//        String token = mastodonAuth.getAccessToken();
 
 
     }

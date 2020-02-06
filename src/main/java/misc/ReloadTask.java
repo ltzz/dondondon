@@ -5,9 +5,7 @@ import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
 import javafx.util.Duration;
-
-import java.util.Date;
-import java.util.TimerTask;
+import timeline.TimelineGenerator;
 
 public class ReloadTask {
 
