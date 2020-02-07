@@ -5,6 +5,7 @@ import javafx.scene.control.TextInputDialog;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -114,7 +115,9 @@ public class WebRequest {
                 }
                 return output.toString();
             }
-        } catch (Exception e) {
+        }catch (UnknownHostException e) {
+            System.err.println("ホストとの接続に失敗");
+        }catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
