@@ -17,53 +17,75 @@ public class TimelineGenerator {
         public String username;
         public String contentText;
         public String date;
-        public TLContent(String tootId, String username, String contentText, String date){
+        public String favorited;
+        public String reblogged;
+        public String sensitive;
+
+        public TLContent(String tootId, String username, String contentText, String date,
+                         String favorited, String reblogged, String sensitive) {
             this.tootId = tootId;
             this.username = username;
             this.contentText = contentText;
             this.date = date;
+            this.favorited = favorited;
+            this.reblogged = reblogged;
+            this.sensitive = sensitive;
         }
     }
 
-    public static class TootContent{
+    public static class RowContent {
+        public String contentText;
+        public String favorited;
+        public String reblogged;
+        public String sensitive;
         public StringProperty tootId = new SimpleStringProperty();
         public StringProperty userName = new SimpleStringProperty();
-        public StringProperty contentText = new SimpleStringProperty();
+        public StringProperty contentTextForDisplay = new SimpleStringProperty();
         public StringProperty contentDate = new SimpleStringProperty();
 
-        TootContent(String tootId, String userName, String contentText, String contentDate){
+        RowContent(String tootId, String userName, String contentText, String contentDate, String favorited, String reblogged, String sensitive){
             this.tootId.set(tootId);
             this.userName.set(userName);
-            this.contentText.set(contentText);
-            this.contentDate.set(contentDate); // TODO
+            if("false".equals(sensitive)){
+                this.contentTextForDisplay.set(contentText);
+            }
+            else {
+                this.contentTextForDisplay.set("█".repeat(contentText.length()*2));
+            }
+            this.contentDate.set(contentDate);
+            this.favorited = favorited;
+            this.reblogged = reblogged;
+            this.sensitive = sensitive;
+            this.contentText = contentText;
+            // TODO
         }
         public StringProperty tootIdProperty(){ return tootId; }
         public StringProperty userNameProperty(){ return userName; }
-        public StringProperty contentTextProperty(){ return contentText; }
+        public StringProperty contentTextForDisplayProperty(){ return contentTextForDisplay; }
         public StringProperty contentDateProperty(){ return contentDate; }
     }
 
     MastodonParser mastodonParser;
-    ObservableList<TootContent> data = FXCollections.observableArrayList();
+    ObservableList<RowContent> data = FXCollections.observableArrayList();
 
     public TimelineGenerator(MastodonParser mastodonParser){
         this.mastodonParser = mastodonParser;
     }
 
-    public ObservableList<TootContent> createTootContents(){
+    public ObservableList<RowContent> createTootContents(){
         var timelineData = mastodonParser.diffTimeline();
 
         for (TLContent tldata : timelineData) {
-            timelineAdd(tldata.tootId, tldata.username, tldata.contentText, tldata.date);
+            timelineAdd(tldata.tootId, tldata.username, tldata.contentText, tldata.date, tldata.favorited, tldata.reblogged, tldata.sensitive);
         }
         data.sort(Comparator.comparing(tootContent -> tootContent.contentDate.get()));
         Collections.reverse(data); // FIXME: 同時刻の投稿が実行するたびに逆順になる
         return data;
     }
 
-    public void timelineAdd(String tootId, String username, String contentText, String contentDate){
+    public void timelineAdd(String tootId, String username, String contentText, String contentDate, String favorited, String reblogged, String sensitive){
         if(data != null){
-            data.add(new TootContent(tootId,username, contentText, contentDate));
+            data.add(new RowContent(tootId,username, contentText, contentDate, favorited, reblogged, sensitive));
         }
     }
 }

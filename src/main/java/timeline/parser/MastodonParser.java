@@ -1,9 +1,9 @@
 package timeline.parser;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import connection.WebRequest;
 import misc.Akan;
 import org.jsoup.Jsoup;
 import timeline.TimelineGenerator;
@@ -24,6 +24,7 @@ public class MastodonParser {
         this.receivedTootIds = new HashSet<>();
     }
 
+    @JsonIgnoreProperties(ignoreUnknown=true)
     public static class Account{
         public String id;
         public String username;
@@ -49,12 +50,41 @@ public class MastodonParser {
 
     }
 
-
+    @JsonIgnoreProperties(ignoreUnknown=true)
     public static class Media {
 
     }
 
+    @JsonIgnoreProperties(ignoreUnknown=true)
+    public static class Reblog {
+        public String id;
+        public String created_at;
+        public String in_reply_to_id;
+        public String in_reply_to_account_id;
+        public String sensitive;
+        public String spoiler_text;
+        public String visibility;
+        public String language;
+        public String uri;
+        public String url;
+        public String replies_count;
+        public String reblogs_count;
+        public String favourites_count;
+        public String favourited;
+        public String reblogged;
+        public String muted;
+        public String content;
+        public String reblog;
+        public Object account;
+        public Object media_attachments;
+        public Object mentions;
+        public Object tags;
+        public String name;
+        public String card;
+        public String poll;
+    }
 
+    @JsonIgnoreProperties(ignoreUnknown=true)
     public static class Toot{
         public String id;
         public String created_at;
@@ -74,13 +104,12 @@ public class MastodonParser {
         public String muted;
         public String content;
         public Account account;
+        public Reblog reblog;
         @JsonIgnore
         public Object pinned;
         public Object card;
         @JsonIgnore
         public Object poll;
-        @JsonIgnore
-        public Object reblog;
         @JsonIgnore
         public Object application;
         @JsonIgnore
@@ -91,7 +120,6 @@ public class MastodonParser {
         public List<Object> tags;
         @JsonIgnore
         public List<Object> emojis;
-
     }
 
     public List<TimelineGenerator.TLContent> diffTimeline(){
@@ -108,7 +136,7 @@ public class MastodonParser {
             //String text = toot.content;
             String text = Jsoup.parse(toot.content).text();
             System.out.println(text);
-            listForTL.add(new TimelineGenerator.TLContent(toot.id, toot.account.display_name, text, toot.created_at));
+            listForTL.add(new TimelineGenerator.TLContent(toot.id, toot.account.display_name, text, toot.created_at, toot.favourited, toot.reblogged, toot.sensitive));
         });
         return listForTL;
     }

@@ -59,15 +59,14 @@ public class Controller implements Initializable {
         }
     }
 
-    public static class TootCell extends TableRow<TimelineGenerator.TootContent> {
+    public static class TootCell extends TableRow<TimelineGenerator.RowContent> {
         @Override
-        protected void updateItem(TimelineGenerator.TootContent tootContent, boolean empty){
-            super.updateItem(tootContent, empty);
+        protected void updateItem(TimelineGenerator.RowContent rowContent, boolean empty){
+            super.updateItem(rowContent, empty);
         }
     }
 
     // TODO: image viewでuser icon
-    // TODO: filter ██
     @Override
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
 
