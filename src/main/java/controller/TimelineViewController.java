@@ -40,9 +40,10 @@ public class TimelineViewController implements Initializable {
         final String styleString = "<style>html{font-size: 12px;background-color: #2B2B2B; color: #A9B7C6;font-family: Meiryo,\"メイリオ\",'Segoe UI Emoji',sans-serif;font-weight:500;}</style>";
         final String contentHeader = "<!DOCTYPE html><html lang=\"ja\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" + twemoji + styleString + "</head><body><div>";
         // final String EMOJI_TEST = "<span style=\"border: 1px #cccccc solid;\">絵文字でねえ🍑💯 &#x1F004</span>";
+        //final String EMOJI_TEST = "\uD842\uDFB7野屋";
         final String EMOJI_TEST = "";
         final String twemojiFooter = "<script>twemoji.parse(document.body)</script>";
-        final String contentFooter = "<br></div>"+EMOJI_TEST+twemojiFooter+"</body></html>";
+        final String contentFooter = "<br></div>"+toCharacterReference(EMOJI_TEST)+twemojiFooter+"</body></html>";
         ObservableList selectedCells = tableView.getSelectionModel().getSelectedCells();
 
         selectedCells.addListener(new ListChangeListener() {
@@ -50,9 +51,10 @@ public class TimelineViewController implements Initializable {
             public void onChanged(Change c) {
                 var tootContent = tableView.getSelectionModel().getSelectedItem();
                 var content = tootContent.contentText;
-                String htmlString = contentHeader + content + contentFooter;
+                String htmlString = contentHeader + toCharacterReference(content) + contentFooter;
                 WebEngine webEngine = webView.getEngine();
-                webEngine.loadContent(htmlString,"text/html");
+                webEngine.setUserStyleSheetLocation(getClass().getResource("webview.css").toString());
+                webEngine.loadContent(htmlString);
             }
         });
     }
@@ -81,18 +83,26 @@ public class TimelineViewController implements Initializable {
 
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemFavorite = new MenuItem("お気に入り");
+        MenuItem menuItemReply = new MenuItem("返信");
         menuItemFavorite.setOnAction((ActionEvent t) -> {
-            var selected = tableView.getSelectionModel().getSelectedItem();
-            var hostname = selected.dataSourceInfo.hostname;
-            var tootId = selected.dataSourceInfo.statusId;
+            var selectedToot = tableView.getSelectionModel().getSelectedItem();
+            var hostname = selectedToot.dataSourceInfo.hostname;
+            var statusId = selectedToot.dataSourceInfo.statusId;
 
-            if( "mastodon".equals(selected.dataSourceInfo.serverType) ) {
+            if( "mastodon".equals(selectedToot.dataSourceInfo.serverType) ) {
                 MastodonAPI mastodonAPI = new MastodonAPI(hostname, Akan.TOKEN);
-                mastodonAPI.addFavorite(tootId);
+                mastodonAPI.addFavorite(statusId);
             }
         });
 
-        contextMenu.getItems().addAll(menuItemFavorite);
+        menuItemReply.setOnAction((ActionEvent t) -> {
+            var selectedToot = tableView.getSelectionModel().getSelectedItem();
+            var statusId = selectedToot.dataSourceInfo.statusId;
+
+            System.out.println("実装しとらんわ");
+        });
+
+        contextMenu.getItems().addAll(menuItemFavorite, menuItemReply);
 
         this.timelineGenerator = new TimelineGenerator(new MastodonParser());
         this.reloadTask = new ReloadTask(tableView, timelineGenerator);
@@ -114,5 +124,20 @@ public class TimelineViewController implements Initializable {
                 }
             });
         }
+    }
+
+
+    String toCharacterReference(String str) {
+        int len = str.length();
+        int[] codePointArray = new int[str.codePointCount(0, len)];
+
+        for (int i = 0, num = 0; i < len; i = str.offsetByCodePoints(i, 1)) {
+            codePointArray[num] = str.codePointAt(i);
+            num += 1;
+        }
+
+        StringBuffer stringBuffer = new StringBuffer();
+        for (int value : codePointArray) stringBuffer.append("&#x" + (Integer.toHexString(value)) + ";");
+        return stringBuffer.toString();
     }
 }
