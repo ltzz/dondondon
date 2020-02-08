@@ -4,17 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import connection.MastodonAPI;
 import misc.Akan;
 import org.jsoup.Jsoup;
 import timeline.TimelineGenerator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static connection.WebRequest.requestGET;
 
 public class MastodonParser {
 
@@ -123,7 +121,8 @@ public class MastodonParser {
     }
 
     public List<TimelineGenerator.TLContent> diffTimeline(){
-        var toots = getHomeTimelineDto(getTimeline());
+        MastodonAPI mastodonAPI = new MastodonAPI(Akan.MASTODON_HOST, Akan.TOKEN);
+        var toots = getHomeTimelineDto(mastodonAPI.getTimeline());
         var filteredToots = toots.stream().filter(toot -> !receivedTootIds.contains(toot.id)).collect(Collectors.toList());
         var received = toots.stream().map(toot -> toot.id).collect(Collectors.toSet());
         receivedTootIds.addAll(received);
@@ -143,18 +142,9 @@ public class MastodonParser {
             else {
                 rebloggUser = toot.reblog.account.username;
             }
-            listForTL.add(new TimelineGenerator.TLContent(toot.id, toot.account.display_name, text, toot.created_at, toot.favourited, toot.reblogged, toot.sensitive, rebloggUser));
+            listForTL.add(new TimelineGenerator.TLContent("mastodon", Akan.MASTODON_HOST, toot.id, toot.account.display_name, text, toot.created_at, toot.favourited, toot.reblogged, toot.sensitive, rebloggUser));
         });
         return listForTL;
-    }
-
-    private String getTimeline() {
-        String token = Akan.TOKEN;
-        String url = Akan.MASTODON_HOST + "/api/v1/timelines/home";
-        var headers = new HashMap<String,String>();
-        headers.put("Authorization", "Bearer " + token);
-        var responseBody = requestGET(url, headers);
-        return responseBody;
     }
 
     List<Toot> getHomeTimelineDto(String json){
@@ -167,5 +157,17 @@ public class MastodonParser {
             e.printStackTrace();
         }
         return List.of();
+    }
+
+    Toot getStatus(String json){
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Toot toot = mapper.readValue(json, new TypeReference<Toot>() {});
+
+            return toot;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 }

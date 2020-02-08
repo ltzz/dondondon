@@ -1,14 +1,20 @@
 package controller;
 
+import connection.MastodonAPI;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
+import misc.Akan;
 import timeline.parser.MastodonParser;
 import misc.ReloadTask;
 import timeline.TimelineGenerator;
@@ -60,12 +66,31 @@ public class TableViewController implements Initializable {
 
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
 
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuItemFavorite = new MenuItem("お気に入り");
+        menuItemFavorite.setOnAction((ActionEvent t) -> {
+            var selected = tableView.getSelectionModel().getSelectedItem();
+            var hostname = selected.hostname;
+            var tootId = selected.tootId;
+
+            if( "mastodon".equals(selected.serverType) ) {
+                MastodonAPI mastodonAPI = new MastodonAPI(hostname, Akan.TOKEN);
+                mastodonAPI.addFavorite(tootId);
+            }
+        });
+
+        contextMenu.getItems().addAll(menuItemFavorite);
+
         this.timelineGenerator = new TimelineGenerator(new MastodonParser());
         this.reloadTask = new ReloadTask(tableView, timelineGenerator);
 
         tabRefresh();
 
         if(tableView != null) {
+            tableView.setOnContextMenuRequested((ContextMenuEvent event) -> {
+                contextMenu.show(tableView, event.getScreenX(), event.getScreenY());
+                event.consume();
+            });
 
             tableView.setRowFactory(new Callback<TableView<TimelineGenerator.RowContent>, TableRow<TimelineGenerator.RowContent>>() {
                 @Override

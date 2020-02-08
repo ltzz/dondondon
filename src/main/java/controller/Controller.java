@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebView;
+import misc.Akan;
 import timeline.TimelineGenerator;
 import misc.Version;
 
@@ -52,7 +53,7 @@ public class Controller implements Initializable {
     @FXML
     protected void onButtonInputTextPost(ActionEvent evt) {
         String text = textArea.getText();
-        MastodonAPI mastodonAPI = new MastodonAPI();
+        MastodonAPI mastodonAPI = new MastodonAPI(Akan.MASTODON_HOST, Akan.TOKEN);
         if(!text.isEmpty()) {
             mastodonAPI.postStatus(text);
             textArea.setText(""); // TODO: 成功時にクリア
