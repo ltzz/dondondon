@@ -60,13 +60,6 @@ public class Controller implements Initializable {
         }
     }
 
-    public static class TootCell extends TableRow<TimelineGenerator.RowContent> {
-        @Override
-        protected void updateItem(TimelineGenerator.RowContent rowContent, boolean empty){
-            super.updateItem(rowContent, empty);
-        }
-    }
-
     // TODO: image viewでuser icon
     @Override
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {

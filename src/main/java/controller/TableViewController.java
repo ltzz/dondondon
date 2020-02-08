@@ -64,16 +64,26 @@ public class TableViewController implements Initializable {
         reloadTask.stop();
     }
 
+    public static class TootCell extends TableRow<TimelineGenerator.RowContent> {
+        @Override
+        protected void updateItem(TimelineGenerator.RowContent rowContent, boolean empty){
+            if( rowContent != null && "true".equals(rowContent.favorited) ) {
+                this.getStyleClass().add("-favorited");
+            }
+            super.updateItem(rowContent, empty);
+        }
+    }
+
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
 
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemFavorite = new MenuItem("お気に入り");
         menuItemFavorite.setOnAction((ActionEvent t) -> {
             var selected = tableView.getSelectionModel().getSelectedItem();
-            var hostname = selected.hostname;
-            var tootId = selected.tootId;
+            var hostname = selected.dataSourceInfo.hostname;
+            var tootId = selected.dataSourceInfo.statusId;
 
-            if( "mastodon".equals(selected.serverType) ) {
+            if( "mastodon".equals(selected.dataSourceInfo.serverType) ) {
                 MastodonAPI mastodonAPI = new MastodonAPI(hostname, Akan.TOKEN);
                 mastodonAPI.addFavorite(tootId);
             }
@@ -95,7 +105,7 @@ public class TableViewController implements Initializable {
             tableView.setRowFactory(new Callback<TableView<TimelineGenerator.RowContent>, TableRow<TimelineGenerator.RowContent>>() {
                 @Override
                 public TableRow<TimelineGenerator.RowContent> call(TableView<TimelineGenerator.RowContent> tootCellTableView) {
-                    var tootCell = new Controller.TootCell();
+                    var tootCell = new TootCell();
                     tootCell.getStyleClass().add("toot-row");
                     return tootCell;
                 }
