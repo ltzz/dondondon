@@ -51,10 +51,10 @@
                     <fx:include fx:id="tableView" source="tableview.fxml" />
                 </Tab>
             </TabPane>
-            <!-- <HBox GridPane.rowIndex="1">
+            <HBox GridPane.rowIndex="1">
                 <WebView fx:id="webView"></WebView>
-                <MenuButton><items><MenuItem text="お気に入り"></MenuItem></items></MenuButton>
-            </HBox> -->
+                <!-- <MenuButton><items><MenuItem text="お気に入り"></MenuItem></items></MenuButton> -->
+            </HBox>
             <HBox GridPane.rowIndex="2">
                 <TextArea fx:id="textArea"></TextArea>
                 <Button onAction="#onButtonInputTextPost" text="投稿"/>
