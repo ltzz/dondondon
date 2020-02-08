@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -34,7 +35,7 @@ public class WebRequest {
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
 
-            PrintWriter printWriter = new PrintWriter(connection.getOutputStream());
+            PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8));
             printWriter.print(parameterString);
             printWriter.close();
             connection.connect();
@@ -42,7 +43,7 @@ public class WebRequest {
             // POSTデータ送信処理
 
             out = connection.getOutputStream();
-            out.write("POST DATA".getBytes("UTF-8"));
+            out.write("POST DATA".getBytes(StandardCharsets.UTF_8));
             out.flush();
 
             int status = connection.getResponseCode();
