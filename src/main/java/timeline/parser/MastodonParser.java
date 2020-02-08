@@ -75,12 +75,12 @@ public class MastodonParser {
         public String muted;
         public String content;
         public String reblog;
-        public Object account;
+        public Account account;
         public Object media_attachments;
         public Object mentions;
         public Object tags;
         public String name;
-        public String card;
+        public Object card;
         public String poll;
     }
 
@@ -136,7 +136,14 @@ public class MastodonParser {
             //String text = toot.content;
             String text = Jsoup.parse(toot.content).text();
             System.out.println(text);
-            listForTL.add(new TimelineGenerator.TLContent(toot.id, toot.account.display_name, text, toot.created_at, toot.favourited, toot.reblogged, toot.sensitive));
+            String rebloggUser;
+            if(toot.reblog == null){
+                rebloggUser = null;
+            }
+            else {
+                rebloggUser = toot.reblog.account.username;
+            }
+            listForTL.add(new TimelineGenerator.TLContent(toot.id, toot.account.display_name, text, toot.created_at, toot.favourited, toot.reblogged, toot.sensitive, rebloggUser));
         });
         return listForTL;
     }
