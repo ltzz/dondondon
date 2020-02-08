@@ -70,6 +70,9 @@ public class TableViewController implements Initializable {
             if( rowContent != null && "true".equals(rowContent.favorited) ) {
                 this.getStyleClass().add("-favorited");
             }
+            else{
+                this.getStyleClass().remove("-favorited");
+            }
             super.updateItem(rowContent, empty);
         }
     }
