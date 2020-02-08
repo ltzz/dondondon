@@ -19,7 +19,7 @@ import timeline.parser.MastodonParser;
 import misc.ReloadTask;
 import timeline.TimelineGenerator;
 
-public class TableViewController implements Initializable {
+public class TimelineViewController implements Initializable {
     @FXML
     private TableView<TimelineGenerator.RowContent> tableView;
 

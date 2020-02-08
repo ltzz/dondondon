@@ -9,7 +9,7 @@
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="controller.TableViewController"
+            fx:controller="controller.NotificationViewController"
             prefHeight="400.0" prefWidth="600.0">
     <TableView fx:id="tableView" editable="false" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" >
         <columnResizePolicy>
@@ -19,14 +19,8 @@
             <TableColumn fx:id="iconCol" text="icon" maxWidth="50">
                 <cellValueFactory><PropertyValueFactory property="icon" /></cellValueFactory>
             </TableColumn>
-            <TableColumn fx:id="userNameCol" text="userName" maxWidth="200">
-                <cellValueFactory><PropertyValueFactory property="userName" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="contentTextCol" text="contentText" prefWidth="300">
-                <cellValueFactory><PropertyValueFactory property="contentTextForDisplay" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="contentDateCol" text="contentDate" prefWidth="100" maxWidth="200">
-                <cellValueFactory><PropertyValueFactory property="contentDate" /></cellValueFactory>
+            <TableColumn fx:id="contentCol" text="content" maxWidth="200">
+                <cellValueFactory><PropertyValueFactory property="content" /></cellValueFactory>
             </TableColumn>
         </columns>
     </TableView>

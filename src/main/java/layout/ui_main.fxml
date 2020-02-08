@@ -48,7 +48,10 @@
         <children>
             <TabPane>
                 <Tab text="default" closable="false">
-                    <fx:include fx:id="tableView" source="tableview.fxml" />
+                    <fx:include fx:id="timelineView" source="timeline_view.fxml" />
+                </Tab>
+                <Tab text="notification" closable="false">
+                    <fx:include fx:id="notificationView" source="notification_view.fxml" />
                 </Tab>
             </TabPane>
             <HBox GridPane.rowIndex="1">

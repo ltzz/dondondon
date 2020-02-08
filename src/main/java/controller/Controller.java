@@ -9,16 +9,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebView;
 import misc.Akan;
-import timeline.TimelineGenerator;
 import misc.Version;
 
 
 public class Controller implements Initializable {
 
     @FXML
-    private AnchorPane tableView;
-    @FXML
-    private TableViewController tableViewController;
+    private TimelineViewController timelineViewController;
     @FXML
     private TextArea textArea;
 
@@ -26,7 +23,7 @@ public class Controller implements Initializable {
 
     @FXML
     protected void onMenuItemReload(ActionEvent evt) {
-        tableViewController.tabRefresh();
+        timelineViewController.tabRefresh();
     }
 
     @FXML
@@ -42,12 +39,12 @@ public class Controller implements Initializable {
 
     @FXML
     protected void onMenuItemReloadPeriodNone(ActionEvent evt) {
-        tableViewController.reloadTaskStop();
+        timelineViewController.reloadTaskStop();
     }
 
     @FXML
     protected void onMenuItemReloadPeriod1Min(ActionEvent evt) {
-        tableViewController.reloadTaskStart();
+        timelineViewController.reloadTaskStart();
     }
 
     @FXML
@@ -64,8 +61,8 @@ public class Controller implements Initializable {
     @Override
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
 
-        tableViewController.tabRefresh();
-        tableViewController.registerWebViewOutput(webView);
+        timelineViewController.tabRefresh();
+        timelineViewController.registerWebViewOutput(webView);
     }
 
 }
