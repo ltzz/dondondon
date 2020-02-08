@@ -30,7 +30,7 @@ public class TimelineViewController implements Initializable {
         tableView.setItems(rowContents);
     }
 
-    public void tabRefresh(){
+    public void viewRefresh(){
         ObservableList<TimelineGenerator.RowContent> rowContents = timelineGenerator.createTootContents(); // TODO:
         tableViewSetItems(rowContents);
     }
@@ -97,7 +97,7 @@ public class TimelineViewController implements Initializable {
         this.timelineGenerator = new TimelineGenerator(new MastodonParser());
         this.reloadTask = new ReloadTask(tableView, timelineGenerator);
 
-        tabRefresh();
+        viewRefresh();
 
         if(tableView != null) {
             tableView.setOnContextMenuRequested((ContextMenuEvent event) -> {

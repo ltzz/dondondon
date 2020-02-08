@@ -19,8 +19,11 @@
             <TableColumn fx:id="iconCol" text="icon" maxWidth="50">
                 <cellValueFactory><PropertyValueFactory property="icon" /></cellValueFactory>
             </TableColumn>
-            <TableColumn fx:id="contentCol" text="content" maxWidth="200">
-                <cellValueFactory><PropertyValueFactory property="content" /></cellValueFactory>
+            <TableColumn fx:id="contentTextCol" text="content" prefWidth="200"  maxWidth="300">
+                <cellValueFactory><PropertyValueFactory property="contentText" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="dateCol" text="date" maxWidth="200">
+                <cellValueFactory><PropertyValueFactory property="createdAt" /></cellValueFactory>
             </TableColumn>
         </columns>
     </TableView>

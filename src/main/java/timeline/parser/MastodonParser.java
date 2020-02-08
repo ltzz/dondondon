@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import connection.MastodonAPI;
 import misc.Akan;
 import org.jsoup.Jsoup;
+import timeline.NotificationGenerator;
 import timeline.TimelineGenerator;
 
 import java.util.ArrayList;
@@ -17,9 +18,11 @@ import java.util.stream.Collectors;
 public class MastodonParser {
 
     HashSet<String> receivedStatusIds;
+    HashSet<String> receivedNotificationIds;
 
     public MastodonParser(){
         this.receivedStatusIds = new HashSet<>();
+        this.receivedNotificationIds = new HashSet<>();
     }
 
     @JsonIgnoreProperties(ignoreUnknown=true)
@@ -120,17 +123,36 @@ public class MastodonParser {
         public List<Object> emojis;
     }
 
+
+    @JsonIgnoreProperties(ignoreUnknown=true)
+    public static class Notification{
+        public String id;
+        public String type;
+        public String created_at;
+        public Account account;
+        public Toot status;
+    }
+
     public List<TimelineGenerator.TLContent> diffTimeline(){
         MastodonAPI mastodonAPI = new MastodonAPI(Akan.MASTODON_HOST, Akan.TOKEN);
         var toots = getHomeTimelineDto(mastodonAPI.getTimeline());
         var filteredToots = toots.stream().filter(toot -> !receivedStatusIds.contains(toot.id)).collect(Collectors.toList());
         var received = toots.stream().map(toot -> toot.id).collect(Collectors.toSet());
         receivedStatusIds.addAll(received);
-        return tootToTLContent(filteredToots);
+        return toTLContent(filteredToots);
     }
 
-    static List<TimelineGenerator.TLContent> tootToTLContent(List<Toot> toots){
-        List<TimelineGenerator.TLContent> listForTL = new ArrayList<>();
+    public List<NotificationGenerator.NotificationContent> diffNotification(){
+        MastodonAPI mastodonAPI = new MastodonAPI(Akan.MASTODON_HOST, Akan.TOKEN);
+        var notifications = getNotificationDto(mastodonAPI.getNotification());
+        var filteredNotification = notifications.stream().filter(notification -> !receivedNotificationIds.contains(notification.id)).collect(Collectors.toList());
+        var received = notifications.stream().map(notification -> notification.id).collect(Collectors.toSet());
+        receivedNotificationIds.addAll(received);
+        return toNotificationContent(filteredNotification);
+    }
+
+    static List<TimelineGenerator.TLContent> toTLContent(List<Toot> toots){
+        List<TimelineGenerator.TLContent> listForGenerator = new ArrayList<>();
         toots.forEach(toot -> {
             String text = Jsoup.parse(toot.content).text();
             System.out.println(text);
@@ -142,10 +164,20 @@ public class MastodonParser {
                 rebloggUser = toot.reblog.account.username;
             }
             TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", Akan.MASTODON_HOST, toot.id);
-            listForTL.add(new TimelineGenerator.TLContent(dataSourceInfo,
+            listForGenerator.add(new TimelineGenerator.TLContent(dataSourceInfo,
                     toot.account.display_name, text, toot.created_at, toot.favourited, toot.reblogged, toot.sensitive, rebloggUser));
         });
-        return listForTL;
+        return listForGenerator;
+    }
+
+    static List<NotificationGenerator.NotificationContent> toNotificationContent(List<Notification> notifications){
+        List<NotificationGenerator.NotificationContent> listForGenerator = new ArrayList<>();
+        notifications.forEach(notification -> {
+            var notificationText = notification.account.username + ": ["+ notification.type + "]";
+            TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", Akan.MASTODON_HOST, notification.id);
+            listForGenerator.add(new NotificationGenerator.NotificationContent(dataSourceInfo, notificationText, notification.created_at));
+        });
+        return listForGenerator;
     }
 
     List<Toot> getHomeTimelineDto(String json){
@@ -154,6 +186,18 @@ public class MastodonParser {
             List<Toot> toots = mapper.readValue(json, new TypeReference<List<Toot>>() {});
 
             return toots;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return List.of();
+    }
+
+    List<Notification> getNotificationDto(String json){
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            List<Notification> notifications = mapper.readValue(json, new TypeReference<List<Notification>>() {});
+
+            return notifications;
         }catch (Exception e){
             e.printStackTrace();
         }

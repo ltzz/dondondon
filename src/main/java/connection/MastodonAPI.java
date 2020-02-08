@@ -30,7 +30,7 @@ public class MastodonAPI {
         var headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + accessToken);
 
-        var responseBody = WebRequest.requestPOST(url, headers, "status="+text);
+        var responseBody = WebRequest.requestPOST(url, headers, "status=" + text);
         // System.out.println(responseBody);
         // getStatus(responseBody)
         // TODO: ここのレスポンスを見てお気に入り状態を表示に反映
@@ -38,6 +38,14 @@ public class MastodonAPI {
 
     public String getTimeline() {
         String url = mastodonHost + "/api/v1/timelines/home";
+        var headers = new HashMap<String,String>();
+        headers.put("Authorization", "Bearer " + accessToken);
+        var responseBody = requestGET(url, headers);
+        return responseBody;
+    }
+
+    public String getNotification() {
+        String url = mastodonHost + "/api/v1/notifications";
         var headers = new HashMap<String,String>();
         headers.put("Authorization", "Bearer " + accessToken);
         var responseBody = requestGET(url, headers);

@@ -23,7 +23,7 @@ public class Controller implements Initializable {
 
     @FXML
     protected void onMenuItemReload(ActionEvent evt) {
-        timelineViewController.tabRefresh();
+        timelineViewController.viewRefresh();
     }
 
     @FXML
@@ -61,7 +61,7 @@ public class Controller implements Initializable {
     @Override
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
 
-        timelineViewController.tabRefresh();
+        timelineViewController.viewRefresh();
         timelineViewController.registerWebViewOutput(webView);
     }
 
