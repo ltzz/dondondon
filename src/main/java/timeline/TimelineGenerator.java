@@ -1,11 +1,19 @@
 package timeline;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import timeline.parser.MastodonParser;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -40,12 +48,14 @@ public class TimelineGenerator {
         public String reblogged;
         public String sensitive;
         public String reblogOriginalUsername;
+        public String avatarURL;
 
         public TLContent(DataSourceInfo dataSourceInfo,
                          String username, String displayName,
                          String contentText, String date,
                          String favorited, String reblogged, String sensitive,
-                         String reblogOriginalUsername) {
+                         String reblogOriginalUsername,
+                         String avatarURL) {
             this.dataSourceInfo = dataSourceInfo;
             this.username = username;
             this.displayName = displayName;
@@ -55,22 +65,37 @@ public class TimelineGenerator {
             this.reblogged = reblogged;
             this.sensitive = sensitive;
             this.reblogOriginalUsername = reblogOriginalUsername;
+            this.avatarURL = avatarURL;
         }
     }
 
     public static class RowContent {
-        public final DataSourceInfo dataSourceInfo;
+        public DataSourceInfo dataSourceInfo;
         public String contentText;
         public String favorited;
         public String reblogged;
         public String sensitive;
         public String reblogOriginalUserId;
+        private ObjectProperty userIcon = new SimpleObjectProperty();
         public StringProperty userName = new SimpleStringProperty();
         public StringProperty contentTextForDisplay = new SimpleStringProperty();
         public StringProperty contentDate = new SimpleStringProperty();
 
         RowContent(TLContent tlContent){
             this.dataSourceInfo = tlContent.dataSourceInfo;
+
+            BufferedImage icon = null;
+            try {
+                icon = ImageIO.read(new URL(tlContent.avatarURL));
+                ImageView iconView = new ImageView(SwingFXUtils.toFXImage(icon, null));
+                iconView.setFitWidth(20);
+                iconView.setFitHeight(20);
+                this.userIcon.set(iconView);
+            }catch (Exception e){
+
+            }
+
+
             this.userName.set(tlContent.username + " / " + tlContent.displayName);
 
             if("false".equals(tlContent.sensitive)){
@@ -95,6 +120,8 @@ public class TimelineGenerator {
             this.reblogOriginalUserId = tlContent.reblogOriginalUsername;
             // TODO
         }
+
+        public ObjectProperty userIconProperty(){ return userIcon; }
         public StringProperty userNameProperty(){ return userName; }
         public StringProperty contentTextForDisplayProperty(){ return contentTextForDisplay; }
         public StringProperty contentDateProperty(){ return contentDate; }

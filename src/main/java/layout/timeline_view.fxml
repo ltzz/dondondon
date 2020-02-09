@@ -16,8 +16,8 @@
             <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY" />
         </columnResizePolicy>
         <columns>
-            <TableColumn fx:id="iconCol" text="icon" maxWidth="50">
-                <cellValueFactory><PropertyValueFactory property="icon" /></cellValueFactory>
+            <TableColumn fx:id="iconCol" text="icon" maxWidth="30" minWidth="30">
+                <cellValueFactory><PropertyValueFactory property="userIcon" /></cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="userNameCol" text="username" maxWidth="200">
                 <cellValueFactory><PropertyValueFactory property="userName" /></cellValueFactory>
