@@ -4,7 +4,7 @@
 
 自分が使うために作ったMastodonクライアントです
 
-![15279e5033dac514](https://user-images.githubusercontent.com/1310799/73954713-8fa8d900-4945-11ea-8ab7-5af7fb67fe5e.png)
+![image](https://user-images.githubusercontent.com/1310799/74102142-2bc02380-4b84-11ea-9060-c6fd82b37ae8.png)
 
 
 ## できること
@@ -14,6 +14,7 @@
 
 ## できないこと
 
+* ショートカットキーとか全然実装してません(Ctrl+Enterで投稿とかすらまだ実装してない)
 * ローカルタイムラインや返信など他のタイムラインの閲覧
 * 複垢には対応してません
 * Stream(リアルタイムにTLに反映されるやつ)はまだ実装していません
