@@ -31,11 +31,12 @@ public class Main extends Application {
         // settings.save();
         // settings.load();
 
-        if(false) { // For Developper:
+        if(false) { // For Developper:　token取得用
             var mastodonAuth = new MastodonAuth();
             MastodonAuth.ClientRegisterResponse clientResponse = mastodonAuth.registerClient();
             MastodonAuth.AccessTokenResponse accessTokenResponse = mastodonAuth.getAccessToken(clientResponse.client_id, clientResponse.client_secret);
-            System.out.println(accessTokenResponse.access_token); // Akan.javaに書く
+            System.out.println(accessTokenResponse.access_token);
+            // 今の所設定保存機能を実装していないので、不足してる諸々はAkan.javaに書いていく
         }
 
     }

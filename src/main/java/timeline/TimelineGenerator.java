@@ -86,6 +86,7 @@ public class TimelineGenerator {
 
             BufferedImage icon = null;
             try {
+                // TODO: この実装セキュリティ的に大丈夫かどうか詳しい人に聞く
                 icon = ImageIO.read(new URL(tlContent.avatarURL));
                 ImageView iconView = new ImageView(SwingFXUtils.toFXImage(icon, null));
                 iconView.setFitWidth(20);
