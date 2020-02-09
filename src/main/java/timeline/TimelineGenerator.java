@@ -33,6 +33,7 @@ public class TimelineGenerator {
     public static class TLContent{
         public final DataSourceInfo dataSourceInfo;
         public String username;
+        public String displayName;
         public String contentText;
         public String date;
         public String favorited;
@@ -41,11 +42,13 @@ public class TimelineGenerator {
         public String reblogOriginalUsername;
 
         public TLContent(DataSourceInfo dataSourceInfo,
-                         String username, String contentText, String date,
+                         String username, String displayName,
+                         String contentText, String date,
                          String favorited, String reblogged, String sensitive,
                          String reblogOriginalUsername) {
             this.dataSourceInfo = dataSourceInfo;
             this.username = username;
+            this.displayName = displayName;
             this.contentText = contentText;
             this.date = date;
             this.favorited = favorited;
@@ -66,31 +69,30 @@ public class TimelineGenerator {
         public StringProperty contentTextForDisplay = new SimpleStringProperty();
         public StringProperty contentDate = new SimpleStringProperty();
 
-        RowContent(DataSourceInfo dataSourceInfo,
-                   String userName, String contentText, String contentDate, String favorited, String reblogged, String sensitive, String reblogOriginalUserId){
-            this.dataSourceInfo = dataSourceInfo;
-            this.userName.set(userName);
+        RowContent(TLContent tlContent){
+            this.dataSourceInfo = tlContent.dataSourceInfo;
+            this.userName.set(tlContent.username + " / " + tlContent.displayName);
 
-            if("false".equals(sensitive)){
-                this.contentTextForDisplay.set(contentText);
+            if("false".equals(tlContent.sensitive)){
+                this.contentTextForDisplay.set(tlContent.contentText);
             }
             else {
-                this.contentTextForDisplay.set("█".repeat(contentText.length()*2));
+                this.contentTextForDisplay.set("█".repeat(tlContent.contentText.length()*2));
             }
 
-            if(reblogOriginalUserId != null){
-                this.contentTextForDisplay.set("reblog " + reblogOriginalUserId + ": " + contentText);
+            if(tlContent.reblogOriginalUsername != null){
+                this.contentTextForDisplay.set("reblog " + tlContent.reblogOriginalUsername + ": " + tlContent.contentText);
             }
             else {
-                this.contentTextForDisplay.set(contentText);
+                this.contentTextForDisplay.set(tlContent.contentText);
             }
 
-            this.contentDate.set(contentDate);
-            this.favorited = favorited;
-            this.reblogged = reblogged;
-            this.sensitive = sensitive;
-            this.contentText = contentText;
-            this.reblogOriginalUserId = reblogOriginalUserId;
+            this.contentDate.set(tlContent.date);
+            this.favorited = tlContent.favorited;
+            this.reblogged = tlContent.reblogged;
+            this.sensitive = tlContent.sensitive;
+            this.contentText = tlContent.contentText;
+            this.reblogOriginalUserId = tlContent.reblogOriginalUsername;
             // TODO
         }
         public StringProperty userNameProperty(){ return userName; }
@@ -102,9 +104,7 @@ public class TimelineGenerator {
         var timelineData = mastodonParser.diffTimeline();
 
         for (TLContent tldata : timelineData) {
-            timelineAdd(tldata.dataSourceInfo, tldata.username, tldata.contentText, tldata.date,
-                    tldata.favorited, tldata.reblogged, tldata.sensitive,
-                    tldata.reblogOriginalUsername);
+            timelineAdd(tldata);
         }
 
         data.sort(Comparator.comparing(tootContent -> tootContent.contentDate.get()));
@@ -112,12 +112,9 @@ public class TimelineGenerator {
         return data;
     }
 
-    public void timelineAdd(DataSourceInfo dataSourceInfo,
-                            String username, String contentText, String contentDate, String favorited, String reblogged, String sensitive, String reblogOriginalUsername){
+    public void timelineAdd(TLContent tlContent){
         if(data != null){
-            data.add(new RowContent(dataSourceInfo,
-                    username, contentText, contentDate,
-                    favorited, reblogged, sensitive, reblogOriginalUsername));
+            data.add(new RowContent(tlContent));
         }
     }
 }

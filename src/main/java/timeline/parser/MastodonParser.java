@@ -165,7 +165,8 @@ public class MastodonParser {
             }
             TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", Akan.MASTODON_HOST, toot.id);
             listForGenerator.add(new TimelineGenerator.TLContent(dataSourceInfo,
-                    toot.account.display_name, text, toot.created_at, toot.favourited, toot.reblogged, toot.sensitive, rebloggUser));
+                    toot.account.username, toot.account.display_name,
+                    text, toot.created_at, toot.favourited, toot.reblogged, toot.sensitive, rebloggUser));
         });
         return listForGenerator;
     }

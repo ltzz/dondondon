@@ -19,13 +19,13 @@
             <TableColumn fx:id="iconCol" text="icon" maxWidth="50">
                 <cellValueFactory><PropertyValueFactory property="icon" /></cellValueFactory>
             </TableColumn>
-            <TableColumn fx:id="userNameCol" text="userName" maxWidth="200">
+            <TableColumn fx:id="userNameCol" text="username" maxWidth="200">
                 <cellValueFactory><PropertyValueFactory property="userName" /></cellValueFactory>
             </TableColumn>
-            <TableColumn fx:id="contentTextCol" text="contentText" prefWidth="300">
+            <TableColumn fx:id="contentTextCol" text="content" prefWidth="300">
                 <cellValueFactory><PropertyValueFactory property="contentTextForDisplay" /></cellValueFactory>
             </TableColumn>
-            <TableColumn fx:id="contentDateCol" text="contentDate" prefWidth="100" maxWidth="200">
+            <TableColumn fx:id="contentDateCol" text="date" prefWidth="100" maxWidth="200">
                 <cellValueFactory><PropertyValueFactory property="contentDate" /></cellValueFactory>
             </TableColumn>
         </columns>
