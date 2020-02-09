@@ -47,6 +47,10 @@ public class NotificationViewController implements Initializable, IReload {
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
 
         if(tableView != null) {
+
+            var columns = tableView.getColumns();
+            for( var column : columns ) column.setSortable(false);
+
             tableView.setRowFactory(new Callback<TableView<NotificationGenerator.RowContent>, TableRow<NotificationGenerator.RowContent>>() {
                 @Override
                 public TableRow<NotificationGenerator.RowContent> call(TableView<NotificationGenerator.RowContent> tootCellTableView) {

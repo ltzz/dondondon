@@ -110,6 +110,10 @@ public class TimelineViewController implements Initializable, IReload {
         contextMenu.getItems().addAll(menuItemFavorite, menuItemReply);
 
         if(tableView != null) {
+
+            var columns = tableView.getColumns();
+            for( var column : columns ) column.setSortable(false);
+
             tableView.setOnContextMenuRequested((ContextMenuEvent event) -> {
                 contextMenu.show(tableView, event.getScreenX(), event.getScreenY());
                 event.consume();
