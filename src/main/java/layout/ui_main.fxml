@@ -9,7 +9,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.RadioMenuItem?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.HBox?>
@@ -40,13 +39,7 @@
             <ColumnConstraints percentWidth="100" />
         </columnConstraints>
         <children>
-            <TabPane>
-                <Tab text="default" closable="false">
-                    <fx:include fx:id="timelineView" source="timeline_view.fxml" />
-                </Tab>
-                <Tab text="notification" closable="false">
-                    <fx:include fx:id="notificationView" source="notification_view.fxml" />
-                </Tab>
+            <TabPane fx:id="tabPane">
             </TabPane>
             <HBox GridPane.rowIndex="1">
                 <WebView fx:id="webView"></WebView>

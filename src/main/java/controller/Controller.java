@@ -3,9 +3,12 @@ package controller;
 import connection.MastodonAPI;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebView;
 import misc.ReloadTask;
 import misc.Settings;
@@ -23,12 +26,15 @@ public class Controller implements Initializable {
     MastodonAPI postMastodonAPI;
     private ReloadTask reloadTask;
 
-    @FXML
+    // @FXML
     private TimelineViewController timelineViewController;
-    @FXML
+    // @FXML
     private NotificationViewController notificationViewController;
     @FXML
     private TextArea textArea;
+
+    @FXML
+    private TabPane tabPane;
 
     @FXML private WebView webView;
 
@@ -73,6 +79,32 @@ public class Controller implements Initializable {
         if(true) { // For Developper:　設定保存用
             SettingsLoadOnStart settingsLoadOnStart = new SettingsLoadOnStart(settings);
             settingsLoadOnStart.startSequence();
+        }
+
+        // 動的タブ追加のテスト
+        try {
+            {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/timeline_view.fxml"));
+                Tab tab = new Tab("default");
+                tab.setClosable(false);
+                AnchorPane pane = loader.load();
+                tab.setContent(pane);
+                timelineViewController = loader.getController();
+                tabPane.getTabs().add(tab);
+            }
+            {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/notification_view.fxml"));
+                Tab tab = new Tab("notification");
+                tab.setClosable(false);
+                AnchorPane pane = loader.load();
+                tab.setContent(pane);
+                notificationViewController = loader.getController();
+                tabPane.getTabs().add(tab);
+            }
+            tabPane.getTabs().add((Tab) FXMLLoader.load(getClass().getResource("../layout/test_tab.fxml")));
+            tabPane.getTabs().add((Tab) FXMLLoader.load(getClass().getResource("../layout/test_tab.fxml")));
+        } catch (Exception e){
+            e.printStackTrace();
         }
 
         postMastodonAPI = new MastodonAPI(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken);
