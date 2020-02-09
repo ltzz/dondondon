@@ -7,7 +7,6 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import timeline.parser.MastodonParser;
 
@@ -39,20 +38,22 @@ public class TimelineGenerator {
 
     // 汎用タイムライン項目データクラス
     public static class TLContent{
-        public final DataSourceInfo dataSourceInfo;
-        public String username;
-        public String displayName;
-        public String contentText;
-        public String date;
-        public String favorited;
-        public String reblogged;
-        public String sensitive;
-        public String reblogOriginalUsername;
-        public String avatarURL;
+        final DataSourceInfo dataSourceInfo;
+        String username;
+        String displayName;
+        String contentText;
+        String contentImageURL;
+        String date;
+        String favorited;
+        String reblogged;
+        String sensitive;
+        String reblogOriginalUsername;
+        String avatarURL;
 
         public TLContent(DataSourceInfo dataSourceInfo,
                          String username, String displayName,
-                         String contentText, String date,
+                         String contentText, String contentImageURL,
+                         String date,
                          String favorited, String reblogged, String sensitive,
                          String reblogOriginalUsername,
                          String avatarURL) {
@@ -60,6 +61,7 @@ public class TimelineGenerator {
             this.username = username;
             this.displayName = displayName;
             this.contentText = contentText;
+            this.contentImageURL = contentImageURL;
             this.date = date;
             this.favorited = favorited;
             this.reblogged = reblogged;
@@ -72,6 +74,7 @@ public class TimelineGenerator {
     public static class RowContent {
         public DataSourceInfo dataSourceInfo;
         public String contentText;
+        public String contentImageURL;
         public String favorited;
         public String reblogged;
         public String sensitive;
@@ -117,6 +120,7 @@ public class TimelineGenerator {
             this.favorited = tlContent.favorited;
             this.reblogged = tlContent.reblogged;
             this.sensitive = tlContent.sensitive;
+            this.contentImageURL = tlContent.contentImageURL;
             this.contentText = tlContent.contentText;
             this.reblogOriginalUserId = tlContent.reblogOriginalUsername;
             // TODO

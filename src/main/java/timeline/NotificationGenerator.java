@@ -1,11 +1,18 @@
 package timeline;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.ImageView;
 import timeline.parser.MastodonParser;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -22,13 +29,16 @@ public class NotificationGenerator {
         TimelineGenerator.DataSourceInfo dataSourceInfo;
         String contentText;
         String createdAt;
+        String avatarURL;
 
         public NotificationContent(TimelineGenerator.DataSourceInfo dataSourceInfo,
                                    String contentText,
-                                   String createdAt) {
+                                   String createdAt,
+                                   String avatarURL) {
             this.dataSourceInfo = dataSourceInfo;
             this.contentText = contentText;
             this.createdAt = createdAt;
+            this.avatarURL = avatarURL;
         }
     }
 
@@ -36,13 +46,28 @@ public class NotificationGenerator {
         public final TimelineGenerator.DataSourceInfo dataSourceInfo;
         public StringProperty contentText = new SimpleStringProperty();
         public StringProperty createdAt = new SimpleStringProperty();
+        private ObjectProperty userIcon = new SimpleObjectProperty();
 
-        RowContent(TimelineGenerator.DataSourceInfo dataSourceInfo, String contentText, String createdAt){
-            this.dataSourceInfo = dataSourceInfo;
-            this.contentText.set(contentText);
-            this.createdAt.set(createdAt);
+        RowContent(NotificationContent notificationContent){
+            this.dataSourceInfo = notificationContent.dataSourceInfo;
+
+            BufferedImage icon = null;
+            try {
+                // TODO: この実装セキュリティ的に大丈夫かどうか詳しい人に聞く
+                icon = ImageIO.read(new URL(notificationContent.avatarURL));
+                ImageView iconView = new ImageView(SwingFXUtils.toFXImage(icon, null));
+                iconView.setFitWidth(20);
+                iconView.setFitHeight(20);
+                this.userIcon.set(iconView);
+            }catch (Exception e){
+
+            }
+
+            this.contentText.set(notificationContent.contentText);
+            this.createdAt.set(notificationContent.createdAt);
         }
 
+        public ObjectProperty userIconProperty(){ return userIcon; }
         public StringProperty contentTextProperty(){ return contentText; }
         public StringProperty createdAtProperty(){ return createdAt; }
     }
@@ -51,7 +76,7 @@ public class NotificationGenerator {
         var notificationData = mastodonParser.diffNotification();
 
         for (NotificationContent notification : notificationData) {
-            notificationAdd(notification.dataSourceInfo, notification.contentText, notification.createdAt);
+            notificationAdd(notification);
         }
 
         data.sort(Comparator.comparing(notificationContent -> notificationContent.createdAt.get()));
@@ -59,9 +84,9 @@ public class NotificationGenerator {
         return data;
     }
 
-    public void notificationAdd(TimelineGenerator.DataSourceInfo dataSourceInfo, String contentText, String createdAt){
+    public void notificationAdd(NotificationContent notificationContent){
         if(data != null){
-            data.add(new RowContent(dataSourceInfo, contentText, createdAt));
+            data.add(new RowContent(notificationContent));
         }
     }
 }

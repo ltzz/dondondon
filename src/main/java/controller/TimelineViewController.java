@@ -61,8 +61,9 @@ public class TimelineViewController implements Initializable, IReload {
             @Override
             public void onChanged(Change c) {
                 var tootContent = tableView.getSelectionModel().getSelectedItem();
+                var contentImage = "<img src=\"" + tootContent.contentImageURL + "\" />";
                 var content = tootContent.contentText;
-                String htmlString = contentHeader + toCharacterReference(content) + contentFooter;
+                String htmlString = contentHeader + toCharacterReference(content) + contentImage + contentFooter;
                 WebEngine webEngine = webView.getEngine();
                 webEngine.setUserStyleSheetLocation(getClass().getResource("webview.css").toString());
                 webEngine.loadContent(htmlString);

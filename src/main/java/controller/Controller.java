@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebView;
 import misc.ReloadTask;
 import misc.Settings;
@@ -81,13 +80,12 @@ public class Controller implements Initializable {
         timelineViewController.registerParentControllerObject(settings,
                 new TimelineGenerator(new MastodonParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken)),
                 new MastodonAPI(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken));
-        timelineViewController.viewRefresh();
         notificationViewController.registerParentControllerObject(settings, new NotificationGenerator(new MastodonParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken)));
-        notificationViewController.viewRefresh(); // FIXME: 起動時にしか通知を読み込んでないので、リロード時にも読むようにする
         timelineViewController.registerWebViewOutput(webView);
 
 
         this.reloadTask = new ReloadTask(List.of(timelineViewController, notificationViewController));
+        this.reloadTask.manualReload();
     }
 
 }

@@ -12,6 +12,7 @@ import timeline.TimelineGenerator;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class MastodonParser {
@@ -57,7 +58,11 @@ public class MastodonParser {
 
     @JsonIgnoreProperties(ignoreUnknown=true)
     public static class Media {
-
+        public String id;
+        public String type;
+        public String url;
+        public String preview_url;
+        public Object meta;
     }
 
     @JsonIgnoreProperties(ignoreUnknown=true)
@@ -81,7 +86,7 @@ public class MastodonParser {
         public String content;
         public String reblog;
         public Account account;
-        public Object media_attachments;
+        public List<Media> media_attachments;
         public Object mentions;
         public Object tags;
         public String name;
@@ -110,6 +115,7 @@ public class MastodonParser {
         public String content;
         public Account account;
         public Reblog reblog;
+        public List<Media> media_attachments;
         @JsonIgnore
         public Object pinned;
         public Object card;
@@ -117,8 +123,6 @@ public class MastodonParser {
         public Object poll;
         @JsonIgnore
         public Object application;
-        @JsonIgnore
-        public Object media_attachments;
         @JsonIgnore
         public List<Object> mentions;
         @JsonIgnore
@@ -167,10 +171,32 @@ public class MastodonParser {
             else {
                 rebloggUser = toot.reblog.account.username;
             }
+
+            // TODO: 複数画像の対応
+            var imageURL = "";
+
+            if(toot.media_attachments.size() > 0) {
+                if (validateURL(toot.media_attachments.get(0).preview_url)) {
+                    imageURL = toot.media_attachments.get(0).preview_url;
+                }
+            }
+            else if(toot.reblog != null && toot.reblog.media_attachments.size() > 0) {
+                // TODO: なんかReblogの時の画像はこっちにあるようだ（本文はtoot.contentにあるのに) よく分からんので調べる
+                if (validateURL(toot.reblog.media_attachments.get(0).preview_url)) {
+                    imageURL = toot.reblog.media_attachments.get(0).preview_url;
+                }
+            }
+
+            var avaterURL = "";
+            if (validateURL(toot.account.avatar_static)) {
+                avaterURL = toot.account.avatar_static;
+            }
+
             TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", MASTODON_HOST, toot.id);
             listForGenerator.add(new TimelineGenerator.TLContent(dataSourceInfo,
                     toot.account.username, toot.account.display_name,
-                    text, toot.created_at, toot.favourited, toot.reblogged, toot.sensitive, rebloggUser, toot.account.avatar_static));
+                    text, imageURL,
+                    toot.created_at, toot.favourited, toot.reblogged, toot.sensitive, rebloggUser, avaterURL));
         });
         return listForGenerator;
     }
@@ -179,8 +205,14 @@ public class MastodonParser {
         List<NotificationGenerator.NotificationContent> listForGenerator = new ArrayList<>();
         notifications.forEach(notification -> {
             var notificationText = notification.account.username + ": ["+ notification.type + "]";
+
+            var avaterURL = "";
+            if (validateURL(notification.account.avatar_static)) {
+                avaterURL = notification.account.avatar_static;
+            }
+
             TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", MASTODON_HOST, notification.id);
-            listForGenerator.add(new NotificationGenerator.NotificationContent(dataSourceInfo, notificationText, notification.created_at));
+            listForGenerator.add(new NotificationGenerator.NotificationContent(dataSourceInfo, notificationText, notification.created_at, avaterURL));
         });
         return listForGenerator;
     }
@@ -219,5 +251,11 @@ public class MastodonParser {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public boolean validateURL(String url){
+        // URLとしてあり得る記号のみ許可する
+        // TODO: 詳しい人にこれで安全か聞く
+        return Pattern.compile("^https?://[a-zA-Z0-9/:%#&~=_!'\\$\\?\\(\\)\\.\\+\\*\\-]+$").matcher(url).matches();
     }
 }
