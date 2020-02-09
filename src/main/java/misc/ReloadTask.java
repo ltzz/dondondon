@@ -7,28 +7,37 @@ import javafx.scene.control.TableView;
 import javafx.util.Duration;
 import timeline.TimelineGenerator;
 
+import java.util.List;
+
 public class ReloadTask {
 
     private Timeline timeline;
-    private TableView<TimelineGenerator.RowContent> tableView;
-    private TimelineGenerator timelineGenerator;
+    private List<IReload>  generators;
 
-    public ReloadTask(TableView<TimelineGenerator.RowContent> tableView, TimelineGenerator timelineGenerator){
-        this.tableView = tableView;
-        this.timelineGenerator = timelineGenerator;
+    public ReloadTask(List<IReload> generators){
+        this.generators = generators;
     }
 
     public void start() {
         timeline = new Timeline(
                 new KeyFrame(Duration.millis(60000),
                         event -> {
-                            ObservableList<TimelineGenerator.RowContent> rowContents = timelineGenerator.createTootContents(); // TODO:
-                            tableView.setItems(rowContents);
+                            reload();
                         }
                 )
         );
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+    }
+
+    public void manualReload(){
+        reload();
+    }
+
+    private void reload(){
+        for(var generator : generators) {
+            generator.reload();
+        }
     }
 
     public void stop() {

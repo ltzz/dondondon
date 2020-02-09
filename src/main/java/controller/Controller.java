@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebView;
+import misc.ReloadTask;
 import misc.Settings;
 import misc.SettingsLoadOnStart;
 import misc.Version;
@@ -15,10 +16,13 @@ import timeline.NotificationGenerator;
 import timeline.TimelineGenerator;
 import timeline.parser.MastodonParser;
 
+import java.util.List;
+
 
 public class Controller implements Initializable {
 
     MastodonAPI postMastodonAPI;
+    private ReloadTask reloadTask;
 
     @FXML
     private TimelineViewController timelineViewController;
@@ -31,7 +35,7 @@ public class Controller implements Initializable {
 
     @FXML
     protected void onMenuItemReload(ActionEvent evt) {
-        timelineViewController.viewRefresh();
+        reloadTask.manualReload();
     }
 
     @FXML
@@ -47,12 +51,12 @@ public class Controller implements Initializable {
 
     @FXML
     protected void onMenuItemReloadPeriodNone(ActionEvent evt) {
-        timelineViewController.reloadTaskStop();
+        reloadTask.stop();
     }
 
     @FXML
     protected void onMenuItemReloadPeriod1Min(ActionEvent evt) {
-        timelineViewController.reloadTaskStart();
+        reloadTask.start();
     }
 
     @FXML
@@ -81,6 +85,9 @@ public class Controller implements Initializable {
         notificationViewController.registerParentControllerObject(settings, new NotificationGenerator(new MastodonParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken)));
         notificationViewController.viewRefresh(); // FIXME: 起動時にしか通知を読み込んでないので、リロード時にも読むようにする
         timelineViewController.registerWebViewOutput(webView);
+
+
+        this.reloadTask = new ReloadTask(List.of(timelineViewController, notificationViewController));
     }
 
 }

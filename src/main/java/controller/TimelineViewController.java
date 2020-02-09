@@ -14,16 +14,15 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
+import misc.IReload;
 import misc.Settings;
-import misc.ReloadTask;
 import timeline.TimelineGenerator;
 
-public class TimelineViewController implements Initializable {
+public class TimelineViewController implements Initializable, IReload {
     @FXML
     private TableView<TimelineGenerator.RowContent> tableView;
 
     private Settings settings;
-    private ReloadTask reloadTask;
     private TimelineGenerator timelineGenerator;
     private MastodonAPI postMastodonAPI;
 
@@ -31,9 +30,14 @@ public class TimelineViewController implements Initializable {
         tableView.setItems(rowContents);
     }
 
-    public void viewRefresh(){
+    @Override
+    public void reload() {
         ObservableList<TimelineGenerator.RowContent> rowContents = timelineGenerator.createTootContents(); // TODO:
         tableViewSetItems(rowContents);
+    }
+
+    public void viewRefresh(){
+        reload();
     }
 
     public void registerParentControllerObject(Settings settings, TimelineGenerator timelineGenerator, MastodonAPI postMastodonAPI){
@@ -64,13 +68,6 @@ public class TimelineViewController implements Initializable {
                 webEngine.loadContent(htmlString);
             }
         });
-    }
-
-    public void reloadTaskStart(){
-        reloadTask.start();
-    }
-    public void reloadTaskStop(){
-        reloadTask.stop();
     }
 
     public static class TootCell extends TableRow<TimelineGenerator.RowContent> {
@@ -110,8 +107,6 @@ public class TimelineViewController implements Initializable {
         });
 
         contextMenu.getItems().addAll(menuItemFavorite, menuItemReply);
-
-        this.reloadTask = new ReloadTask(tableView, timelineGenerator);
 
         if(tableView != null) {
             tableView.setOnContextMenuRequested((ContextMenuEvent event) -> {

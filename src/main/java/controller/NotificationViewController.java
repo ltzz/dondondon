@@ -6,10 +6,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
+import misc.IReload;
 import misc.Settings;
 import timeline.NotificationGenerator;
 
-public class NotificationViewController implements Initializable {
+public class NotificationViewController implements Initializable, IReload {
     @FXML
     private TableView<NotificationGenerator.RowContent> tableView;
 
@@ -20,9 +21,14 @@ public class NotificationViewController implements Initializable {
         tableView.setItems(rowContents);
     }
 
-    public void viewRefresh(){
+    @Override
+    public void reload() {
         ObservableList<NotificationGenerator.RowContent> rowContents = notificationGenerator.createNotificationContents(); // TODO:
         tableViewSetItems(rowContents);
+    }
+
+    public void viewRefresh(){
+        reload();
     }
 
 
