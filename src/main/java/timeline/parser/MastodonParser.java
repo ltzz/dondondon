@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import connection.MastodonAPI;
-import misc.Akan;
 import org.jsoup.Jsoup;
 import timeline.NotificationGenerator;
 import timeline.TimelineGenerator;
@@ -17,10 +16,15 @@ import java.util.stream.Collectors;
 
 public class MastodonParser {
 
+    public final String MASTODON_HOST;
+    public final String MASTODON_TOKEN;
+
     HashSet<String> receivedStatusIds;
     HashSet<String> receivedNotificationIds;
 
-    public MastodonParser(){
+    public MastodonParser(String mastodonHost, String mastodonToken){
+        this.MASTODON_HOST = mastodonHost;
+        this.MASTODON_TOKEN = mastodonToken;
         this.receivedStatusIds = new HashSet<>();
         this.receivedNotificationIds = new HashSet<>();
     }
@@ -134,7 +138,7 @@ public class MastodonParser {
     }
 
     public List<TimelineGenerator.TLContent> diffTimeline(){
-        MastodonAPI mastodonAPI = new MastodonAPI(Akan.MASTODON_HOST, Akan.TOKEN);
+        MastodonAPI mastodonAPI = new MastodonAPI(MASTODON_HOST, MASTODON_TOKEN);
         var toots = getHomeTimelineDto(mastodonAPI.getTimeline());
         var filteredToots = toots.stream().filter(toot -> !receivedStatusIds.contains(toot.id)).collect(Collectors.toList());
         var received = toots.stream().map(toot -> toot.id).collect(Collectors.toSet());
@@ -143,7 +147,7 @@ public class MastodonParser {
     }
 
     public List<NotificationGenerator.NotificationContent> diffNotification(){
-        MastodonAPI mastodonAPI = new MastodonAPI(Akan.MASTODON_HOST, Akan.TOKEN);
+        MastodonAPI mastodonAPI = new MastodonAPI(MASTODON_HOST, MASTODON_TOKEN);
         var notifications = getNotificationDto(mastodonAPI.getNotification());
         var filteredNotification = notifications.stream().filter(notification -> !receivedNotificationIds.contains(notification.id)).collect(Collectors.toList());
         var received = notifications.stream().map(notification -> notification.id).collect(Collectors.toSet());
@@ -151,7 +155,7 @@ public class MastodonParser {
         return toNotificationContent(filteredNotification);
     }
 
-    static List<TimelineGenerator.TLContent> toTLContent(List<Toot> toots){
+    List<TimelineGenerator.TLContent> toTLContent(List<Toot> toots){
         List<TimelineGenerator.TLContent> listForGenerator = new ArrayList<>();
         toots.forEach(toot -> {
             String text = Jsoup.parse(toot.content).text();
@@ -163,7 +167,7 @@ public class MastodonParser {
             else {
                 rebloggUser = toot.reblog.account.username;
             }
-            TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", Akan.MASTODON_HOST, toot.id);
+            TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", MASTODON_HOST, toot.id);
             listForGenerator.add(new TimelineGenerator.TLContent(dataSourceInfo,
                     toot.account.username, toot.account.display_name,
                     text, toot.created_at, toot.favourited, toot.reblogged, toot.sensitive, rebloggUser, toot.account.avatar_static));
@@ -171,11 +175,11 @@ public class MastodonParser {
         return listForGenerator;
     }
 
-    static List<NotificationGenerator.NotificationContent> toNotificationContent(List<Notification> notifications){
+    List<NotificationGenerator.NotificationContent> toNotificationContent(List<Notification> notifications){
         List<NotificationGenerator.NotificationContent> listForGenerator = new ArrayList<>();
         notifications.forEach(notification -> {
             var notificationText = notification.account.username + ": ["+ notification.type + "]";
-            TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", Akan.MASTODON_HOST, notification.id);
+            TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", MASTODON_HOST, notification.id);
             listForGenerator.add(new NotificationGenerator.NotificationContent(dataSourceInfo, notificationText, notification.created_at));
         });
         return listForGenerator;

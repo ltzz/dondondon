@@ -9,9 +9,16 @@ import java.util.Optional;
 import static connection.WebRequest.requestPOST;
 
 public class MastodonAuth {
-    final String CLIENT_NAME = "test_client2";
-    final String RegisterURL = Akan.MASTODON_HOST + "/api/v1/apps";
-    final String TokenURL = Akan.MASTODON_HOST + "/oauth/token";
+    final String MASTODON_HOST;
+    final String CLIENT_NAME = "test_client";
+    final String RegisterURL;
+    final String TokenURL;
+
+    public MastodonAuth(String MASTODON_HOST){
+        this.MASTODON_HOST = MASTODON_HOST;
+        RegisterURL = MASTODON_HOST + "/api/v1/apps";
+        TokenURL = MASTODON_HOST + "/oauth/token";
+    }
 
     public String getAuthorizeURL(String host, String clientId){
         try {
@@ -39,7 +46,7 @@ public class MastodonAuth {
 
     public AccessTokenResponse getAccessToken(String clientId, String clientSecret){
 
-        BrowserLauncher.launch(getAuthorizeURL(Akan.MASTODON_HOST, clientId));
+        BrowserLauncher.launch(getAuthorizeURL(MASTODON_HOST, clientId));
 
         TextInputDialog dialog = new TextInputDialog("コードを入れてください");
         Optional<String> msg = dialog.showAndWait();

@@ -1,7 +1,5 @@
 package connection;
 
-import misc.Akan;
-
 import java.util.HashMap;
 
 import static connection.WebRequest.requestGET;

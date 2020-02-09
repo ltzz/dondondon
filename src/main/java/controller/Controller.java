@@ -8,14 +8,22 @@ import javafx.scene.control.*;
 
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebView;
-import misc.Akan;
+import misc.Settings;
+import misc.SettingsLoadOnStart;
 import misc.Version;
+import timeline.NotificationGenerator;
+import timeline.TimelineGenerator;
+import timeline.parser.MastodonParser;
 
 
 public class Controller implements Initializable {
 
+    MastodonAPI postMastodonAPI;
+
     @FXML
     private TimelineViewController timelineViewController;
+    @FXML
+    private NotificationViewController notificationViewController;
     @FXML
     private TextArea textArea;
 
@@ -50,18 +58,28 @@ public class Controller implements Initializable {
     @FXML
     protected void onButtonInputTextPost(ActionEvent evt) {
         String text = textArea.getText();
-        MastodonAPI mastodonAPI = new MastodonAPI(Akan.MASTODON_HOST, Akan.TOKEN);
         if(!text.isEmpty()) {
-            mastodonAPI.postStatus(text);
+            postMastodonAPI.postStatus(text);
             textArea.setText(""); // TODO: 成功時にクリア
         }
     }
 
-    // TODO: image viewでuser icon
     @Override
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
+        Settings settings = new Settings();
+        if(true) { // For Developper:　設定保存用
+            SettingsLoadOnStart settingsLoadOnStart = new SettingsLoadOnStart(settings);
+            settingsLoadOnStart.startSequence();
+        }
 
+        postMastodonAPI = new MastodonAPI(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken);
+
+        timelineViewController.registerParentControllerObject(settings,
+                new TimelineGenerator(new MastodonParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken)),
+                new MastodonAPI(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken));
         timelineViewController.viewRefresh();
+        notificationViewController.registerParentControllerObject(settings, new NotificationGenerator(new MastodonParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken)));
+        notificationViewController.viewRefresh(); // FIXME: 起動時にしか通知を読み込んでないので、リロード時にも読むようにする
         timelineViewController.registerWebViewOutput(webView);
     }
 

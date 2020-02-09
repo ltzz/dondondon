@@ -6,13 +6,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
+import misc.Settings;
 import timeline.NotificationGenerator;
-import timeline.parser.MastodonParser;
 
 public class NotificationViewController implements Initializable {
     @FXML
     private TableView<NotificationGenerator.RowContent> tableView;
 
+    private Settings settings;
     private NotificationGenerator notificationGenerator;
 
     public void tableViewSetItems(ObservableList<NotificationGenerator.RowContent> rowContents){
@@ -32,12 +33,12 @@ public class NotificationViewController implements Initializable {
         }
     }
 
+    public void registerParentControllerObject(Settings settings, NotificationGenerator notificationGenerator){
+        this.settings = settings;
+        this.notificationGenerator = notificationGenerator;
+    }
+
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
-
-
-        this.notificationGenerator = new NotificationGenerator(new MastodonParser());
-
-        viewRefresh(); // FIXME: 起動時にしか通知を読み込んでないので、リロード時にも読むようにする
 
         if(tableView != null) {
             tableView.setRowFactory(new Callback<TableView<NotificationGenerator.RowContent>, TableRow<NotificationGenerator.RowContent>>() {

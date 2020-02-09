@@ -14,8 +14,7 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
-import misc.Akan;
-import timeline.parser.MastodonParser;
+import misc.Settings;
 import misc.ReloadTask;
 import timeline.TimelineGenerator;
 
@@ -23,8 +22,10 @@ public class TimelineViewController implements Initializable {
     @FXML
     private TableView<TimelineGenerator.RowContent> tableView;
 
+    private Settings settings;
     private ReloadTask reloadTask;
     private TimelineGenerator timelineGenerator;
+    private MastodonAPI postMastodonAPI;
 
     public void tableViewSetItems(ObservableList<TimelineGenerator.RowContent> rowContents){
         tableView.setItems(rowContents);
@@ -33,6 +34,12 @@ public class TimelineViewController implements Initializable {
     public void viewRefresh(){
         ObservableList<TimelineGenerator.RowContent> rowContents = timelineGenerator.createTootContents(); // TODO:
         tableViewSetItems(rowContents);
+    }
+
+    public void registerParentControllerObject(Settings settings, TimelineGenerator timelineGenerator, MastodonAPI postMastodonAPI){
+        this.settings = settings;
+        this.postMastodonAPI = postMastodonAPI;
+        this.timelineGenerator = timelineGenerator;
     }
 
     public void registerWebViewOutput(WebView webView){
@@ -90,8 +97,8 @@ public class TimelineViewController implements Initializable {
             var statusId = selectedToot.dataSourceInfo.statusId;
 
             if( "mastodon".equals(selectedToot.dataSourceInfo.serverType) ) {
-                MastodonAPI mastodonAPI = new MastodonAPI(hostname, Akan.TOKEN);
-                mastodonAPI.addFavorite(statusId);
+                // TODO: データ読み込み元ホストに応じてAPI叩く鯖切り替え
+                postMastodonAPI.addFavorite(statusId);
             }
         });
 
@@ -104,10 +111,7 @@ public class TimelineViewController implements Initializable {
 
         contextMenu.getItems().addAll(menuItemFavorite, menuItemReply);
 
-        this.timelineGenerator = new TimelineGenerator(new MastodonParser());
         this.reloadTask = new ReloadTask(tableView, timelineGenerator);
-
-        viewRefresh();
 
         if(tableView != null) {
             tableView.setOnContextMenuRequested((ContextMenuEvent event) -> {

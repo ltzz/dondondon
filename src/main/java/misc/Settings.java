@@ -1,25 +1,12 @@
 package misc;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.TextInputDialog;
-import org.jsoup.Jsoup;
-
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Settings {
 
     final String settingsFileName = "settings.txt";
-    final int MAX_INSTANCES = 10;
+    final int MAX_INSTANCES = 1;
     List<InstanceSetting> instanceSettings;
 
     public Settings(){
@@ -32,7 +19,7 @@ public class Settings {
         public String clientSecret;
         public String accessToken;
 
-        InstanceSetting(String hostName, String clientId, String clientSecret, String accessToken){
+        public InstanceSetting(String hostName, String clientId, String clientSecret, String accessToken){
             this.hostName = hostName;
             this.clientId = clientId;
             this.clientSecret = clientSecret;
@@ -47,6 +34,15 @@ public class Settings {
         }
     }
 
+    public InstanceSetting getInstanceSetting(){ // FIXME: 一旦1インスタンスのみの対応で実装
+        if(instanceSettings.size() >= 1){
+            return instanceSettings.get(0);
+        }
+        else {
+            return null;
+        }
+    }
+
     public void save(){
         try(FileOutputStream f = new FileOutputStream(settingsFileName);
             BufferedOutputStream b = new BufferedOutputStream(f)){
@@ -54,7 +50,7 @@ public class Settings {
             Properties prop = new Properties();
             prop.setProperty("debug", "on");
 
-            for(int i=0; i<MAX_INSTANCES; ++i){
+            for(int i=0; i < MAX_INSTANCES; ++i){
                 if(i < instanceSettings.size()){
                     prop.setProperty(String.format("instance[%d].hostName",i), instanceSettings.get(i).hostName);
                     prop.setProperty(String.format("instance[%d].clientId",i), instanceSettings.get(i).clientId);
@@ -81,7 +77,7 @@ public class Settings {
             }
 
             for(int i=0; i < MAX_INSTANCES; ++i){
-                if(i < instanceSettings.size()){
+                //if(i < instanceSettings.size()){
                     String hostName = prop.getProperty(String.format("instance[%d].hostName",i));
                     String clientId = prop.getProperty(String.format("instance[%d].clientId",i));
                     String clientSecret = prop.getProperty(String.format("instance[%d].clientSecret",i));
@@ -93,7 +89,7 @@ public class Settings {
                     else{
                         break;
                     }
-                }
+                //}
             }
 
         } catch ( IOException e ) {
