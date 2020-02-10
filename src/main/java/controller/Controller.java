@@ -7,6 +7,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebView;
 import misc.ReloadTask;
@@ -84,6 +88,10 @@ public class Controller implements Initializable {
 
     @FXML
     protected void onButtonInputTextPost(ActionEvent evt) {
+        userPostEvent();
+    }
+
+    public void userPostEvent(){
         String text = textArea.getText();
         if(!text.isEmpty()) {
             postMastodonAPI.postStatus(text);
@@ -144,6 +152,15 @@ public class Controller implements Initializable {
 
         postMastodonAPI = new MastodonAPI(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken);
 
+
+        final KeyCombination postTextAreaKey =
+                new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN);
+
+        textArea.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if(postTextAreaKey.match(event)) {
+                userPostEvent();
+            }
+        });
 
         this.reloadTask = new ReloadTask(List.of(homeTimelineViewController, notificationViewController, localTimelineViewController));
         this.reloadTask.manualReload();
