@@ -34,8 +34,16 @@ public class MastodonAPI {
         // TODO: ここのレスポンスを見てお気に入り状態を表示に反映
     }
 
-    public String getTimeline() {
+    public String getHomeTimeline() {
         String url = mastodonHost + "/api/v1/timelines/home";
+        var headers = new HashMap<String,String>();
+        headers.put("Authorization", "Bearer " + accessToken);
+        var responseBody = requestGET(url, headers);
+        return responseBody;
+    }
+
+    public String getLocalTimeline() {
+        String url = mastodonHost + "/api/v1/timelines/public?local=true";
         var headers = new HashMap<String,String>();
         headers.put("Authorization", "Bearer " + accessToken);
         var responseBody = requestGET(url, headers);

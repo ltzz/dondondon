@@ -8,7 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.ImageView;
-import timeline.parser.MastodonParser;
+import timeline.parser.MastodonTimelineParser;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -18,10 +18,10 @@ import java.util.Comparator;
 
 public class TimelineGenerator {
 
-    MastodonParser mastodonParser;
+    MastodonTimelineParser mastodonParser;
     ObservableList<RowContent> data = FXCollections.observableArrayList();
 
-    public TimelineGenerator(MastodonParser mastodonParser){
+    public TimelineGenerator(MastodonTimelineParser mastodonParser){
         this.mastodonParser = mastodonParser;
     }
 

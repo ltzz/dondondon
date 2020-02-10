@@ -8,7 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.ImageView;
-import timeline.parser.MastodonParser;
+import timeline.parser.MastodonNotificationParser;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -18,9 +18,9 @@ import java.util.Comparator;
 
 public class NotificationGenerator {
 
-    MastodonParser mastodonParser;
+    MastodonNotificationParser mastodonParser;
     ObservableList<RowContent> data = FXCollections.observableArrayList();
-    public NotificationGenerator(MastodonParser mastodonParser){
+    public NotificationGenerator(MastodonNotificationParser mastodonParser){
         this.mastodonParser = mastodonParser;
     }
 

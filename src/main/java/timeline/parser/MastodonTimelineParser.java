@@ -17,19 +17,20 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class MastodonParser {
+public class MastodonTimelineParser {
 
     public final String MASTODON_HOST;
     public final String MASTODON_TOKEN;
 
-    HashSet<String> receivedStatusIds;
-    HashSet<String> receivedNotificationIds;
+    private MastodonTimelineEndPoint endPoint;
 
-    public MastodonParser(String mastodonHost, String mastodonToken){
+    HashSet<String> receivedStatusIds;
+
+    public MastodonTimelineParser(String mastodonHost, String mastodonToken, MastodonTimelineEndPoint endPoint){
         this.MASTODON_HOST = mastodonHost;
         this.MASTODON_TOKEN = mastodonToken;
+        this.endPoint = endPoint;
         this.receivedStatusIds = new HashSet<>();
-        this.receivedNotificationIds = new HashSet<>();
     }
 
     @JsonIgnoreProperties(ignoreUnknown=true)
@@ -144,21 +145,11 @@ public class MastodonParser {
     }
 
     public List<TimelineGenerator.TLContent> diffTimeline(){
-        MastodonAPI mastodonAPI = new MastodonAPI(MASTODON_HOST, MASTODON_TOKEN);
-        var toots = getHomeTimelineDto(mastodonAPI.getTimeline());
+        var toots = getTimelineDto(endPoint.get());
         var filteredToots = toots.stream().filter(toot -> !receivedStatusIds.contains(toot.id)).collect(Collectors.toList());
         var received = toots.stream().map(toot -> toot.id).collect(Collectors.toSet());
         receivedStatusIds.addAll(received);
         return toTLContent(filteredToots);
-    }
-
-    public List<NotificationGenerator.NotificationContent> diffNotification(){
-        MastodonAPI mastodonAPI = new MastodonAPI(MASTODON_HOST, MASTODON_TOKEN);
-        var notifications = getNotificationDto(mastodonAPI.getNotification());
-        var filteredNotification = notifications.stream().filter(notification -> !receivedNotificationIds.contains(notification.id)).collect(Collectors.toList());
-        var received = notifications.stream().map(notification -> notification.id).collect(Collectors.toSet());
-        receivedNotificationIds.addAll(received);
-        return toNotificationContent(filteredNotification);
     }
 
     List<TimelineGenerator.TLContent> toTLContent(List<Toot> toots){
@@ -220,24 +211,12 @@ public class MastodonParser {
         return listForGenerator;
     }
 
-    List<Toot> getHomeTimelineDto(String json){
+    List<Toot> getTimelineDto(String json){
         try {
             ObjectMapper mapper = new ObjectMapper();
             List<Toot> toots = mapper.readValue(json, new TypeReference<List<Toot>>() {});
 
             return toots;
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return List.of();
-    }
-
-    List<Notification> getNotificationDto(String json){
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            List<Notification> notifications = mapper.readValue(json, new TypeReference<List<Notification>>() {});
-
-            return notifications;
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -256,7 +235,7 @@ public class MastodonParser {
         return null;
     }
 
-    public boolean validateURL(String url){
+    public static boolean validateURL(String url){
         // URLとしてあり得る記号のみ許可する
         // TODO: 詳しい人にこれで安全か聞く
         return Pattern.compile("^https?://[a-zA-Z0-9/:%#&~=_!'\\$\\?\\(\\)\\.\\+\\*\\-]+$").matcher(url).matches();
