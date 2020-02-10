@@ -93,7 +93,7 @@ public class MastodonParser {
         public Object tags;
         public String name;
         public Object card;
-        public String poll;
+        public Object poll;
     }
 
     @JsonIgnoreProperties(ignoreUnknown=true)
