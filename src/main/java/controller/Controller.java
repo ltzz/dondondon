@@ -91,6 +91,10 @@ public class Controller implements Initializable {
                 tab.setContent(pane);
                 timelineViewController = loader.getController();
                 tabPane.getTabs().add(tab);
+                timelineViewController.registerParentControllerObject(settings,
+                        new TimelineGenerator(new MastodonParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken)),
+                        new MastodonAPI(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken));
+                timelineViewController.registerWebViewOutput(webView);
             }
             {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/notification_view.fxml"));
@@ -100,6 +104,7 @@ public class Controller implements Initializable {
                 tab.setContent(pane);
                 notificationViewController = loader.getController();
                 tabPane.getTabs().add(tab);
+                notificationViewController.registerParentControllerObject(settings, new NotificationGenerator(new MastodonParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken)));
             }
             tabPane.getTabs().add((Tab) FXMLLoader.load(getClass().getResource("../layout/test_tab.fxml")));
             tabPane.getTabs().add((Tab) FXMLLoader.load(getClass().getResource("../layout/test_tab.fxml")));
@@ -108,12 +113,6 @@ public class Controller implements Initializable {
         }
 
         postMastodonAPI = new MastodonAPI(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken);
-
-        timelineViewController.registerParentControllerObject(settings,
-                new TimelineGenerator(new MastodonParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken)),
-                new MastodonAPI(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken));
-        notificationViewController.registerParentControllerObject(settings, new NotificationGenerator(new MastodonParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken)));
-        timelineViewController.registerWebViewOutput(webView);
 
 
         this.reloadTask = new ReloadTask(List.of(timelineViewController, notificationViewController));
