@@ -4,3 +4,17 @@ img.emoji {
   margin: 0 .05em 0 .1em;
   vertical-align: -0.1em;
 }
+
+a:link {
+  color: #589DF6;
+}
+
+.ContentWrapper {
+  display: flex;
+}
+.ContentBody {
+  flex: 1;
+}
+.ContentImage {
+  width: 300px;
+}

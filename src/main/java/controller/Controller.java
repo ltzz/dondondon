@@ -5,7 +5,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 
 import javafx.scene.layout.AnchorPane;
@@ -38,6 +37,8 @@ public class Controller implements Initializable {
 
     @FXML private WebView webView;
 
+    @FXML private CheckMenuItem userIconVisible;
+
     @FXML
     protected void onMenuItemReload(ActionEvent evt) {
         reloadTask.manualReload();
@@ -52,6 +53,18 @@ public class Controller implements Initializable {
         ButtonType button = alert.showAndWait().orElse(ButtonType.OK);
         System.out.println(button.toString());
 
+    }
+
+    @FXML
+    protected void onMenuItemUserIconInvisible(ActionEvent evt) {
+        if( userIconVisible.selectedProperty().get() ){
+            timelineViewController.iconInvisible(true);
+            notificationViewController.iconInvisible(true);
+        }
+        else {
+            timelineViewController.iconInvisible(false);
+            notificationViewController.iconInvisible(false);
+        }
     }
 
     @FXML

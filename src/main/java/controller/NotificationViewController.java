@@ -3,6 +3,7 @@ package controller;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
@@ -16,6 +17,18 @@ public class NotificationViewController implements Initializable, IReload {
 
     private Settings settings;
     private NotificationGenerator notificationGenerator;
+
+    @FXML
+    private TableColumn iconCol;
+
+    public void iconInvisible(boolean value){
+        if(value) {
+            iconCol.getStyleClass().add("-iconHidden");
+        }
+        else {
+            iconCol.getStyleClass().remove("-iconHidden");
+        }
+    }
 
     public void tableViewSetItems(ObservableList<NotificationGenerator.RowContent> rowContents){
         tableView.setItems(rowContents);

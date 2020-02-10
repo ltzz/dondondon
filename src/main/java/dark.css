@@ -14,3 +14,7 @@
 .toot-row:selected{
   -fx-background-color: #333333;
 }
+
+.-iconHidden {
+  visibility: hidden;
+}

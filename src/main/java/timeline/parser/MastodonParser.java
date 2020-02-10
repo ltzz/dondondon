@@ -166,7 +166,7 @@ public class MastodonParser {
         toots.forEach(toot -> {
             String text = Jsoup.parse(toot.content).text();
             var htmltext = Jsoup.clean(toot.content, "", Whitelist.basic(), new Document.OutputSettings().prettyPrint(false));
-            System.out.println(htmltext);
+            System.out.println(text);
             String rebloggUser;
             if(toot.reblog == null){
                 rebloggUser = null;

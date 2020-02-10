@@ -12,11 +12,13 @@
 <?import javafx.scene.control.RadioMenuItem?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.CheckMenuItem?>
 <VBox fx:controller="controller.Controller"
       xmlns:fx="http://javafx.com/fxml">
     <MenuBar>
         <Menu text="全般">
             <items>
+                <CheckMenuItem fx:id="userIconVisible" text="アイコン非表示" onAction="#onMenuItemUserIconInvisible"></CheckMenuItem>
                 <MenuItem text="読み込み" onAction="#onMenuItemReload"/>
                 <Menu text="自動読み込み">
                     <fx:define>
