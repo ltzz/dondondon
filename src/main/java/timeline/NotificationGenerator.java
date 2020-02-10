@@ -72,7 +72,7 @@ public class NotificationGenerator {
         public StringProperty createdAtProperty(){ return createdAt; }
     }
 
-    public ObservableList<RowContent> createNotificationContents() {
+    public ObservableList<RowContent> createRowContents() {
         var notificationData = mastodonParser.diffNotification();
 
         for (NotificationContent notification : notificationData) {
@@ -81,6 +81,10 @@ public class NotificationGenerator {
 
         data.sort(Comparator.comparing(notificationContent -> notificationContent.createdAt.get()));
         Collections.reverse(data); // FIXME: 同時刻の投稿が実行するたびに逆順になる
+        return data;
+    }
+
+    public ObservableList<RowContent> getRowContents(){
         return data;
     }
 

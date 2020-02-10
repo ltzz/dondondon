@@ -4,27 +4,33 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.text.Text?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="controller.TimelineViewController"
             prefHeight="400.0" prefWidth="600.0">
-    <TableView fx:id="tableView" editable="false" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" >
-        <columnResizePolicy>
-            <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY" />
-        </columnResizePolicy>
-        <columns>
-            <TableColumn fx:id="iconCol" text="icon" maxWidth="30" minWidth="30">
-                <cellValueFactory><PropertyValueFactory property="userIcon" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="userNameCol" text="username" maxWidth="200">
-                <cellValueFactory><PropertyValueFactory property="userName" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="contentTextCol" text="content" prefWidth="300">
-                <cellValueFactory><PropertyValueFactory property="contentTextForDisplay" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="contentDateCol" text="date" prefWidth="100" maxWidth="200">
-                <cellValueFactory><PropertyValueFactory property="contentDate" /></cellValueFactory>
-            </TableColumn>
-        </columns>
-    </TableView>
+    <StackPane AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" >
+        <TableView fx:id="tableView" editable="false">
+            <columnResizePolicy>
+                <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+            <columns>
+                <TableColumn fx:id="iconCol" text="icon" maxWidth="30" minWidth="30">
+                    <cellValueFactory><PropertyValueFactory property="userIcon" /></cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="userNameCol" text="username" maxWidth="200">
+                    <cellValueFactory><PropertyValueFactory property="userName" /></cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="contentTextCol" text="content" prefWidth="300">
+                    <cellValueFactory><PropertyValueFactory property="contentTextForDisplay" /></cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="contentDateCol" text="date" prefWidth="100" maxWidth="200">
+                    <cellValueFactory><PropertyValueFactory property="contentDate" /></cellValueFactory>
+                </TableColumn>
+            </columns>
+        </TableView>
+    </StackPane>
+    <StackPane AnchorPane.bottomAnchor="0.0" >
+        <HBox styleClass="u-hidden" fx:id="filterWordBox"><Text>filter: </Text><TextField fx:id="filterWordField"></TextField></HBox>
+    </StackPane>
 </AnchorPane>

@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import connection.MastodonAPI;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
 import timeline.NotificationGenerator;
 import timeline.TimelineGenerator;
+import timeline.parser.timelineEndPoint.MastodonTimelineEndPoint;
 
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -36,7 +36,7 @@ public class NotificationViewController implements Initializable, IReload {
 
     @Override
     public void reload() {
-        ObservableList<NotificationGenerator.RowContent> rowContents = notificationGenerator.createNotificationContents(); // TODO:
+        ObservableList<NotificationGenerator.RowContent> rowContents = notificationGenerator.createRowContents(); // TODO:
         tableViewSetItems(rowContents);
     }
 

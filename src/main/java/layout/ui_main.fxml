@@ -13,8 +13,10 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.MenuButton?>
 <VBox fx:controller="controller.Controller"
-      xmlns:fx="http://javafx.com/fxml">
+      xmlns:fx="http://javafx.com/fxml"
+      fx:id="root">
     <MenuBar>
         <Menu text="全般">
             <items>
@@ -27,6 +29,7 @@
                     <RadioMenuItem text="なし" onAction="#onMenuItemReloadPeriodNone" selected="true" toggleGroup="$reloadPeriod" />
                     <RadioMenuItem text="1分" onAction="#onMenuItemReloadPeriod1Min" toggleGroup="$reloadPeriod" />
                 </Menu>
+                <MenuItem text="開発用" onAction="#onMenuItemDebug"/>
             </items>
         </Menu>
         <Menu text="バージョン"><MenuItem text="バージョン" onAction="#onMenuItemVersion"/></Menu>
@@ -45,10 +48,11 @@
             </TabPane>
             <HBox GridPane.rowIndex="1">
                 <WebView fx:id="webView"></WebView>
-                <!-- <MenuButton><items><MenuItem text="お気に入り"></MenuItem></items></MenuButton> -->
+                <!-- <MenuButton><items><MenuItem text="返信モードを取り消す"></MenuItem></items></MenuButton> -->
             </HBox>
             <HBox GridPane.rowIndex="2">
                 <TextArea fx:id="textArea"></TextArea>
+                <MenuButton><items><MenuItem text="返信モードを取り消す(未実装)"></MenuItem></items></MenuButton>
                 <Button onAction="#onButtonInputTextPost" text="投稿"/>
             </HBox>
         </children>

@@ -12,6 +12,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import misc.ReloadTask;
 import misc.Settings;
@@ -31,10 +32,14 @@ public class Controller implements Initializable {
 
     MastodonAPI postMastodonAPI;
     private ReloadTask reloadTask;
+    private Settings settings;
 
     private TimelineViewController homeTimelineViewController;
     private NotificationViewController notificationViewController;
     private TimelineViewController localTimelineViewController;
+
+    @FXML
+    private VBox root;
 
     @FXML
     private TextArea textArea;
@@ -49,6 +54,18 @@ public class Controller implements Initializable {
     @FXML
     protected void onMenuItemReload(ActionEvent evt) {
         reloadTask.manualReload();
+    }
+
+    @FXML
+    protected void onMenuItemDebug(ActionEvent evt) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK);
+        alert.setTitle("開発用情報");
+        alert.getDialogPane().setHeaderText("開発用情報");
+        var hostName = settings.getInstanceSetting().hostName;
+        var contentText = "mastodon host: " + hostName + "\n 今のところ1つしか登録できない";
+        alert.getDialogPane().setContentText(contentText);
+        ButtonType button = alert.showAndWait().orElse(ButtonType.OK);
+        System.out.println(button.toString());
     }
 
     @FXML
@@ -99,9 +116,14 @@ public class Controller implements Initializable {
         }
     }
 
+    public void userFilterWordBoxToggle(){
+        homeTimelineViewController.userFilterWordBoxToggle();
+        // TODO: 選ばれてるタブのコントローラでやる必要がある
+    }
+
     @Override
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
-        Settings settings = new Settings();
+        settings = new Settings();
         if(true) { // For Developper:　設定保存用
             SettingsLoadOnStart settingsLoadOnStart = new SettingsLoadOnStart(settings);
             settingsLoadOnStart.startSequence();
@@ -155,12 +177,22 @@ public class Controller implements Initializable {
 
         final KeyCombination postTextAreaKey =
                 new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN);
+        final KeyCombination filterWordKey =
+                new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN);
+
 
         textArea.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if(postTextAreaKey.match(event)) {
                 userPostEvent();
             }
         });
+
+        root.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if(filterWordKey.match(event)){
+                userFilterWordBoxToggle();
+            }
+        });
+
 
         this.reloadTask = new ReloadTask(List.of(homeTimelineViewController, notificationViewController, localTimelineViewController));
         this.reloadTask.manualReload();

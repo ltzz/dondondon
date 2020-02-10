@@ -138,7 +138,7 @@ public class TimelineGenerator {
         public StringProperty contentDateProperty(){ return contentDate; }
     }
 
-    public ObservableList<RowContent> createTootContents(){
+    public ObservableList<RowContent> createRowContents(){
         var timelineData = mastodonParser.diffTimeline();
 
         for (TLContent tldata : timelineData) {
@@ -150,7 +150,11 @@ public class TimelineGenerator {
         return data;
     }
 
-    public void timelineAdd(TLContent tlContent){
+    public ObservableList<RowContent> getRowContents(){
+        return data;
+    }
+
+   public void timelineAdd(TLContent tlContent){
         if(data != null){
             data.add(new RowContent(tlContent));
         }

@@ -1,7 +1,6 @@
 package timeline.parser.timelineEndPoint;
 
 import connection.MastodonAPI;
-import timeline.parser.MastodonTimelineEndPoint;
 
 public class LocalTimelineGet implements MastodonTimelineEndPoint {
     private final String MASTODON_HOST;

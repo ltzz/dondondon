@@ -1,19 +1,23 @@
 package controller;
 
 import connection.MastodonAPI;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
 import misc.IReload;
 import misc.Settings;
 import timeline.TimelineGenerator;
+
+import java.util.stream.Collectors;
 
 public class TimelineViewController implements Initializable, IReload {
     @FXML
@@ -25,6 +29,21 @@ public class TimelineViewController implements Initializable, IReload {
 
     @FXML
     private TableColumn iconCol;
+
+    @FXML private HBox filterWordBox;
+    @FXML private TextField filterWordField;
+
+    public void userFilterWordBoxToggle(){
+        var styleClass = filterWordBox.getStyleClass();
+        if(styleClass.contains("u-hidden")){
+            styleClass.remove("u-hidden");
+            filterWordField.requestFocus();
+        }
+        else {
+            styleClass.add("u-hidden");
+        }
+    }
+
 
     public void iconInvisible(boolean value){
         if(value) {
@@ -41,8 +60,17 @@ public class TimelineViewController implements Initializable, IReload {
 
     @Override
     public void reload() {
-        ObservableList<TimelineGenerator.RowContent> rowContents = timelineGenerator.createTootContents(); // TODO:
+        ObservableList<TimelineGenerator.RowContent> rowContents = timelineGenerator.createRowContents(); // TODO:
         tableViewSetItems(rowContents);
+        filterWord();
+    }
+
+    private void filterWord(){
+        var filterWord = filterWordField.getText();
+        if( filterWord.isEmpty() ) return;
+        var rowContents = timelineGenerator.getRowContents();
+        var filteredRowContents = FXCollections.observableList(rowContents.stream().filter(rowContent -> rowContent.contentText.contains(filterWord)).collect(Collectors.toList()));
+        tableViewSetItems(filteredRowContents);
     }
 
     public void viewRefresh(){
@@ -99,7 +127,7 @@ public class TimelineViewController implements Initializable, IReload {
 
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemFavorite = new MenuItem("お気に入り");
-        MenuItem menuItemReply = new MenuItem("返信");
+        MenuItem menuItemReply = new MenuItem("返信(未実装)");
         menuItemFavorite.setOnAction((ActionEvent t) -> {
             var selectedToot = tableView.getSelectionModel().getSelectedItem();
             var hostname = selectedToot.dataSourceInfo.hostname;
@@ -119,6 +147,15 @@ public class TimelineViewController implements Initializable, IReload {
         });
 
         contextMenu.getItems().addAll(menuItemFavorite, menuItemReply);
+
+        final KeyCombination filterWordKey =
+                new KeyCodeCombination(KeyCode.ENTER);
+
+        filterWordField.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if(filterWordKey.match(event)) {
+                filterWord();
+            }
+        });
 
         if(tableView != null) {
 
