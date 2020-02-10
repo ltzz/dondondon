@@ -6,6 +6,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import connection.MastodonAPI;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Whitelist;
 import timeline.NotificationGenerator;
 import timeline.TimelineGenerator;
 
@@ -163,7 +165,8 @@ public class MastodonParser {
         List<TimelineGenerator.TLContent> listForGenerator = new ArrayList<>();
         toots.forEach(toot -> {
             String text = Jsoup.parse(toot.content).text();
-            System.out.println(text);
+            var htmltext = Jsoup.clean(toot.content, "", Whitelist.basic(), new Document.OutputSettings().prettyPrint(false));
+            System.out.println(htmltext);
             String rebloggUser;
             if(toot.reblog == null){
                 rebloggUser = null;
@@ -195,7 +198,7 @@ public class MastodonParser {
             TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", MASTODON_HOST, toot.id);
             listForGenerator.add(new TimelineGenerator.TLContent(dataSourceInfo,
                     toot.account.username, toot.account.display_name,
-                    text, imageURL,
+                    text, htmltext, imageURL,
                     toot.created_at, toot.favourited, toot.reblogged, toot.sensitive, rebloggUser, avaterURL));
         });
         return listForGenerator;
@@ -204,7 +207,7 @@ public class MastodonParser {
     List<NotificationGenerator.NotificationContent> toNotificationContent(List<Notification> notifications){
         List<NotificationGenerator.NotificationContent> listForGenerator = new ArrayList<>();
         notifications.forEach(notification -> {
-            var notificationText = notification.account.username + ": ["+ notification.type + "]";
+            var notificationText = notification.account.username + ": ["+ notification.type + "] " + Jsoup.parse(notification.status.content).text();
 
             var avaterURL = "";
             if (validateURL(notification.account.avatar_static)) {

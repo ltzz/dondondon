@@ -59,8 +59,8 @@ public class TimelineViewController implements Initializable, IReload {
             public void onChanged(Change c) {
                 var tootContent = tableView.getSelectionModel().getSelectedItem();
                 var contentImage = "<img src=\"" + tootContent.contentImageURL + "\" />";
-                var content = tootContent.contentText;
-                String htmlString = contentHeader + toCharacterReference(content) + contentImage + contentFooter;
+                var contentHtml = tootContent.contentHtml;
+                String htmlString = contentHeader + toCharacterReference(contentHtml) + contentImage + contentFooter;
                 WebEngine webEngine = webView.getEngine();
                 webEngine.setUserStyleSheetLocation(getClass().getResource("webview.css").toString());
                 webEngine.loadContent(htmlString);
@@ -138,7 +138,13 @@ public class TimelineViewController implements Initializable, IReload {
         }
 
         StringBuffer stringBuffer = new StringBuffer();
-        for (int value : codePointArray) stringBuffer.append("&#x" + (Integer.toHexString(value)) + ";");
+        for (int value : codePointArray){
+            if(value >= 0x10000){
+                stringBuffer.append("&#x" + (Integer.toHexString(value)) + ";");
+            }else {
+                stringBuffer.append(Character.toChars(value));
+            }
+        }
         return stringBuffer.toString();
     }
 }

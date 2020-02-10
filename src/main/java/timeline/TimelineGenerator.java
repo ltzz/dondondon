@@ -42,6 +42,7 @@ public class TimelineGenerator {
         String username;
         String displayName;
         String contentText;
+        String contentHtml;
         String contentImageURL;
         String date;
         String favorited;
@@ -52,7 +53,8 @@ public class TimelineGenerator {
 
         public TLContent(DataSourceInfo dataSourceInfo,
                          String username, String displayName,
-                         String contentText, String contentImageURL,
+                         String contentText, String contentHtml,
+                         String contentImageURL,
                          String date,
                          String favorited, String reblogged, String sensitive,
                          String reblogOriginalUsername,
@@ -61,6 +63,7 @@ public class TimelineGenerator {
             this.username = username;
             this.displayName = displayName;
             this.contentText = contentText;
+            this.contentHtml = contentHtml;
             this.contentImageURL = contentImageURL;
             this.date = date;
             this.favorited = favorited;
@@ -74,6 +77,7 @@ public class TimelineGenerator {
     public static class RowContent {
         public DataSourceInfo dataSourceInfo;
         public String contentText;
+        public String contentHtml;
         public String contentImageURL;
         public String favorited;
         public String reblogged;
@@ -106,7 +110,7 @@ public class TimelineGenerator {
                 this.contentTextForDisplay.set(tlContent.contentText);
             }
             else {
-                this.contentTextForDisplay.set("█".repeat(tlContent.contentText.length()*2));
+                this.contentTextForDisplay.set("█".repeat(tlContent.contentText.length() * 2));
             }
 
             if(tlContent.reblogOriginalUsername != null){
@@ -115,6 +119,8 @@ public class TimelineGenerator {
             else {
                 this.contentTextForDisplay.set(tlContent.contentText);
             }
+
+            this.contentHtml = tlContent.contentHtml;
 
             this.contentDate.set(tlContent.date);
             this.favorited = tlContent.favorited;
