@@ -55,6 +55,14 @@ public class MastodonAPI {
         return responseBody;
     }
 
+    public String getUserTimeline(String userId) {
+        String url = mastodonHost + "/api/v1/accounts/"+userId+"/statuses";
+        var headers = new HashMap<String,String>();
+        headers.put("Authorization", "Bearer " + accessToken);
+        var responseBody = requestGET(url, headers);
+        return responseBody;
+    }
+
     public String getNotification() {
         String url = mastodonHost + "/api/v1/notifications";
         var headers = new HashMap<String,String>();

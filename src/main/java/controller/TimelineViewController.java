@@ -14,6 +14,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
 
+import misc.Common;
 import misc.Settings;
 import timeline.TimelineGenerator;
 
@@ -134,6 +135,8 @@ public class TimelineViewController implements Initializable, IReload {
 
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemFavorite = new MenuItem("お気に入り");
+        MenuItem menuItemReblog = new MenuItem("リブログ");
+        MenuItem menuItemUserTimeline = new MenuItem("このユーザーのタイムラインを見る");
         MenuItem menuItemReply = new MenuItem("返信");
         menuItemFavorite.setOnAction((ActionEvent t) -> {
             var selectedToot = tableView.getSelectionModel().getSelectedItem();
@@ -146,6 +149,15 @@ public class TimelineViewController implements Initializable, IReload {
             }
         });
 
+        menuItemReblog.setOnAction((ActionEvent t) -> {
+            Common.NotImplementAlert();
+        });
+
+        menuItemUserTimeline.setOnAction((ActionEvent t) -> {
+            var selectedToot = tableView.getSelectionModel().getSelectedItem();
+            rootController.addUserTab(selectedToot.userId, selectedToot.userName);
+        });
+
         menuItemReply.setOnAction((ActionEvent t) -> {
             var selectedToot = tableView.getSelectionModel().getSelectedItem();
             var statusId = selectedToot.dataSourceInfo.statusId;
@@ -155,7 +167,7 @@ public class TimelineViewController implements Initializable, IReload {
             rootController.userReplyInputStart(statusId, acct);
         });
 
-        contextMenu.getItems().addAll(menuItemFavorite, menuItemReply);
+        contextMenu.getItems().addAll(menuItemFavorite, menuItemReblog, menuItemUserTimeline, menuItemReply);
 
         final KeyCombination filterWordKey =
                 new KeyCodeCombination(KeyCode.ENTER);

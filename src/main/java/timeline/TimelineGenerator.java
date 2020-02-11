@@ -40,6 +40,7 @@ public class TimelineGenerator {
     // 汎用タイムライン項目データクラス
     public static class TLContent{
         final DataSourceInfo dataSourceInfo;
+        String userId;
         String acct;
         String username;
         String displayName;
@@ -54,7 +55,7 @@ public class TimelineGenerator {
         String avatarURL;
 
         public TLContent(DataSourceInfo dataSourceInfo,
-                         String acct,
+                         String userId, String acct,
                          String username, String displayName,
                          String contentText, String contentHtml,
                          String contentImageURL,
@@ -63,6 +64,7 @@ public class TimelineGenerator {
                          String reblogOriginalUsername,
                          String avatarURL) {
             this.dataSourceInfo = dataSourceInfo;
+            this.userId = userId;
             this.acct = acct;
             this.username = username;
             this.displayName = displayName;
@@ -80,6 +82,8 @@ public class TimelineGenerator {
 
     public static class RowContent {
         public DataSourceInfo dataSourceInfo;
+        public String userId;
+        public String userName;
         public String acct;
         public String contentText;
         public String contentHtml;
@@ -89,12 +93,13 @@ public class TimelineGenerator {
         public String sensitive;
         public String reblogOriginalUserId;
         private ObjectProperty userIcon = new SimpleObjectProperty();
-        public StringProperty userName = new SimpleStringProperty();
-        public StringProperty contentTextForDisplay = new SimpleStringProperty();
+        public StringProperty userNameForColumn = new SimpleStringProperty();
+        public StringProperty contentTextForColumn = new SimpleStringProperty();
         public StringProperty contentDate = new SimpleStringProperty();
 
         RowContent(TLContent tlContent){
             this.dataSourceInfo = tlContent.dataSourceInfo;
+            this.userId = tlContent.userId;
             this.acct = tlContent.acct;
 
                     BufferedImage icon = null;
@@ -109,20 +114,21 @@ public class TimelineGenerator {
 
             }
 
-            this.userName.set(tlContent.username + " / " + tlContent.displayName);
+            this.userName = tlContent.username;
+            this.userNameForColumn.set(tlContent.username + " / " + tlContent.displayName);
 
             if("false".equals(tlContent.sensitive)){
-                this.contentTextForDisplay.set(tlContent.contentText);
+                this.contentTextForColumn.set(tlContent.contentText);
             }
             else {
-                this.contentTextForDisplay.set("█".repeat(tlContent.contentText.length() * 2));
+                this.contentTextForColumn.set("█".repeat(tlContent.contentText.length() * 2));
             }
 
             if(tlContent.reblogOriginalUsername != null){
-                this.contentTextForDisplay.set("reblog " + tlContent.reblogOriginalUsername + ": " + tlContent.contentText);
+                this.contentTextForColumn.set("reblog " + tlContent.reblogOriginalUsername + ": " + tlContent.contentText);
             }
             else {
-                this.contentTextForDisplay.set(tlContent.contentText);
+                this.contentTextForColumn.set(tlContent.contentText);
             }
 
             this.contentHtml = tlContent.contentHtml;
@@ -138,8 +144,8 @@ public class TimelineGenerator {
         }
 
         public ObjectProperty userIconProperty(){ return userIcon; }
-        public StringProperty userNameProperty(){ return userName; }
-        public StringProperty contentTextForDisplayProperty(){ return contentTextForDisplay; }
+        public StringProperty userNameProperty(){ return userNameForColumn; }
+        public StringProperty contentTextProperty(){ return contentTextForColumn; }
         public StringProperty contentDateProperty(){ return contentDate; }
     }
 

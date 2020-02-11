@@ -2,6 +2,8 @@ package controller;
 
 import connection.MastodonAPI;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -15,6 +17,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 
+import misc.Common;
 import misc.Settings;
 import misc.SettingsLoadOnStart;
 import misc.Version;
@@ -25,7 +28,10 @@ import timeline.parser.MastodonNotificationParser;
 import timeline.parser.MastodonTimelineParser;
 import timeline.parser.timelineEndPoint.HomeTimelineGet;
 import timeline.parser.timelineEndPoint.LocalTimelineGet;
+import timeline.parser.timelineEndPoint.UserTimelineGet;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -38,7 +44,7 @@ public class Controller implements Initializable {
     private TimelineViewController homeTimelineViewController;
     private NotificationViewController notificationViewController;
     private TimelineViewController localTimelineViewController;
-    // private List<ContentController> contentControllers;
+    private HashMap<String, TimelineViewController> contentControllers; // TODO: タイムライン以外も複製できるように
 
     private String inReplyToId;
 
@@ -126,6 +132,11 @@ public class Controller implements Initializable {
         replyModeCancel();
     }
 
+    @FXML
+    protected void onMenuItemUploadImage(ActionEvent evt) {
+        Common.NotImplementAlert();
+    }
+
     public void userReplyInputStart(String inReplyToStatusId, String acct ){
         textArea.setText("@" + acct + " ");
         inReplyToId = inReplyToStatusId;
@@ -146,6 +157,41 @@ public class Controller implements Initializable {
         // TODO: 選ばれてるタブのコントローラでやる必要がある
     }
 
+    public void addUserTab(String userId, String username){
+        try {
+            var tabKey = "UserTab<"+userId+">";
+            if( contentControllers.containsKey(tabKey) ) return;
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/timeline_view.fxml"));
+            Tab tab = new Tab("user: " + username);
+            AnchorPane pane = loader.load();
+            tab.setContent(pane);
+            TimelineViewController timelineViewController = loader.getController();
+            tabPane.getTabs().add(tab);
+            timelineViewController.registerParentControllerObject(this,
+                    settings,
+                    new TimelineGenerator(
+                            new MastodonTimelineParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken,
+                                    new UserTimelineGet(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken, userId))
+                    ),
+                    new MastodonAPI(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken));
+            timelineViewController.registerWebViewOutput(webView);
+            contentControllers.put(tabKey, timelineViewController);
+            // 閉じたときにコントローラの登録を外す
+            tab.setClosable(true);
+            tab.setOnClosed(new EventHandler<Event>() {
+                @Override
+                public void handle(Event t) {
+                    contentControllers.remove(tabKey);
+                }
+            });
+            // リロードタスクでロードしないので手動読み込み
+            timelineViewController.reload();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
         settings = new Settings();
@@ -153,6 +199,8 @@ public class Controller implements Initializable {
             SettingsLoadOnStart settingsLoadOnStart = new SettingsLoadOnStart(settings);
             settingsLoadOnStart.startSequence();
         }
+
+        contentControllers = new HashMap<>();
 
         // 動的タブ追加のテスト
         try {
@@ -164,9 +212,13 @@ public class Controller implements Initializable {
                 tab.setContent(pane);
                 homeTimelineViewController = loader.getController();
                 tabPane.getTabs().add(tab);
-                homeTimelineViewController.registerParentControllerObject(this,
+                homeTimelineViewController.registerParentControllerObject(
+                        this,
                         settings,
-                        new TimelineGenerator(new MastodonTimelineParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken, new HomeTimelineGet(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken))),
+                        new TimelineGenerator(
+                                new MastodonTimelineParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken,
+                                new HomeTimelineGet(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken))
+                        ),
                         new MastodonAPI(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken));
                 homeTimelineViewController.registerWebViewOutput(webView);
             }
@@ -178,8 +230,12 @@ public class Controller implements Initializable {
                 tab.setContent(pane);
                 notificationViewController = loader.getController();
                 tabPane.getTabs().add(tab);
-                notificationViewController.registerParentControllerObject(this,
-                        settings, new NotificationGenerator(new MastodonNotificationParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken)));
+                notificationViewController.registerParentControllerObject(
+                        this,
+                        settings,
+                        new NotificationGenerator(
+                                new MastodonNotificationParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken)
+                        ));
             }
             {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/timeline_view.fxml"));
@@ -191,11 +247,13 @@ public class Controller implements Initializable {
                 tabPane.getTabs().add(tab);
                 localTimelineViewController.registerParentControllerObject(this,
                         settings,
-                        new TimelineGenerator(new MastodonTimelineParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken, new LocalTimelineGet(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken))),
+                        new TimelineGenerator(
+                                new MastodonTimelineParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken,
+                                new LocalTimelineGet(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken))
+                        ),
                         new MastodonAPI(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken));
                 localTimelineViewController.registerWebViewOutput(webView);
             }
-            tabPane.getTabs().add((Tab) FXMLLoader.load(getClass().getResource("../layout/test_tab.fxml")));
         } catch (Exception e){
             e.printStackTrace();
         }
