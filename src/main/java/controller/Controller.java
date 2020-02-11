@@ -131,6 +131,8 @@ public class Controller implements Initializable {
         inReplyToId = inReplyToStatusId;
         textArea.lookup(".content").getStyleClass().add("u-bgLightPinkColor");
         textArea.requestFocus();
+        var caretPosition = acct.length() + 2; // @と空白で+2
+        textArea.positionCaret(caretPosition);
         // TODO: 送信時データ読み込み元ホストに応じてAPI叩く鯖切り替えできるように
     }
 
