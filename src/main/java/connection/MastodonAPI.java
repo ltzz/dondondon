@@ -20,18 +20,23 @@ public class MastodonAPI {
         headers.put("Authorization", "Bearer " + accessToken);
 
         var responseBody = WebRequest.requestPOST(url, headers, "");
-        System.out.println(responseBody);
+        // System.out.println(responseBody);
+        // TODO: ここのレスポンスを見てお気に入り状態を表示に反映
     }
 
-    public void postStatus(String text) {
+    public void postStatus(String text, String inReplyToId) {
         String url = mastodonHost + "/api/v1/statuses";
         var headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + accessToken);
 
-        var responseBody = WebRequest.requestPOST(url, headers, "status=" + text);
+        var parameterString = "status=" + text;
+        if( inReplyToId != null ) {
+            parameterString = parameterString + "&in_reply_to_id=" + inReplyToId;
+        }
+        var responseBody = WebRequest.requestPOST(url, headers, parameterString);
         // System.out.println(responseBody);
         // getStatus(responseBody)
-        // TODO: ここのレスポンスを見てお気に入り状態を表示に反映
+        // TODO: ここのレスポンスを見て投稿成功不成功を判断・リストに反映？
     }
 
     public String getHomeTimeline() {

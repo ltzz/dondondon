@@ -15,12 +15,12 @@
   -fx-background-color: #333333;
 }
 
-.-iconHidden {
-  visibility: hidden;
-}
-
 .u-pd2 {
   -fx-padding: 2;
+}
+
+.u-bgLightPinkColor {
+  -fx-background-color: #ffb6c1;
 }
 
 .u-bgGrayColor {

@@ -53,7 +53,7 @@
             <HBox GridPane.rowIndex="2" styleClass="u-pd2">
                 <TextArea fx:id="textArea"></TextArea>
                 <VBox>
-                    <MenuButton><items><MenuItem text="返信モードを取り消す(未実装)"></MenuItem></items></MenuButton>
+                    <MenuButton><items><MenuItem text="返信モードを取り消す" onAction="#onMenuItemClearReply"></MenuItem></items></MenuButton>
                     <Button onAction="#onButtonInputTextPost" text="投稿"/>
                 </VBox>
             </HBox>

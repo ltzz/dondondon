@@ -7,6 +7,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
+
 import misc.Settings;
 import timeline.NotificationGenerator;
 
@@ -14,6 +15,7 @@ public class NotificationViewController implements Initializable, IReload {
     @FXML
     private TableView<NotificationGenerator.RowContent> tableView;
 
+    private Controller rootController;
     private Settings settings;
     private NotificationGenerator notificationGenerator;
 
@@ -22,10 +24,10 @@ public class NotificationViewController implements Initializable, IReload {
 
     public void iconInvisible(boolean value){
         if(value) {
-            iconCol.getStyleClass().add("-iconHidden");
+            iconCol.getStyleClass().add("u-hidden");
         }
         else {
-            iconCol.getStyleClass().remove("-iconHidden");
+            iconCol.getStyleClass().remove("u-hidden");
         }
     }
 
@@ -51,7 +53,8 @@ public class NotificationViewController implements Initializable, IReload {
         }
     }
 
-    public void registerParentControllerObject(Settings settings, NotificationGenerator notificationGenerator){
+    public void registerParentControllerObject(Controller rootController, Settings settings, NotificationGenerator notificationGenerator){
+        this.rootController = rootController;
         this.settings = settings;
         this.notificationGenerator = notificationGenerator;
     }

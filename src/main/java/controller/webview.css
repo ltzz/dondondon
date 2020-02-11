@@ -11,6 +11,7 @@ a:link {
 
 .ContentWrapper {
   display: flex;
+  width: 80%;
 }
 .ContentBody {
   flex: 1;

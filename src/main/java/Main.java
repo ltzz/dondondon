@@ -1,4 +1,3 @@
-import controller.Controller;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,14 +15,12 @@ public class Main extends Application {
         var scene = new Scene(root, 600, 500);
         scene.getStylesheets().add("dark.css");
         primaryStage.setScene(scene);
+        primaryStage.setMinHeight(300);
+        primaryStage.setMinWidth(300);
         primaryStage.show();
 
         // こっちのスレッドのアプリケーションはいったん無効化
         // MainWindow mainWindow = new MainWindow("test", 400, 500);
-
-
-
-        var controller = new Controller();
 
     }
 

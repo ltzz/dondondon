@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.ImageView;
+
 import timeline.parser.MastodonTimelineParser;
 
 import javax.imageio.ImageIO;
@@ -39,6 +40,7 @@ public class TimelineGenerator {
     // 汎用タイムライン項目データクラス
     public static class TLContent{
         final DataSourceInfo dataSourceInfo;
+        String acct;
         String username;
         String displayName;
         String contentText;
@@ -52,6 +54,7 @@ public class TimelineGenerator {
         String avatarURL;
 
         public TLContent(DataSourceInfo dataSourceInfo,
+                         String acct,
                          String username, String displayName,
                          String contentText, String contentHtml,
                          String contentImageURL,
@@ -60,6 +63,7 @@ public class TimelineGenerator {
                          String reblogOriginalUsername,
                          String avatarURL) {
             this.dataSourceInfo = dataSourceInfo;
+            this.acct = acct;
             this.username = username;
             this.displayName = displayName;
             this.contentText = contentText;
@@ -76,6 +80,7 @@ public class TimelineGenerator {
 
     public static class RowContent {
         public DataSourceInfo dataSourceInfo;
+        public String acct;
         public String contentText;
         public String contentHtml;
         public String contentImageURL;
@@ -90,8 +95,9 @@ public class TimelineGenerator {
 
         RowContent(TLContent tlContent){
             this.dataSourceInfo = tlContent.dataSourceInfo;
+            this.acct = tlContent.acct;
 
-            BufferedImage icon = null;
+                    BufferedImage icon = null;
             try {
                 // TODO: この実装セキュリティ的に大丈夫かどうか詳しい人に聞く
                 icon = ImageIO.read(new URL(tlContent.avatarURL));
@@ -102,7 +108,6 @@ public class TimelineGenerator {
             }catch (Exception e){
 
             }
-
 
             this.userName.set(tlContent.username + " / " + tlContent.displayName);
 

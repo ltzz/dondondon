@@ -13,6 +13,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
+
 import misc.Settings;
 import timeline.TimelineGenerator;
 
@@ -23,6 +24,7 @@ public class TimelineViewController implements Initializable, IReload {
     private TableView<TimelineGenerator.RowContent> tableView;
 
     private Settings settings;
+    private Controller rootController;
     private TimelineGenerator timelineGenerator;
     private MastodonAPI postMastodonAPI;
 
@@ -46,10 +48,10 @@ public class TimelineViewController implements Initializable, IReload {
 
     public void iconInvisible(boolean value){
         if(value) {
-            iconCol.getStyleClass().add("-iconHidden");
+            iconCol.getStyleClass().add("u-hidden");
         }
         else {
-            iconCol.getStyleClass().remove("-iconHidden");
+            iconCol.getStyleClass().remove("u-hidden");
         }
     }
 
@@ -79,7 +81,8 @@ public class TimelineViewController implements Initializable, IReload {
         reload();
     }
 
-    public void registerParentControllerObject(Settings settings, TimelineGenerator timelineGenerator, MastodonAPI postMastodonAPI){
+    public void registerParentControllerObject(Controller rootController, Settings settings, TimelineGenerator timelineGenerator, MastodonAPI postMastodonAPI){
+        this.rootController = rootController;
         this.settings = settings;
         this.postMastodonAPI = postMastodonAPI;
         this.timelineGenerator = timelineGenerator;
@@ -131,7 +134,7 @@ public class TimelineViewController implements Initializable, IReload {
 
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemFavorite = new MenuItem("お気に入り");
-        MenuItem menuItemReply = new MenuItem("返信(未実装)");
+        MenuItem menuItemReply = new MenuItem("返信");
         menuItemFavorite.setOnAction((ActionEvent t) -> {
             var selectedToot = tableView.getSelectionModel().getSelectedItem();
             var hostname = selectedToot.dataSourceInfo.hostname;
@@ -146,8 +149,10 @@ public class TimelineViewController implements Initializable, IReload {
         menuItemReply.setOnAction((ActionEvent t) -> {
             var selectedToot = tableView.getSelectionModel().getSelectedItem();
             var statusId = selectedToot.dataSourceInfo.statusId;
+            var acct = selectedToot.acct;
 
-            System.out.println("実装しとらんわ");
+            // TODO: データ読み込み元ホストに応じてAPI叩く鯖切り替え
+            rootController.userReplyInputStart(statusId, acct);
         });
 
         contextMenu.getItems().addAll(menuItemFavorite, menuItemReply);

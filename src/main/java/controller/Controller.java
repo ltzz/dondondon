@@ -14,9 +14,11 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
+
 import misc.Settings;
 import misc.SettingsLoadOnStart;
 import misc.Version;
+
 import timeline.NotificationGenerator;
 import timeline.TimelineGenerator;
 import timeline.parser.MastodonNotificationParser;
@@ -36,6 +38,9 @@ public class Controller implements Initializable {
     private TimelineViewController homeTimelineViewController;
     private NotificationViewController notificationViewController;
     private TimelineViewController localTimelineViewController;
+    // private List<ContentController> contentControllers;
+
+    private String inReplyToId;
 
     @FXML
     private VBox root;
@@ -107,15 +112,34 @@ public class Controller implements Initializable {
         userPostEvent();
     }
 
-    public void userPostEvent(){
+    private void userPostEvent(){
         String text = textArea.getText();
         if(!text.isEmpty()) {
-            postMastodonAPI.postStatus(text);
-            textArea.setText(""); // TODO: 成功時にクリア
+            postMastodonAPI.postStatus(text, inReplyToId);
+            textArea.setText(""); // TODO: 成功時にのみクリア
+            replyModeCancel();
         }
     }
 
-    public void userFilterWordBoxToggle(){
+    @FXML
+    protected void onMenuItemClearReply(ActionEvent evt) {
+        replyModeCancel();
+    }
+
+    public void userReplyInputStart(String inReplyToStatusId, String acct ){
+        textArea.setText("@" + acct + " ");
+        inReplyToId = inReplyToStatusId;
+        textArea.lookup(".content").getStyleClass().add("u-bgLightPinkColor");
+        textArea.requestFocus();
+        // TODO: 送信時データ読み込み元ホストに応じてAPI叩く鯖切り替えできるように
+    }
+
+    private void replyModeCancel(){
+        inReplyToId = null;
+        textArea.lookup(".content").getStyleClass().remove("u-bgLightPinkColor");
+    }
+
+    private void userFilterWordBoxToggle(){
         homeTimelineViewController.userFilterWordBoxToggle();
         // TODO: 選ばれてるタブのコントローラでやる必要がある
     }
@@ -138,7 +162,8 @@ public class Controller implements Initializable {
                 tab.setContent(pane);
                 homeTimelineViewController = loader.getController();
                 tabPane.getTabs().add(tab);
-                homeTimelineViewController.registerParentControllerObject(settings,
+                homeTimelineViewController.registerParentControllerObject(this,
+                        settings,
                         new TimelineGenerator(new MastodonTimelineParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken, new HomeTimelineGet(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken))),
                         new MastodonAPI(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken));
                 homeTimelineViewController.registerWebViewOutput(webView);
@@ -151,7 +176,8 @@ public class Controller implements Initializable {
                 tab.setContent(pane);
                 notificationViewController = loader.getController();
                 tabPane.getTabs().add(tab);
-                notificationViewController.registerParentControllerObject(settings, new NotificationGenerator(new MastodonNotificationParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken)));
+                notificationViewController.registerParentControllerObject(this,
+                        settings, new NotificationGenerator(new MastodonNotificationParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken)));
             }
             {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/timeline_view.fxml"));
@@ -161,7 +187,8 @@ public class Controller implements Initializable {
                 tab.setContent(pane);
                 localTimelineViewController = loader.getController();
                 tabPane.getTabs().add(tab);
-                localTimelineViewController.registerParentControllerObject(settings,
+                localTimelineViewController.registerParentControllerObject(this,
+                        settings,
                         new TimelineGenerator(new MastodonTimelineParser(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken, new LocalTimelineGet(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken))),
                         new MastodonAPI(settings.getInstanceSetting().hostName, settings.getInstanceSetting().accessToken));
                 localTimelineViewController.registerWebViewOutput(webView);
