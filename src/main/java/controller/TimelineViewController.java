@@ -176,6 +176,10 @@ public class TimelineViewController implements Initializable, IReload {
                 event.consume();
             });
 
+            tableView.setOnMouseClicked((event) -> {
+                contextMenu.hide();
+            });
+
             tableView.setRowFactory(new Callback<TableView<TimelineGenerator.RowContent>, TableRow<TimelineGenerator.RowContent>>() {
                 @Override
                 public TableRow<TimelineGenerator.RowContent> call(TableView<TimelineGenerator.RowContent> tootCellTableView) {
