@@ -95,11 +95,13 @@ public class TimelineViewController implements Initializable, IReload {
         final String twemojiFooter = "<script>twemoji.parse(document.body)</script>";
         final String contentFooter = "<br></div>"+toCharacterReference(EMOJI_TEST)+twemojiFooter+"</body></html>";
         ObservableList selectedCells = tableView.getSelectionModel().getSelectedCells();
+        if(selectedCells == null) return;
 
         selectedCells.addListener(new ListChangeListener() {
             @Override
             public void onChanged(Change c) {
                 var tootContent = tableView.getSelectionModel().getSelectedItem();
+                if(tootContent == null) return;
                 var contentImage = "<img src=\"" + tootContent.contentImageURL + "\" />";
                 var contentImageElement = "<div class=\"ContentImage\">" + contentImage + "</div>";
                 var contentHtml = toCharacterReference(tootContent.contentHtml);
