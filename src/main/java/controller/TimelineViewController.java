@@ -67,8 +67,11 @@ public class TimelineViewController implements Initializable, IReload {
 
     private void filterWord(){
         var filterWord = filterWordField.getText();
-        if( filterWord.isEmpty() ) return;
         var rowContents = timelineGenerator.getRowContents();
+
+        if( filterWord.isEmpty() ){
+            tableViewSetItems(rowContents);
+        }
         var filteredRowContents = FXCollections.observableList(rowContents.stream().filter(rowContent -> rowContent.contentText.contains(filterWord)).collect(Collectors.toList()));
         tableViewSetItems(filteredRowContents);
     }
