@@ -44,16 +44,18 @@
             <ColumnConstraints percentWidth="100" />
         </columnConstraints>
         <children>
-            <TabPane fx:id="tabPane">
+            <TabPane fx:id="tabPane" styleClass="u-pd2">
+                <!-- ここには動的にタブが入る -->
             </TabPane>
-            <HBox GridPane.rowIndex="1">
-                <WebView fx:id="webView"></WebView>
-                <!-- <MenuButton><items><MenuItem text="返信モードを取り消す"></MenuItem></items></MenuButton> -->
+            <HBox GridPane.rowIndex="1" styleClass="u-pd2">
+                <WebView fx:id="webView" prefWidth="10000"></WebView>
             </HBox>
-            <HBox GridPane.rowIndex="2">
+            <HBox GridPane.rowIndex="2" styleClass="u-pd2">
                 <TextArea fx:id="textArea"></TextArea>
-                <MenuButton><items><MenuItem text="返信モードを取り消す(未実装)"></MenuItem></items></MenuButton>
-                <Button onAction="#onButtonInputTextPost" text="投稿"/>
+                <VBox>
+                    <MenuButton><items><MenuItem text="返信モードを取り消す(未実装)"></MenuItem></items></MenuButton>
+                    <Button onAction="#onButtonInputTextPost" text="投稿"/>
+                </VBox>
             </HBox>
         </children>
     </GridPane>
