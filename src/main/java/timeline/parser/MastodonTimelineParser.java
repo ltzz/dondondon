@@ -195,22 +195,6 @@ public class MastodonTimelineParser {
         return listForGenerator;
     }
 
-    List<NotificationGenerator.NotificationContent> toNotificationContent(List<Notification> notifications){
-        List<NotificationGenerator.NotificationContent> listForGenerator = new ArrayList<>();
-        notifications.forEach(notification -> {
-            var notificationText = notification.account.username + ": ["+ notification.type + "] " + Jsoup.parse(notification.status.content).text();
-
-            var avaterURL = "";
-            if (validateURL(notification.account.avatar_static)) {
-                avaterURL = notification.account.avatar_static;
-            }
-
-            TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", MASTODON_HOST, notification.id);
-            listForGenerator.add(new NotificationGenerator.NotificationContent(dataSourceInfo, notificationText, notification.created_at, avaterURL));
-        });
-        return listForGenerator;
-    }
-
     List<Toot> getTimelineDto(String json){
         try {
             ObjectMapper mapper = new ObjectMapper();

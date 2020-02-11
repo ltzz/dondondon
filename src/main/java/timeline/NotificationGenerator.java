@@ -27,15 +27,20 @@ public class NotificationGenerator {
     // 汎用通知項目データクラス
     public static class NotificationContent {
         TimelineGenerator.DataSourceInfo dataSourceInfo;
+        String username;
+        String displayName;
         String contentText;
         String createdAt;
         String avatarURL;
 
         public NotificationContent(TimelineGenerator.DataSourceInfo dataSourceInfo,
+                                   String username, String displayName,
                                    String contentText,
                                    String createdAt,
                                    String avatarURL) {
             this.dataSourceInfo = dataSourceInfo;
+            this.username = username;
+            this.displayName = displayName;
             this.contentText = contentText;
             this.createdAt = createdAt;
             this.avatarURL = avatarURL;
@@ -47,6 +52,7 @@ public class NotificationGenerator {
         public StringProperty contentText = new SimpleStringProperty();
         public StringProperty createdAt = new SimpleStringProperty();
         private ObjectProperty userIcon = new SimpleObjectProperty();
+        public StringProperty userName = new SimpleStringProperty();
 
         RowContent(NotificationContent notificationContent){
             this.dataSourceInfo = notificationContent.dataSourceInfo;
@@ -63,11 +69,13 @@ public class NotificationGenerator {
 
             }
 
+            this.userName.set(notificationContent.username + " / " + notificationContent.displayName);
             this.contentText.set(notificationContent.contentText);
             this.createdAt.set(notificationContent.createdAt);
         }
 
         public ObjectProperty userIconProperty(){ return userIcon; }
+        public StringProperty userNameProperty(){ return userName; }
         public StringProperty contentTextProperty(){ return contentText; }
         public StringProperty createdAtProperty(){ return createdAt; }
     }

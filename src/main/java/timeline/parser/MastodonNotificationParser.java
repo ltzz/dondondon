@@ -47,7 +47,7 @@ public class MastodonNotificationParser {
     List<NotificationGenerator.NotificationContent> toNotificationContent(List<Notification> notifications){
         List<NotificationGenerator.NotificationContent> listForGenerator = new ArrayList<>();
         notifications.forEach(notification -> {
-            var notificationText = notification.account.username + ": ["+ notification.type + "] " + Jsoup.parse(notification.status.content).text();
+            var notificationText = "["+ notification.type + "] " + Jsoup.parse(notification.status.content).text();
 
             var avaterURL = "";
             if (MastodonTimelineParser.validateURL(notification.account.avatar_static)) {
@@ -55,7 +55,7 @@ public class MastodonNotificationParser {
             }
 
             TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", MASTODON_HOST, notification.id);
-            listForGenerator.add(new NotificationGenerator.NotificationContent(dataSourceInfo, notificationText, notification.created_at, avaterURL));
+            listForGenerator.add(new NotificationGenerator.NotificationContent(dataSourceInfo, notification.account.username, notification.account.display_name, notificationText, notification.created_at, avaterURL));
         });
         return listForGenerator;
     }
