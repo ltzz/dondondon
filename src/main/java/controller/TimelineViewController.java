@@ -9,11 +9,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
-import misc.IReload;
 import misc.Settings;
 import timeline.TimelineGenerator;
 
@@ -30,11 +29,11 @@ public class TimelineViewController implements Initializable, IReload {
     @FXML
     private TableColumn iconCol;
 
-    @FXML private HBox filterWordBox;
+    @FXML private StackPane filterWordPane;
     @FXML private TextField filterWordField;
 
     public void userFilterWordBoxToggle(){
-        var styleClass = filterWordBox.getStyleClass();
+        var styleClass = filterWordPane.getStyleClass();
         if(styleClass.contains("u-hidden")){
             styleClass.remove("u-hidden");
             filterWordField.requestFocus();

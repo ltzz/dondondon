@@ -22,7 +22,7 @@
             <TableColumn fx:id="contentTextCol" text="content" prefWidth="300" maxWidth="500">
                 <cellValueFactory><PropertyValueFactory property="contentText" /></cellValueFactory>
             </TableColumn>
-            <TableColumn fx:id="dateCol" text="date" maxWidth="200">
+            <TableColumn fx:id="dateCol" text="date" prefWidth="150" maxWidth="200">
                 <cellValueFactory><PropertyValueFactory property="createdAt" /></cellValueFactory>
             </TableColumn>
         </columns>

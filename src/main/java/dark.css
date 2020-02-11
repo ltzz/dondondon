@@ -19,6 +19,14 @@
   visibility: hidden;
 }
 
+.u-pd2 {
+  -fx-padding: 2;
+}
+
+.u-bgGrayColor {
+  -fx-background-color: #cccccc;
+}
+
 .u-hidden {
   visibility: hidden;
 }

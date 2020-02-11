@@ -1,11 +1,8 @@
-package misc;
+package controller;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.collections.ObservableList;
-import javafx.scene.control.TableView;
 import javafx.util.Duration;
-import timeline.TimelineGenerator;
 
 import java.util.List;
 

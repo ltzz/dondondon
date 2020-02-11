@@ -14,7 +14,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
-import misc.ReloadTask;
 import misc.Settings;
 import misc.SettingsLoadOnStart;
 import misc.Version;

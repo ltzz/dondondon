@@ -24,13 +24,13 @@
                 <TableColumn fx:id="contentTextCol" text="content" prefWidth="300" maxWidth="500">
                     <cellValueFactory><PropertyValueFactory property="contentTextForDisplay" /></cellValueFactory>
                 </TableColumn>
-                <TableColumn fx:id="contentDateCol" text="date" prefWidth="100" maxWidth="200">
+                <TableColumn fx:id="contentDateCol" text="date" prefWidth="150" maxWidth="200">
                     <cellValueFactory><PropertyValueFactory property="contentDate" /></cellValueFactory>
                 </TableColumn>
             </columns>
         </TableView>
     </StackPane>
-    <StackPane AnchorPane.bottomAnchor="0.0" >
-        <HBox styleClass="u-hidden" fx:id="filterWordBox"><Text>filter: </Text><TextField fx:id="filterWordField"></TextField></HBox>
+    <StackPane AnchorPane.bottomAnchor="0.0" styleClass="u-bgGrayColor, u-hidden, u-pd2"  fx:id="filterWordPane">
+        <HBox><Text>filter: </Text><TextField fx:id="filterWordField" prefWidth="200"></TextField></HBox>
     </StackPane>
 </AnchorPane>
