@@ -25,6 +25,7 @@ public class NotificationGenerator {
     // 汎用通知項目データクラス
     public static class NotificationContent {
         TimelineGenerator.DataSourceInfo dataSourceInfo;
+        String id;
         String userId;
         String username;
         String displayName;
@@ -33,12 +34,14 @@ public class NotificationGenerator {
         BufferedImage avatarIcon;
 
         public NotificationContent(TimelineGenerator.DataSourceInfo dataSourceInfo,
+                                   String id,
                                    String userId,
                                    String username, String displayName,
                                    String contentText,
                                    String createdAt,
                                    BufferedImage avatarIcon) {
             this.dataSourceInfo = dataSourceInfo;
+            this.id = id;
             this.userId = userId;
             this.username = username;
             this.displayName = displayName;
@@ -49,6 +52,7 @@ public class NotificationGenerator {
     }
 
     public static class RowContent {
+        public String id;
         public String userId;
         public String userName;
         public final TimelineGenerator.DataSourceInfo dataSourceInfo;
@@ -59,6 +63,7 @@ public class NotificationGenerator {
 
         RowContent(NotificationContent notificationContent){
             this.dataSourceInfo = notificationContent.dataSourceInfo;
+            this.id = notificationContent.id;
             this.userId = notificationContent.userId;
             this.userName = notificationContent.username;
 
@@ -89,7 +94,7 @@ public class NotificationGenerator {
             notificationAdd(notification);
         }
 
-        data.sort(Comparator.comparing(notificationContent -> notificationContent.createdAt.get()));
+        data.sort(Comparator.comparing(notificationContent -> notificationContent.id)); // MastodonではIDの上位48bitは時刻なのでソートに使ってOK
         Collections.reverse(data); // FIXME: 同時刻の投稿が実行するたびに逆順になる
         return data;
     }

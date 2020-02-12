@@ -27,17 +27,16 @@ public class TimelineGenerator {
     public static class DataSourceInfo{
         public String serverType;
         public String hostname;
-        public String statusId;
-        public DataSourceInfo(String serverType, String hostname, String statusId){
+        public DataSourceInfo(String serverType, String hostname){
             this.serverType = serverType;
             this.hostname = hostname;
-            this.statusId = statusId;
         }
     }
 
     // 汎用タイムライン項目データクラス
     public static class TLContent{
         final DataSourceInfo dataSourceInfo;
+        String id;
         String userId;
         String acct;
         String username;
@@ -53,6 +52,7 @@ public class TimelineGenerator {
         BufferedImage avatarIcon;
 
         public TLContent(DataSourceInfo dataSourceInfo,
+                         String id,
                          String userId, String acct,
                          String username, String displayName,
                          String contentText, String contentHtml,
@@ -62,6 +62,7 @@ public class TimelineGenerator {
                          String reblogOriginalUsername,
                          BufferedImage avatarIcon) {
             this.dataSourceInfo = dataSourceInfo;
+            this.id = id;
             this.userId = userId;
             this.acct = acct;
             this.username = username;
@@ -80,6 +81,7 @@ public class TimelineGenerator {
 
     public static class RowContent {
         public DataSourceInfo dataSourceInfo;
+        public String id;
         public String userId;
         public String userName;
         public String acct;
@@ -97,6 +99,7 @@ public class TimelineGenerator {
 
         RowContent(TLContent tlContent){
             this.dataSourceInfo = tlContent.dataSourceInfo;
+            this.id = tlContent.id;
             this.userId = tlContent.userId;
             this.acct = tlContent.acct;
             this.userName = tlContent.username;
@@ -151,8 +154,8 @@ public class TimelineGenerator {
             timelineAdd(tldata);
         }
 
-        data.sort(Comparator.comparing(tootContent -> tootContent.contentDate.get()));
-        Collections.reverse(data); // FIXME: 同時刻の投稿が実行するたびに逆順になる
+        data.sort(Comparator.comparing(tootContent -> tootContent.id)); // MastodonではIDの上位48bitは時刻なのでソートに使ってOK
+        Collections.reverse(data);
         return data;
     }
 

@@ -206,8 +206,9 @@ public class MastodonTimelineParser {
                 }
             }
 
-            TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", MASTODON_HOST, toot.id);
+            TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", MASTODON_HOST);
             listForGenerator.add(new TimelineGenerator.TLContent(dataSourceInfo,
+                    toot.id,
                     toot.account.id, toot.account.acct,
                     toot.account.username, toot.account.display_name,
                     text, htmltext, imageURL,

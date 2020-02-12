@@ -14,7 +14,6 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
 
-import misc.Common;
 import misc.Settings;
 import timeline.TimelineGenerator;
 import timeline.parser.MastodonWriteAPIParser;
@@ -141,7 +140,7 @@ public class TimelineViewController implements Initializable, IReload {
         menuItemFavorite.setOnAction((ActionEvent t) -> {
             var selectedToot = tableView.getSelectionModel().getSelectedItem();
             var hostname = selectedToot.dataSourceInfo.hostname;
-            var statusId = selectedToot.dataSourceInfo.statusId;
+            var statusId = selectedToot.id;
 
             if( "mastodon".equals(selectedToot.dataSourceInfo.serverType) ) {
                 // TODO: データ読み込み元ホストに応じてAPI叩く鯖切り替え
@@ -153,7 +152,7 @@ public class TimelineViewController implements Initializable, IReload {
         menuItemReblog.setOnAction((ActionEvent t) -> {
             var selectedToot = tableView.getSelectionModel().getSelectedItem();
             var hostname = selectedToot.dataSourceInfo.hostname;
-            var statusId = selectedToot.dataSourceInfo.statusId;
+            var statusId = selectedToot.id;
 
             if( "mastodon".equals(selectedToot.dataSourceInfo.serverType) ) {
                 // TODO: データ読み込み元ホストに応じてAPI叩く鯖切り替え
@@ -169,7 +168,7 @@ public class TimelineViewController implements Initializable, IReload {
 
         menuItemReply.setOnAction((ActionEvent t) -> {
             var selectedToot = tableView.getSelectionModel().getSelectedItem();
-            var statusId = selectedToot.dataSourceInfo.statusId;
+            var statusId = selectedToot.id;
             var acct = selectedToot.acct;
 
             // TODO: データ読み込み元ホストに応じてAPI叩く鯖切り替え
