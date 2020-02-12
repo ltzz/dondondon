@@ -1,11 +1,11 @@
 package controller;
 
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.util.Callback;
 
 import misc.Settings;
@@ -59,7 +59,29 @@ public class NotificationViewController implements Initializable, IReload {
         this.notificationGenerator = notificationGenerator;
     }
 
+    private void contextMenuInit(){
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuItemUserTimeline = new MenuItem("このユーザーのタイムラインを見る");
+        menuItemUserTimeline.setOnAction((ActionEvent t) -> {
+            var selectedNotification = tableView.getSelectionModel().getSelectedItem();
+            rootController.addUserTab(selectedNotification.userId, selectedNotification.userName);
+        });
+
+        tableView.setOnContextMenuRequested((ContextMenuEvent event) -> {
+            contextMenu.show(tableView, event.getScreenX(), event.getScreenY());
+            event.consume();
+        });
+
+        tableView.setOnMouseClicked((event) -> {
+            contextMenu.hide();
+        });
+
+        contextMenu.getItems().addAll(menuItemUserTimeline);
+    }
+
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
+
+        contextMenuInit();
 
         if(tableView != null) {
 

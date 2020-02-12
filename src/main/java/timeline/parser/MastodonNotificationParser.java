@@ -83,7 +83,8 @@ public class MastodonNotificationParser {
             }
 
             TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", MASTODON_HOST, notification.id);
-            listForGenerator.add(new NotificationGenerator.NotificationContent(dataSourceInfo, notification.account.username, notification.account.display_name, notificationText, notification.created_at, avatarIcon));
+            listForGenerator.add(new NotificationGenerator.NotificationContent(dataSourceInfo, notification.account.id,
+                    notification.account.username, notification.account.display_name, notificationText, notification.created_at, avatarIcon));
         });
         return listForGenerator;
     }

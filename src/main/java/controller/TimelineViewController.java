@@ -132,8 +132,7 @@ public class TimelineViewController implements Initializable, IReload {
         }
     }
 
-    public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
-
+    private void contextMenuInit(){
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemFavorite = new MenuItem("お気に入り");
         MenuItem menuItemReblog = new MenuItem("リブログ");
@@ -179,6 +178,20 @@ public class TimelineViewController implements Initializable, IReload {
 
         contextMenu.getItems().addAll(menuItemFavorite, menuItemReblog, menuItemUserTimeline, menuItemReply);
 
+        tableView.setOnContextMenuRequested((ContextMenuEvent event) -> {
+            contextMenu.show(tableView, event.getScreenX(), event.getScreenY());
+            event.consume();
+        });
+
+        tableView.setOnMouseClicked((event) -> {
+            contextMenu.hide();
+        });
+    }
+
+    public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
+
+        contextMenuInit();
+
         final KeyCombination filterWordKey =
                 new KeyCodeCombination(KeyCode.ENTER);
 
@@ -192,15 +205,6 @@ public class TimelineViewController implements Initializable, IReload {
 
             var columns = tableView.getColumns();
             for( var column : columns ) column.setSortable(false);
-
-            tableView.setOnContextMenuRequested((ContextMenuEvent event) -> {
-                contextMenu.show(tableView, event.getScreenX(), event.getScreenY());
-                event.consume();
-            });
-
-            tableView.setOnMouseClicked((event) -> {
-                contextMenu.hide();
-            });
 
             tableView.setRowFactory(new Callback<TableView<TimelineGenerator.RowContent>, TableRow<TimelineGenerator.RowContent>>() {
                 @Override

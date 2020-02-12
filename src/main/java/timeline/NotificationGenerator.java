@@ -17,7 +17,7 @@ import java.util.Comparator;
 public class NotificationGenerator {
 
     MastodonNotificationParser mastodonParser;
-    ObservableList<RowContent> data = FXCollections.observableArrayList();
+    private ObservableList<RowContent> data = FXCollections.observableArrayList();
     public NotificationGenerator(MastodonNotificationParser mastodonParser){
         this.mastodonParser = mastodonParser;
     }
@@ -25,6 +25,7 @@ public class NotificationGenerator {
     // 汎用通知項目データクラス
     public static class NotificationContent {
         TimelineGenerator.DataSourceInfo dataSourceInfo;
+        String userId;
         String username;
         String displayName;
         String contentText;
@@ -32,11 +33,13 @@ public class NotificationGenerator {
         BufferedImage avatarIcon;
 
         public NotificationContent(TimelineGenerator.DataSourceInfo dataSourceInfo,
+                                   String userId,
                                    String username, String displayName,
                                    String contentText,
                                    String createdAt,
                                    BufferedImage avatarIcon) {
             this.dataSourceInfo = dataSourceInfo;
+            this.userId = userId;
             this.username = username;
             this.displayName = displayName;
             this.contentText = contentText;
@@ -46,14 +49,18 @@ public class NotificationGenerator {
     }
 
     public static class RowContent {
+        public String userId;
+        public String userName;
         public final TimelineGenerator.DataSourceInfo dataSourceInfo;
         public StringProperty contentText = new SimpleStringProperty();
         public StringProperty createdAt = new SimpleStringProperty();
         private ObjectProperty userIcon = new SimpleObjectProperty();
-        public StringProperty userName = new SimpleStringProperty();
+        public StringProperty contentTextForColumn = new SimpleStringProperty();
 
         RowContent(NotificationContent notificationContent){
             this.dataSourceInfo = notificationContent.dataSourceInfo;
+            this.userId = notificationContent.userId;
+            this.userName = notificationContent.username;
 
             try {
                 ImageView iconView = new ImageView(SwingFXUtils.toFXImage(notificationContent.avatarIcon, null));
@@ -64,13 +71,13 @@ public class NotificationGenerator {
 
             }
 
-            this.userName.set(notificationContent.username + " / " + notificationContent.displayName);
+            this.contentTextForColumn.set(notificationContent.username + " / " + notificationContent.displayName);
             this.contentText.set(notificationContent.contentText);
             this.createdAt.set(notificationContent.createdAt);
         }
 
         public ObjectProperty userIconProperty(){ return userIcon; }
-        public StringProperty userNameProperty(){ return userName; }
+        public StringProperty userNameProperty(){ return contentTextForColumn; }
         public StringProperty contentTextProperty(){ return contentText; }
         public StringProperty createdAtProperty(){ return createdAt; }
     }

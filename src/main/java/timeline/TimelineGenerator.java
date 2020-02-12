@@ -18,7 +18,7 @@ import java.util.Comparator;
 public class TimelineGenerator {
 
     MastodonTimelineParser mastodonParser;
-    ObservableList<RowContent> data = FXCollections.observableArrayList(); // TODO: TimelineGeneratorの内部状態はHashMapでもいいのでは？返す時ObservableListになればいい 読み込み時は同じIDのもの重複は後勝ち上書き
+    private ObservableList<RowContent> data = FXCollections.observableArrayList(); // TODO: TimelineGeneratorの内部状態はHashMapでもいいのでは？返す時ObservableListになればいい 読み込み時は同じIDのもの重複は後勝ち上書き
 
     public TimelineGenerator(MastodonTimelineParser mastodonParser){
         this.mastodonParser = mastodonParser;
@@ -99,6 +99,7 @@ public class TimelineGenerator {
             this.dataSourceInfo = tlContent.dataSourceInfo;
             this.userId = tlContent.userId;
             this.acct = tlContent.acct;
+            this.userName = tlContent.username;
 
             try {
                 ImageView iconView = new ImageView(SwingFXUtils.toFXImage(tlContent.avatarIcon, null));
@@ -109,7 +110,6 @@ public class TimelineGenerator {
 
             }
 
-            this.userName = tlContent.username;
             this.userNameForColumn.set(tlContent.username + " / " + tlContent.displayName);
 
             if("false".equals(tlContent.sensitive)){
