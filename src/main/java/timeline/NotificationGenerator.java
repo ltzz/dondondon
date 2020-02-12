@@ -13,13 +13,16 @@ import timeline.parser.MastodonNotificationParser;
 import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class NotificationGenerator {
 
     MastodonNotificationParser mastodonParser;
-    private ObservableList<RowContent> data = FXCollections.observableArrayList();
+    private TreeMap<String, RowContent> fetchedContents;
     public NotificationGenerator(MastodonNotificationParser mastodonParser){
         this.mastodonParser = mastodonParser;
+        this.fetchedContents = new TreeMap<String, RowContent>();
     }
 
     // 汎用通知項目データクラス
@@ -91,21 +94,12 @@ public class NotificationGenerator {
         var notificationData = mastodonParser.diffNotification();
 
         for (NotificationContent notification : notificationData) {
-            notificationAdd(notification);
+            fetchedContents.put(notification.id, new RowContent(notification));
         }
 
-        data.sort(Comparator.comparing(notificationContent -> notificationContent.id)); // MastodonではIDの上位48bitは時刻なのでソートに使ってOK
-        Collections.reverse(data); // FIXME: 同時刻の投稿が実行するたびに逆順になる
-        return data;
+        var fetchedList = fetchedContents.values().stream().collect(Collectors.toList());
+        Collections.reverse(fetchedList);  // MastodonではIDの上位48bitは時刻なのでソートに使ってOK
+        return FXCollections.observableArrayList(fetchedList);
     }
 
-    public ObservableList<RowContent> getRowContents(){
-        return data;
-    }
-
-    public void notificationAdd(NotificationContent notificationContent){
-        if(data != null){
-            data.add(new RowContent(notificationContent));
-        }
-    }
 }

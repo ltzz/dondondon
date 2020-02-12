@@ -31,13 +31,10 @@ public class MastodonTimelineParser {
 
     private MastodonTimelineEndPoint endPoint;
 
-    HashSet<String> receivedStatusIds;
-
     public MastodonTimelineParser(String mastodonHost, String mastodonToken, MastodonTimelineEndPoint endPoint){
         this.MASTODON_HOST = mastodonHost;
         this.MASTODON_TOKEN = mastodonToken;
         this.endPoint = endPoint;
-        this.receivedStatusIds = new HashSet<>();
         this.iconCache = new HashMap<>();
     }
 
@@ -152,12 +149,9 @@ public class MastodonTimelineParser {
         public Toot status;
     }
 
-    public List<TimelineGenerator.TLContent> diffTimeline(){
+    public List<TimelineGenerator.TLContent> getTimeline(){
         var toots = getTimelineDto(endPoint.get());
-        var filteredToots = toots.stream().filter(toot -> !receivedStatusIds.contains(toot.id)).collect(Collectors.toList());
-        var received = toots.stream().map(toot -> toot.id).collect(Collectors.toSet());
-        receivedStatusIds.addAll(received);
-        return toTLContent(filteredToots);
+        return toTLContent(toots);
     }
 
     List<TimelineGenerator.TLContent> toTLContent(List<Toot> toots){

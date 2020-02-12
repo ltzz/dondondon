@@ -13,15 +13,17 @@ import timeline.parser.MastodonTimelineParser;
 
 import java.awt.image.BufferedImage;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class TimelineGenerator {
 
     MastodonTimelineParser mastodonParser;
-    private ObservableList<RowContent> data = FXCollections.observableArrayList(); // TODO: TimelineGeneratorの内部状態はHashMapでもいいのでは？返す時ObservableListになればいい 読み込み時は同じIDのもの重複は後勝ち上書き
+    private TreeMap<String, RowContent> fetchedContents;
 
     public TimelineGenerator(MastodonTimelineParser mastodonParser){
         this.mastodonParser = mastodonParser;
+        this.fetchedContents = new TreeMap<String, RowContent>();
     }
 
     public static class DataSourceInfo{
@@ -148,25 +150,22 @@ public class TimelineGenerator {
     }
 
     public ObservableList<RowContent> createRowContents(){
-        var timelineData = mastodonParser.diffTimeline();
+
+        var timelineData = mastodonParser.getTimeline();
 
         for (TLContent tldata : timelineData) {
-            timelineAdd(tldata);
+            fetchedContents.put(tldata.id, new RowContent(tldata)); // FIXME: 上書きなので投稿削除とかの時の挙動が謎
         }
+        var fetchedList = fetchedContents.values().stream().collect(Collectors.toList());
+        Collections.reverse(fetchedList);
 
-        data.sort(Comparator.comparing(tootContent -> tootContent.id)); // MastodonではIDの上位48bitは時刻なのでソートに使ってOK
-        Collections.reverse(data);
-        return data;
+        return FXCollections.observableArrayList(fetchedList);
     }
 
     public ObservableList<RowContent> getRowContents(){
-        return data;
-    }
-
-   public void timelineAdd(TLContent tlContent){
-        if(data != null){
-            data.add(new RowContent(tlContent));
-        }
+        var fetchedList = fetchedContents.values().stream().collect(Collectors.toList());
+        Collections.reverse(fetchedList);  // MastodonではIDの上位48bitは時刻なのでソートに使ってOK
+        return FXCollections.observableArrayList(fetchedList);
     }
 }
 
