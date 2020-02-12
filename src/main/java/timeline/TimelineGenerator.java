@@ -11,16 +11,14 @@ import javafx.scene.image.ImageView;
 
 import timeline.parser.MastodonTimelineParser;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
 
 public class TimelineGenerator {
 
     MastodonTimelineParser mastodonParser;
-    ObservableList<RowContent> data = FXCollections.observableArrayList();
+    ObservableList<RowContent> data = FXCollections.observableArrayList(); // TODO: TimelineGeneratorの内部状態はHashMapでもいいのでは？返す時ObservableListになればいい 読み込み時は同じIDのもの重複は後勝ち上書き
 
     public TimelineGenerator(MastodonTimelineParser mastodonParser){
         this.mastodonParser = mastodonParser;
@@ -52,7 +50,7 @@ public class TimelineGenerator {
         String reblogged;
         String sensitive;
         String reblogOriginalUsername;
-        String avatarURL;
+        BufferedImage avatarIcon;
 
         public TLContent(DataSourceInfo dataSourceInfo,
                          String userId, String acct,
@@ -62,7 +60,7 @@ public class TimelineGenerator {
                          String date,
                          String favorited, String reblogged, String sensitive,
                          String reblogOriginalUsername,
-                         String avatarURL) {
+                         BufferedImage avatarIcon) {
             this.dataSourceInfo = dataSourceInfo;
             this.userId = userId;
             this.acct = acct;
@@ -76,7 +74,7 @@ public class TimelineGenerator {
             this.reblogged = reblogged;
             this.sensitive = sensitive;
             this.reblogOriginalUsername = reblogOriginalUsername;
-            this.avatarURL = avatarURL;
+            this.avatarIcon = avatarIcon;
         }
     }
 
@@ -102,11 +100,8 @@ public class TimelineGenerator {
             this.userId = tlContent.userId;
             this.acct = tlContent.acct;
 
-                    BufferedImage icon = null;
             try {
-                // TODO: この実装セキュリティ的に大丈夫かどうか詳しい人に聞く
-                icon = ImageIO.read(new URL(tlContent.avatarURL));
-                ImageView iconView = new ImageView(SwingFXUtils.toFXImage(icon, null));
+                ImageView iconView = new ImageView(SwingFXUtils.toFXImage(tlContent.avatarIcon, null));
                 iconView.setFitWidth(20);
                 iconView.setFitHeight(20);
                 this.userIcon.set(iconView);

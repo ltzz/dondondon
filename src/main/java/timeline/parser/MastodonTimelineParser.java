@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.ImageView;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
@@ -11,7 +13,11 @@ import org.jsoup.safety.Whitelist;
 import timeline.TimelineGenerator;
 import timeline.parser.timelineEndPoint.MastodonTimelineEndPoint;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -21,6 +27,7 @@ public class MastodonTimelineParser {
 
     public final String MASTODON_HOST;
     public final String MASTODON_TOKEN;
+    private HashMap<String, BufferedImage> iconCache;
 
     private MastodonTimelineEndPoint endPoint;
 
@@ -31,6 +38,7 @@ public class MastodonTimelineParser {
         this.MASTODON_TOKEN = mastodonToken;
         this.endPoint = endPoint;
         this.receivedStatusIds = new HashSet<>();
+        this.iconCache = new HashMap<>();
     }
 
     @JsonIgnoreProperties(ignoreUnknown=true)
@@ -181,9 +189,21 @@ public class MastodonTimelineParser {
                 }
             }
 
-            var avaterURL = "";
+            BufferedImage avatarIcon = null;
             if (validateURL(toot.account.avatar_static)) {
-                avaterURL = toot.account.avatar_static;
+                var avatarURL = toot.account.avatar_static;
+                try {
+                    // TODO: この実装セキュリティ的に大丈夫かどうか詳しい人に聞く
+                    if(iconCache.containsKey(avatarURL)){
+                        avatarIcon = iconCache.get(avatarURL);
+                    }
+                    else {
+                        avatarIcon = ImageIO.read(new URL(avatarURL));
+                        iconCache.put(avatarURL, avatarIcon);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
 
             TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", MASTODON_HOST, toot.id);
@@ -191,12 +211,12 @@ public class MastodonTimelineParser {
                     toot.account.id, toot.account.acct,
                     toot.account.username, toot.account.display_name,
                     text, htmltext, imageURL,
-                    toot.created_at, toot.favourited, toot.reblogged, toot.sensitive, rebloggUser, avaterURL));
+                    toot.created_at, toot.favourited, toot.reblogged, toot.sensitive, rebloggUser, avatarIcon));
         });
         return listForGenerator;
     }
 
-    List<Toot> getTimelineDto(String json){
+    static List<Toot> getTimelineDto(String json){
         try {
             ObjectMapper mapper = new ObjectMapper();
             List<Toot> toots = mapper.readValue(json, new TypeReference<List<Toot>>() {});
@@ -208,7 +228,7 @@ public class MastodonTimelineParser {
         return List.of();
     }
 
-    Toot getStatus(String json){
+    static Toot getStatus(String json){
         try {
             ObjectMapper mapper = new ObjectMapper();
             Toot toot = mapper.readValue(json, new TypeReference<Toot>() {});

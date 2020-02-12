@@ -8,7 +8,11 @@ import org.jsoup.Jsoup;
 import timeline.NotificationGenerator;
 import timeline.TimelineGenerator;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +21,7 @@ public class MastodonNotificationParser {
 
     public final String MASTODON_HOST;
     public final String MASTODON_TOKEN;
+    private HashMap<String, BufferedImage> iconCache;
 
     HashSet<String> receivedNotificationIds;
 
@@ -24,6 +29,7 @@ public class MastodonNotificationParser {
         this.MASTODON_HOST = mastodonHost;
         this.MASTODON_TOKEN = mastodonToken;
         this.receivedNotificationIds = new HashSet<>();
+        this.iconCache = new HashMap<>();
     }
 
     @JsonIgnoreProperties(ignoreUnknown=true)
@@ -59,8 +65,25 @@ public class MastodonNotificationParser {
                 avaterURL = notification.account.avatar_static;
             }
 
+            BufferedImage avatarIcon = null;
+            if (MastodonTimelineParser.validateURL(notification.account.avatar_static)) {
+                var avatarURL = notification.account.avatar_static;
+                try {
+                    // TODO: この実装セキュリティ的に大丈夫かどうか詳しい人に聞く
+                    if(iconCache.containsKey(avatarURL)){
+                        avatarIcon = iconCache.get(avatarURL);
+                    }
+                    else {
+                        avatarIcon = ImageIO.read(new URL(avatarURL));
+                        iconCache.put(avatarURL, avatarIcon);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+
             TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", MASTODON_HOST, notification.id);
-            listForGenerator.add(new NotificationGenerator.NotificationContent(dataSourceInfo, notification.account.username, notification.account.display_name, notificationText, notification.created_at, avaterURL));
+            listForGenerator.add(new NotificationGenerator.NotificationContent(dataSourceInfo, notification.account.username, notification.account.display_name, notificationText, notification.created_at, avatarIcon));
         });
         return listForGenerator;
     }

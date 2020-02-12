@@ -10,9 +10,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.ImageView;
 import timeline.parser.MastodonNotificationParser;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -31,19 +29,19 @@ public class NotificationGenerator {
         String displayName;
         String contentText;
         String createdAt;
-        String avatarURL;
+        BufferedImage avatarIcon;
 
         public NotificationContent(TimelineGenerator.DataSourceInfo dataSourceInfo,
                                    String username, String displayName,
                                    String contentText,
                                    String createdAt,
-                                   String avatarURL) {
+                                   BufferedImage avatarIcon) {
             this.dataSourceInfo = dataSourceInfo;
             this.username = username;
             this.displayName = displayName;
             this.contentText = contentText;
             this.createdAt = createdAt;
-            this.avatarURL = avatarURL;
+            this.avatarIcon = avatarIcon;
         }
     }
 
@@ -57,11 +55,8 @@ public class NotificationGenerator {
         RowContent(NotificationContent notificationContent){
             this.dataSourceInfo = notificationContent.dataSourceInfo;
 
-            BufferedImage icon = null;
             try {
-                // TODO: この実装セキュリティ的に大丈夫かどうか詳しい人に聞く
-                icon = ImageIO.read(new URL(notificationContent.avatarURL));
-                ImageView iconView = new ImageView(SwingFXUtils.toFXImage(icon, null));
+                ImageView iconView = new ImageView(SwingFXUtils.toFXImage(notificationContent.avatarIcon, null));
                 iconView.setFitWidth(20);
                 iconView.setFitHeight(20);
                 this.userIcon.set(iconView);

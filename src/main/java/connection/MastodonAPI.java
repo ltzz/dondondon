@@ -6,22 +6,30 @@ import static connection.WebRequest.requestGET;
 
 
 public class MastodonAPI {
-    String mastodonHost;
-    String accessToken;
+    public final String mastodonHost;
+    public final String accessToken;
 
     public MastodonAPI(String mastodonHost, String accessToken){
         this.mastodonHost = mastodonHost;
         this.accessToken = accessToken;
     }
 
-    public void addFavorite(String tootId) {
+    public String reblog(String tootId) {
+        String url = mastodonHost + "/api/v1/statuses/"+tootId+"/reblog";
+        var headers = new HashMap<String,String>();
+        headers.put("Authorization", "Bearer " + accessToken);
+
+        var responseBody = WebRequest.requestPOST(url, headers, "");
+        return responseBody;
+    }
+
+    public String addFavorite(String tootId) {
         String url = mastodonHost + "/api/v1/statuses/"+tootId+"/favourite";
         var headers = new HashMap<String,String>();
         headers.put("Authorization", "Bearer " + accessToken);
 
         var responseBody = WebRequest.requestPOST(url, headers, "");
-        // System.out.println(responseBody);
-        // TODO: ここのレスポンスを見てお気に入り状態を表示に反映
+        return responseBody;
     }
 
     public void postStatus(String text, String inReplyToId) {

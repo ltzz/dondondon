@@ -17,6 +17,7 @@ import javafx.util.Callback;
 import misc.Common;
 import misc.Settings;
 import timeline.TimelineGenerator;
+import timeline.parser.MastodonWriteAPIParser;
 
 import java.util.stream.Collectors;
 
@@ -145,12 +146,21 @@ public class TimelineViewController implements Initializable, IReload {
 
             if( "mastodon".equals(selectedToot.dataSourceInfo.serverType) ) {
                 // TODO: データ読み込み元ホストに応じてAPI叩く鯖切り替え
-                postMastodonAPI.addFavorite(statusId);
+                MastodonWriteAPIParser mastodonWriteAPIParser = new MastodonWriteAPIParser(postMastodonAPI.mastodonHost, postMastodonAPI.accessToken);
+                mastodonWriteAPIParser.addFavorite(statusId); // TODO: 成功時、TimelineGeneratorの内部状態への反映
             }
         });
 
         menuItemReblog.setOnAction((ActionEvent t) -> {
-            Common.NotImplementAlert();
+            var selectedToot = tableView.getSelectionModel().getSelectedItem();
+            var hostname = selectedToot.dataSourceInfo.hostname;
+            var statusId = selectedToot.dataSourceInfo.statusId;
+
+            if( "mastodon".equals(selectedToot.dataSourceInfo.serverType) ) {
+                // TODO: データ読み込み元ホストに応じてAPI叩く鯖切り替え
+                MastodonWriteAPIParser mastodonWriteAPIParser = new MastodonWriteAPIParser(postMastodonAPI.mastodonHost, postMastodonAPI.accessToken);
+                mastodonWriteAPIParser.reblog(statusId); // TODO: 成功時、TimelineGeneratorの内部状態への反映
+            }
         });
 
         menuItemUserTimeline.setOnAction((ActionEvent t) -> {
