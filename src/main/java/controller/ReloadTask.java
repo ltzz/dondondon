@@ -9,9 +9,9 @@ import java.util.List;
 public class ReloadTask {
 
     private Timeline timeline;
-    private List<IReload>  generators;
+    private List<IContentListController>  generators;
 
-    public ReloadTask(List<IReload> generators){
+    public ReloadTask(List<IContentListController> generators){
         this.generators = generators;
     }
 

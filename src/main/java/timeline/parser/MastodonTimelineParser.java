@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.ImageView;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
@@ -18,22 +16,22 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class MastodonTimelineParser {
 
     public final String MASTODON_HOST;
     public final String MASTODON_TOKEN;
+    public final String loginUsername;
     private HashMap<String, BufferedImage> iconCache;
 
     private MastodonTimelineEndPoint endPoint;
 
-    public MastodonTimelineParser(String mastodonHost, String mastodonToken, MastodonTimelineEndPoint endPoint){
+    public MastodonTimelineParser(String mastodonHost, String mastodonToken, MastodonTimelineEndPoint endPoint, String username){
         this.MASTODON_HOST = mastodonHost;
         this.MASTODON_TOKEN = mastodonToken;
+        this.loginUsername = username;
         this.endPoint = endPoint;
         this.iconCache = new HashMap<>();
     }
@@ -200,8 +198,8 @@ public class MastodonTimelineParser {
                 }
             }
 
-            TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", MASTODON_HOST);
-            listForGenerator.add(new TimelineGenerator.TLContent(dataSourceInfo,
+            TimelineGenerator.DataOriginInfo dataOriginInfo = new TimelineGenerator.DataOriginInfo("mastodon", MASTODON_HOST, loginUsername, MASTODON_TOKEN);
+            listForGenerator.add(new TimelineGenerator.TLContent(dataOriginInfo,
                     toot.id,
                     toot.account.id, toot.account.acct,
                     toot.account.username, toot.account.display_name,

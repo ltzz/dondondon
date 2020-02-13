@@ -12,7 +12,6 @@ import timeline.parser.MastodonNotificationParser;
 
 import java.awt.image.BufferedImage;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -27,7 +26,7 @@ public class NotificationGenerator {
 
     // 汎用通知項目データクラス
     public static class NotificationContent {
-        TimelineGenerator.DataSourceInfo dataSourceInfo;
+        TimelineGenerator.DataOriginInfo dataOriginInfo;
         String id;
         String userId;
         String username;
@@ -36,14 +35,14 @@ public class NotificationGenerator {
         String createdAt;
         BufferedImage avatarIcon;
 
-        public NotificationContent(TimelineGenerator.DataSourceInfo dataSourceInfo,
+        public NotificationContent(TimelineGenerator.DataOriginInfo dataOriginInfo,
                                    String id,
                                    String userId,
                                    String username, String displayName,
                                    String contentText,
                                    String createdAt,
                                    BufferedImage avatarIcon) {
-            this.dataSourceInfo = dataSourceInfo;
+            this.dataOriginInfo = dataOriginInfo;
             this.id = id;
             this.userId = userId;
             this.username = username;
@@ -58,14 +57,14 @@ public class NotificationGenerator {
         public String id;
         public String userId;
         public String userName;
-        public final TimelineGenerator.DataSourceInfo dataSourceInfo;
+        public final TimelineGenerator.DataOriginInfo dataOriginInfo;
         public StringProperty contentText = new SimpleStringProperty();
         public StringProperty createdAt = new SimpleStringProperty();
         private ObjectProperty userIcon = new SimpleObjectProperty();
         public StringProperty contentTextForColumn = new SimpleStringProperty();
 
         RowContent(NotificationContent notificationContent){
-            this.dataSourceInfo = notificationContent.dataSourceInfo;
+            this.dataOriginInfo = notificationContent.dataOriginInfo;
             this.id = notificationContent.id;
             this.userId = notificationContent.userId;
             this.userName = notificationContent.username;

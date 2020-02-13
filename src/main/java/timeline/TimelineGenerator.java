@@ -26,18 +26,25 @@ public class TimelineGenerator {
         this.fetchedContents = new TreeMap<String, RowContent>();
     }
 
-    public static class DataSourceInfo{
+    public static class DataOriginInfo {
         public String serverType;
         public String hostname;
-        public DataSourceInfo(String serverType, String hostname){
+        public String username;
+        private String token;
+        public DataOriginInfo(String serverType, String hostname, String username, String token){
             this.serverType = serverType;
             this.hostname = hostname;
+            this.username = username;
+            this.token = token;
+        }
+        public String getToken(){
+            return token;
         }
     }
 
     // 汎用タイムライン項目データクラス
     public static class TLContent{
-        final DataSourceInfo dataSourceInfo;
+        final DataOriginInfo dataOriginInfo;
         String id;
         String userId;
         String acct;
@@ -53,7 +60,7 @@ public class TimelineGenerator {
         String reblogOriginalUsername;
         BufferedImage avatarIcon;
 
-        public TLContent(DataSourceInfo dataSourceInfo,
+        public TLContent(DataOriginInfo dataOriginInfo,
                          String id,
                          String userId, String acct,
                          String username, String displayName,
@@ -63,7 +70,7 @@ public class TimelineGenerator {
                          String favorited, String reblogged, String sensitive,
                          String reblogOriginalUsername,
                          BufferedImage avatarIcon) {
-            this.dataSourceInfo = dataSourceInfo;
+            this.dataOriginInfo = dataOriginInfo;
             this.id = id;
             this.userId = userId;
             this.acct = acct;
@@ -82,7 +89,7 @@ public class TimelineGenerator {
     }
 
     public static class RowContent {
-        public DataSourceInfo dataSourceInfo;
+        public DataOriginInfo dataOriginInfo;
         public String id;
         public String userId;
         public String userName;
@@ -100,7 +107,7 @@ public class TimelineGenerator {
         public StringProperty contentDate = new SimpleStringProperty();
 
         RowContent(TLContent tlContent){
-            this.dataSourceInfo = tlContent.dataSourceInfo;
+            this.dataOriginInfo = tlContent.dataOriginInfo;
             this.id = tlContent.id;
             this.userId = tlContent.userId;
             this.acct = tlContent.acct;

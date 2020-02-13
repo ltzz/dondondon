@@ -14,20 +14,20 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
 
-import misc.Settings;
 import timeline.TimelineGenerator;
 import timeline.parser.MastodonWriteAPIParser;
 
 import java.util.stream.Collectors;
 
-public class TimelineViewController implements Initializable, IReload {
+public class TimelineViewController implements Initializable, IContentListController {
     @FXML
     private TableView<TimelineGenerator.RowContent> tableView;
 
-    private Settings settings;
     private Controller rootController;
     private TimelineGenerator timelineGenerator;
     private MastodonAPI postMastodonAPI;
+
+    String hostname;
 
     @FXML
     private TableColumn iconCol;
@@ -82,11 +82,11 @@ public class TimelineViewController implements Initializable, IReload {
         reload();
     }
 
-    public void registerParentControllerObject(Controller rootController, Settings settings, TimelineGenerator timelineGenerator, MastodonAPI postMastodonAPI){
+    public void registerParentControllerObject(Controller rootController, TimelineGenerator timelineGenerator, MastodonAPI postMastodonAPI, String hostname){
         this.rootController = rootController;
-        this.settings = settings;
         this.postMastodonAPI = postMastodonAPI;
         this.timelineGenerator = timelineGenerator;
+        this.hostname = hostname;
     }
 
     public void registerWebViewOutput(WebView webView){
@@ -139,10 +139,10 @@ public class TimelineViewController implements Initializable, IReload {
         MenuItem menuItemReply = new MenuItem("返信");
         menuItemFavorite.setOnAction((ActionEvent t) -> {
             var selectedToot = tableView.getSelectionModel().getSelectedItem();
-            var hostname = selectedToot.dataSourceInfo.hostname;
+            var hostname = selectedToot.dataOriginInfo.hostname;
             var statusId = selectedToot.id;
 
-            if( "mastodon".equals(selectedToot.dataSourceInfo.serverType) ) {
+            if( "mastodon".equals(selectedToot.dataOriginInfo.serverType) ) {
                 // TODO: データ読み込み元ホストに応じてAPI叩く鯖切り替え
                 MastodonWriteAPIParser mastodonWriteAPIParser = new MastodonWriteAPIParser(postMastodonAPI.mastodonHost, postMastodonAPI.accessToken);
                 mastodonWriteAPIParser.addFavorite(statusId); // TODO: 成功時、TimelineGeneratorの内部状態への反映
@@ -151,10 +151,10 @@ public class TimelineViewController implements Initializable, IReload {
 
         menuItemReblog.setOnAction((ActionEvent t) -> {
             var selectedToot = tableView.getSelectionModel().getSelectedItem();
-            var hostname = selectedToot.dataSourceInfo.hostname;
+            var hostname = selectedToot.dataOriginInfo.hostname;
             var statusId = selectedToot.id;
 
-            if( "mastodon".equals(selectedToot.dataSourceInfo.serverType) ) {
+            if( "mastodon".equals(selectedToot.dataOriginInfo.serverType) ) {
                 // TODO: データ読み込み元ホストに応じてAPI叩く鯖切り替え
                 MastodonWriteAPIParser mastodonWriteAPIParser = new MastodonWriteAPIParser(postMastodonAPI.mastodonHost, postMastodonAPI.accessToken);
                 mastodonWriteAPIParser.reblog(statusId); // TODO: 成功時、TimelineGeneratorの内部状態への反映
@@ -163,7 +163,7 @@ public class TimelineViewController implements Initializable, IReload {
 
         menuItemUserTimeline.setOnAction((ActionEvent t) -> {
             var selectedToot = tableView.getSelectionModel().getSelectedItem();
-            rootController.addUserTab(selectedToot.userId, selectedToot.userName);
+            rootController.addUserTab(selectedToot.userId, selectedToot.userName, hostname, selectedToot.dataOriginInfo.getToken());
         });
 
         menuItemReply.setOnAction((ActionEvent t) -> {

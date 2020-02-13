@@ -6,7 +6,7 @@ import java.util.*;
 public class Settings {
 
     final String settingsFileName = "settings.txt";
-    final int MAX_INSTANCES = 1;
+    final int MAX_INSTANCES = 2;
     List<InstanceSetting> instanceSettings;
 
     public Settings(){
@@ -34,9 +34,9 @@ public class Settings {
         }
     }
 
-    public InstanceSetting getInstanceSetting(){ // FIXME: 一旦1インスタンスのみの対応で実装
+    public List<InstanceSetting> getInstanceSettings(){
         if(instanceSettings.size() >= 1){
-            return instanceSettings.get(0);
+            return instanceSettings;
         }
         else {
             return null;

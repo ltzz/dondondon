@@ -7,6 +7,8 @@ img.emoji {
 
 a:link {
   color: #589DF6;
+  /* FIXME: 危なそうなので一旦リンクは無効化 今後Java側でリンク処理するようにする */
+  pointer-events: none;
 }
 
 .ContentWrapper {

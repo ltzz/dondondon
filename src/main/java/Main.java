@@ -1,3 +1,4 @@
+import controller.Controller;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,7 +11,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("layout/ui_main.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("layout/ui_main.fxml"));
+        Parent root = loader.load();
+        Controller controller = loader.getController();
+        controller.setStage(primaryStage);
         primaryStage.setTitle("${CLIENT_NAME}");
         var scene = new Scene(root, 600, 500);
         scene.getStylesheets().add("dark.css");

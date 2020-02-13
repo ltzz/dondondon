@@ -13,7 +13,7 @@ public class SettingsLoadOnStart {
 
     public void startSequence(){ // TODO: 多インスタンス対応
         settings.load();
-        var instanceSetting = settings.getInstanceSetting();
+        var instanceSetting = settings.getInstanceSettings();
         if( instanceSetting != null ){
 
         }

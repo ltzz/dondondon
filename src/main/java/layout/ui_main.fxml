@@ -21,6 +21,7 @@
         <Menu text="全般">
             <items>
                 <CheckMenuItem fx:id="userIconVisible" text="アイコン非表示" onAction="#onMenuItemUserIconInvisible"></CheckMenuItem>
+                <MenuItem fx:id="tabSetting" text="タブの設定" onAction="#onMenuItemTabSetting"></MenuItem>
                 <MenuItem text="読み込み" onAction="#onMenuItemReload"/>
                 <Menu text="自動読み込み">
                     <fx:define>

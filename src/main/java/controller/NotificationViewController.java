@@ -8,16 +8,15 @@ import javafx.scene.control.*;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.util.Callback;
 
-import misc.Settings;
 import timeline.NotificationGenerator;
 
-public class NotificationViewController implements Initializable, IReload {
+public class NotificationViewController implements Initializable, IContentListController {
     @FXML
     private TableView<NotificationGenerator.RowContent> tableView;
 
     private Controller rootController;
-    private Settings settings;
     private NotificationGenerator notificationGenerator;
+    String hostname;
 
     @FXML
     private TableColumn iconCol;
@@ -53,10 +52,10 @@ public class NotificationViewController implements Initializable, IReload {
         }
     }
 
-    public void registerParentControllerObject(Controller rootController, Settings settings, NotificationGenerator notificationGenerator){
+    public void registerParentControllerObject(Controller rootController, NotificationGenerator notificationGenerator, String hostname){
         this.rootController = rootController;
-        this.settings = settings;
         this.notificationGenerator = notificationGenerator;
+        this.hostname = hostname;
     }
 
     private void contextMenuInit(){
@@ -64,7 +63,7 @@ public class NotificationViewController implements Initializable, IReload {
         MenuItem menuItemUserTimeline = new MenuItem("このユーザーのタイムラインを見る");
         menuItemUserTimeline.setOnAction((ActionEvent t) -> {
             var selectedNotification = tableView.getSelectionModel().getSelectedItem();
-            rootController.addUserTab(selectedNotification.userId, selectedNotification.userName);
+            rootController.addUserTab(selectedNotification.userId, selectedNotification.userName, hostname, selectedNotification.dataOriginInfo.getToken());
         });
 
         tableView.setOnContextMenuRequested((ContextMenuEvent event) -> {

@@ -21,13 +21,15 @@ public class MastodonNotificationParser {
 
     public final String MASTODON_HOST;
     public final String MASTODON_TOKEN;
+    public final String loginUsername;
     private HashMap<String, BufferedImage> iconCache;
 
     HashSet<String> receivedNotificationIds;
 
-    public MastodonNotificationParser(String mastodonHost, String mastodonToken){
+    public MastodonNotificationParser(String mastodonHost, String mastodonToken, String username){
         this.MASTODON_HOST = mastodonHost;
         this.MASTODON_TOKEN = mastodonToken;
+        this.loginUsername = username;
         this.receivedNotificationIds = new HashSet<>();
         this.iconCache = new HashMap<>();
     }
@@ -82,8 +84,8 @@ public class MastodonNotificationParser {
                 }
             }
 
-            TimelineGenerator.DataSourceInfo dataSourceInfo = new TimelineGenerator.DataSourceInfo("mastodon", MASTODON_HOST);
-            listForGenerator.add(new NotificationGenerator.NotificationContent(dataSourceInfo, notification.id, notification.account.id,
+            TimelineGenerator.DataOriginInfo dataOriginInfo = new TimelineGenerator.DataOriginInfo("mastodon", loginUsername, MASTODON_HOST, MASTODON_TOKEN);
+            listForGenerator.add(new NotificationGenerator.NotificationContent(dataOriginInfo, notification.id, notification.account.id,
                     notification.account.username, notification.account.display_name, notificationText, notification.created_at, avatarIcon));
         });
         return listForGenerator;
