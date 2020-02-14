@@ -33,12 +33,25 @@ public class ReloadTask {
 
     private void reload(){
         for(var generator : generators) {
-            generator.reload();
+            var thread = new ReloadThread(generator);
+            thread.start();
         }
     }
 
     public void stop() {
         if (timeline == null) return;
         timeline.stop();
+    }
+
+    // TODO: 通信使うやつ全てのスレッド化
+    static class ReloadThread extends Thread{
+        IContentListController contentListController;
+        public ReloadThread(IContentListController contentListController){
+            this.contentListController = contentListController;
+        }
+
+        public void run(){
+            contentListController.reload();
+        }
     }
 }
