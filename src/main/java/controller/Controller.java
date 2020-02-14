@@ -253,7 +253,7 @@ public class Controller implements Initializable {
                                     new HomeTimelineGet(hostname, accessToken), myUserName)
                     );
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/timeline_view.fxml"));
-                    Tab tab = new Tab("default");
+                    Tab tab = new Tab("home");
                     tab.setClosable(false);
                     AnchorPane pane = loader.load();
                     tab.setContent(pane);
