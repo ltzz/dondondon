@@ -77,7 +77,9 @@ public class MastodonNotificationParser {
                     }
                     else {
                         avatarIcon = ImageIO.read(new URL(avatarURL));
-                        iconCache.put(avatarURL, avatarIcon);
+                        if(avatarIcon != null) {
+                            iconCache.put(avatarURL, avatarIcon);
+                        }
                     }
                 }catch (Exception e){
                     e.printStackTrace();
