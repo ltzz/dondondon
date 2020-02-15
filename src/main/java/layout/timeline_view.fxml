@@ -21,7 +21,7 @@
                 <TableColumn fx:id="userNameCol" text="username" maxWidth="200">
                     <cellValueFactory><PropertyValueFactory property="userName" /></cellValueFactory>
                 </TableColumn>
-                <TableColumn fx:id="contentTextCol" text="content" prefWidth="300" maxWidth="500">
+                <TableColumn fx:id="contentTextCol" text="content" prefWidth="500" maxWidth="1000">
                     <cellValueFactory><PropertyValueFactory property="contentText" /></cellValueFactory>
                 </TableColumn>
                 <TableColumn fx:id="contentDateCol" text="date" prefWidth="150" maxWidth="200">

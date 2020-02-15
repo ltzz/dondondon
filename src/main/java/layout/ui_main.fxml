@@ -34,14 +34,14 @@
         </Menu>
         <Menu text="バージョン"><MenuItem text="バージョン" onAction="#onMenuItemVersion"/></Menu>
     </MenuBar>
-    <SplitPane orientation="VERTICAL" dividerPositions="0.6,0.8">
+    <SplitPane orientation="VERTICAL" dividerPositions="0.6,0.8" prefHeight="10000">
         <TabPane fx:id="tabPane" styleClass="u-pd2">
             <!-- ここには動的にタブが入る -->
         </TabPane>
-        <HBox GridPane.rowIndex="1" styleClass="u-pd2">
+        <HBox styleClass="u-pd2" minHeight="100" prefHeight="200" maxHeight="500">
             <WebView fx:id="webView" prefWidth="10000"></WebView>
         </HBox>
-        <HBox GridPane.rowIndex="2" styleClass="u-pd2">
+        <HBox styleClass="u-pd2" minHeight="100" prefHeight="200" maxHeight="500">
             <TextArea fx:id="textArea" wrapText="true"></TextArea>
             <VBox>
                 <MenuButton><items>
