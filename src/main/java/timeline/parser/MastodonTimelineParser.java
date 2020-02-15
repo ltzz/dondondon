@@ -14,9 +14,8 @@ import timeline.parser.timelineEndPoint.MastodonTimelineEndPoint;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class MastodonTimelineParser {
@@ -200,13 +199,23 @@ public class MastodonTimelineParser {
                 }
             }
 
+            Date createdAt = null;
+            try {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
+                format.setTimeZone(TimeZone.getTimeZone("UTC"));
+                createdAt = format.parse(toot.created_at);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+
             TimelineGenerator.DataOriginInfo dataOriginInfo = new TimelineGenerator.DataOriginInfo("mastodon", MASTODON_HOST, loginUsername, MASTODON_TOKEN);
             listForGenerator.add(new TimelineGenerator.TLContent(dataOriginInfo,
                     toot.id,
                     toot.account.id, toot.account.acct,
                     toot.account.username, toot.account.display_name,
                     text, htmltext, imageURL,
-                    toot.created_at, toot.favourited, toot.reblogged, toot.sensitive, rebloggUser, avatarIcon));
+                    createdAt, toot.favourited, toot.reblogged, toot.sensitive, rebloggUser, avatarIcon));
         });
         return listForGenerator;
     }

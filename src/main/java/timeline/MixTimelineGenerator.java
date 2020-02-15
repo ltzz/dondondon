@@ -17,17 +17,10 @@ public class MixTimelineGenerator implements ITimelineGenerator {
         private Date date;
         private String host;
 
-        public MixTimelineId(String id, String dateStr, String host){
+        public MixTimelineId(String id, Date date, String host){
             this.id = id;
             this.host = host;
-            this.date = null;
-            try {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
-                this.date = format.parse(dateStr);
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
+            this.date = date;
         }
 
         @Override
@@ -64,10 +57,10 @@ public class MixTimelineGenerator implements ITimelineGenerator {
         ObservableList<TimelineGenerator.RowContent> rowContents2 = timelineGenerator2.createRowContents();
 
         for (var rowContent : rowContents1) {
-            fetchedContents.put(new MixTimelineId(rowContent.id, rowContent.contentDate.get(), rowContent.dataOriginInfo.hostname), rowContent);
+            fetchedContents.put(new MixTimelineId(rowContent.id, rowContent.date, rowContent.dataOriginInfo.hostname), rowContent);
         }
         for (var rowContent : rowContents2) {
-            fetchedContents.put(new MixTimelineId(rowContent.id, rowContent.contentDate.get(), rowContent.dataOriginInfo.hostname), rowContent);
+            fetchedContents.put(new MixTimelineId(rowContent.id, rowContent.date, rowContent.dataOriginInfo.hostname), rowContent);
         }
 
         var fetchedList = fetchedContents.values().stream().collect(Collectors.toList());

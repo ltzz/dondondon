@@ -25,7 +25,7 @@
                     <cellValueFactory><PropertyValueFactory property="contentText" /></cellValueFactory>
                 </TableColumn>
                 <TableColumn fx:id="contentDateCol" text="date" prefWidth="150" maxWidth="200">
-                    <cellValueFactory><PropertyValueFactory property="contentDate" /></cellValueFactory>
+                    <cellValueFactory><PropertyValueFactory property="date" /></cellValueFactory>
                 </TableColumn>
             </columns>
         </TableView>

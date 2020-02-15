@@ -13,8 +13,8 @@ import timeline.parser.ITimelineGenerator;
 import timeline.parser.MastodonTimelineParser;
 
 import java.awt.image.BufferedImage;
-import java.util.Collections;
-import java.util.TreeMap;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TimelineGenerator implements ITimelineGenerator {
@@ -54,7 +54,7 @@ public class TimelineGenerator implements ITimelineGenerator {
         String contentText;
         String contentHtml;
         String contentImageURL;
-        String date;
+        Date date;
         String favorited;
         String reblogged;
         String sensitive;
@@ -67,7 +67,7 @@ public class TimelineGenerator implements ITimelineGenerator {
                          String username, String displayName,
                          String contentText, String contentHtml,
                          String contentImageURL,
-                         String date,
+                         Date date,
                          String favorited, String reblogged, String sensitive,
                          String reblogOriginalUsername,
                          BufferedImage avatarIcon) {
@@ -102,10 +102,11 @@ public class TimelineGenerator implements ITimelineGenerator {
         public String reblogged;
         public String sensitive;
         public String reblogOriginalUserId;
-        private ObjectProperty userIcon = new SimpleObjectProperty();
+        public Date date;
+        private ObjectProperty<ImageView> userIcon = new SimpleObjectProperty<ImageView>();
         public StringProperty userNameForColumn = new SimpleStringProperty();
         public StringProperty contentTextForColumn = new SimpleStringProperty();
-        public StringProperty contentDate = new SimpleStringProperty();
+        public StringProperty dateForColumn = new SimpleStringProperty();
 
         RowContent(TLContent tlContent){
             this.dataOriginInfo = tlContent.dataOriginInfo;
@@ -141,7 +142,12 @@ public class TimelineGenerator implements ITimelineGenerator {
 
             this.contentHtml = tlContent.contentHtml;
 
-            this.contentDate.set(tlContent.date);
+            this.date = tlContent.date;
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+            simpleDateFormat.setTimeZone(TimeZone.getDefault());
+
+            this.dateForColumn.set(simpleDateFormat.format(tlContent.date));
             this.favorited = tlContent.favorited;
             this.reblogged = tlContent.reblogged;
             this.sensitive = tlContent.sensitive;
@@ -151,10 +157,10 @@ public class TimelineGenerator implements ITimelineGenerator {
             // TODO
         }
 
-        public ObjectProperty userIconProperty(){ return userIcon; }
+        public ObjectProperty<ImageView> userIconProperty(){ return userIcon; }
         public StringProperty userNameProperty(){ return userNameForColumn; }
         public StringProperty contentTextProperty(){ return contentTextForColumn; }
-        public StringProperty contentDateProperty(){ return contentDate; }
+        public StringProperty dateProperty(){ return dateForColumn; }
     }
 
     public ObservableList<RowContent> createRowContents(){
@@ -164,14 +170,14 @@ public class TimelineGenerator implements ITimelineGenerator {
         for (TLContent tldata : timelineData) {
             fetchedContents.put(tldata.id, new RowContent(tldata)); // FIXME: 上書きなので投稿削除とかの時の挙動が謎
         }
-        var fetchedList = fetchedContents.values().stream().collect(Collectors.toList());
+        var fetchedList = new ArrayList<>(fetchedContents.values());
         Collections.reverse(fetchedList);
 
         return FXCollections.observableArrayList(fetchedList);
     }
 
     public ObservableList<RowContent> getRowContents(){
-        var fetchedList = fetchedContents.values().stream().collect(Collectors.toList());
+        var fetchedList = new ArrayList<>(fetchedContents.values());
         Collections.reverse(fetchedList);  // MastodonではIDの上位48bitは時刻なのでソートに使ってOK
         return FXCollections.observableArrayList(fetchedList);
     }

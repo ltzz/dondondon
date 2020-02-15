@@ -11,8 +11,8 @@ import javafx.scene.image.ImageView;
 import timeline.parser.MastodonNotificationParser;
 
 import java.awt.image.BufferedImage;
-import java.util.Collections;
-import java.util.TreeMap;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class NotificationGenerator {
@@ -32,7 +32,7 @@ public class NotificationGenerator {
         String username;
         String displayName;
         String contentText;
-        String createdAt;
+        Date createdAt;
         BufferedImage avatarIcon;
 
         public NotificationContent(TimelineGenerator.DataOriginInfo dataOriginInfo,
@@ -40,7 +40,7 @@ public class NotificationGenerator {
                                    String userId,
                                    String username, String displayName,
                                    String contentText,
-                                   String createdAt,
+                                   Date createdAt,
                                    BufferedImage avatarIcon) {
             this.dataOriginInfo = dataOriginInfo;
             this.id = id;
@@ -58,9 +58,10 @@ public class NotificationGenerator {
         public String userId;
         public String userName;
         public final TimelineGenerator.DataOriginInfo dataOriginInfo;
+        public Date date;
         public StringProperty contentText = new SimpleStringProperty();
-        public StringProperty createdAt = new SimpleStringProperty();
-        private ObjectProperty userIcon = new SimpleObjectProperty();
+        public StringProperty dateForColumn = new SimpleStringProperty();
+        private ObjectProperty<ImageView> userIcon = new SimpleObjectProperty<ImageView>();
         public StringProperty contentTextForColumn = new SimpleStringProperty();
 
         RowContent(NotificationContent notificationContent){
@@ -78,15 +79,23 @@ public class NotificationGenerator {
 
             }
 
+
+            this.date = notificationContent.createdAt;
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+            simpleDateFormat.setTimeZone(TimeZone.getDefault());
+
+            this.dateForColumn.set(simpleDateFormat.format(notificationContent.createdAt));
+
             this.contentTextForColumn.set(notificationContent.username + " / " + notificationContent.displayName);
             this.contentText.set(notificationContent.contentText);
-            this.createdAt.set(notificationContent.createdAt);
+
         }
 
-        public ObjectProperty userIconProperty(){ return userIcon; }
+        public ObjectProperty<ImageView> userIconProperty(){ return userIcon; }
         public StringProperty userNameProperty(){ return contentTextForColumn; }
         public StringProperty contentTextProperty(){ return contentText; }
-        public StringProperty createdAtProperty(){ return createdAt; }
+        public StringProperty dateProperty(){ return dateForColumn; }
     }
 
     public ObservableList<RowContent> createRowContents() {
@@ -96,7 +105,7 @@ public class NotificationGenerator {
             fetchedContents.put(notification.id, new RowContent(notification));
         }
 
-        var fetchedList = fetchedContents.values().stream().collect(Collectors.toList());
+        var fetchedList = new ArrayList<>(fetchedContents.values());
         Collections.reverse(fetchedList);  // MastodonではIDの上位48bitは時刻なのでソートに使ってOK
         return FXCollections.observableArrayList(fetchedList);
     }
