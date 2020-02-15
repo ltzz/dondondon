@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.ImageView;
 
+import timeline.parser.ITimelineGenerator;
 import timeline.parser.MastodonTimelineParser;
 
 import java.awt.image.BufferedImage;
@@ -16,7 +17,7 @@ import java.util.Collections;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-public class TimelineGenerator {
+public class TimelineGenerator implements ITimelineGenerator {
 
     MastodonTimelineParser mastodonParser;
     private TreeMap<String, RowContent> fetchedContents;

@@ -25,8 +25,10 @@ import misc.Settings;
 import misc.SettingsLoadOnStart;
 import misc.Version;
 
+import timeline.MixTimelineGenerator;
 import timeline.NotificationGenerator;
 import timeline.TimelineGenerator;
+import timeline.parser.ITimelineGenerator;
 import timeline.parser.MastodonNotificationParser;
 import timeline.parser.MastodonTimelineParser;
 import timeline.parser.timelineEndPoint.HomeTimelineGet;
@@ -35,6 +37,7 @@ import timeline.parser.timelineEndPoint.UserTimelineGet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class Controller implements Initializable {
@@ -228,18 +231,29 @@ public class Controller implements Initializable {
         }
     }
 
-    @Override
-    public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
-        settings = new Settings();
-        if(true) { // For Developper:　設定保存用
-            SettingsLoadOnStart settingsLoadOnStart = new SettingsLoadOnStart(settings);
-            settingsLoadOnStart.startSequence();
-        }
+    private void initShortcutKey(){
+        final KeyCombination postTextAreaKey =
+                new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN);
+        final KeyCombination filterWordKey =
+                new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN);
 
-        contentControllers = new HashMap<>();
 
-        var controllersForReload = new ArrayList();
-        // 動的タブ追加のテスト
+        textArea.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if(postTextAreaKey.match(event)) {
+                userPostEvent();
+            }
+        });
+
+        root.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if(filterWordKey.match(event)){
+                userFilterWordBoxToggle();
+            }
+        });
+    }
+
+    private void initSpecificTab(){
+        List<IContentListController> controllersForReload = new ArrayList<IContentListController>();
+
         try {
 
             var instanceSettings = settings.getInstanceSettings();
@@ -306,34 +320,67 @@ public class Controller implements Initializable {
                     controllersForReload.add(controller);
                 }
             }
+            { // 試験的
+                // 今のところ2つ以上インスタンスを登録するには設定ファイルを弄る導線しかないため、上級者向け機能として動作する
+                // TODO: 2つ以上インスタンス登録するUIを作った場合は、この機能の有効無効をどこで決めるか仕様を定める
+                // 2つ以上インスタンスの設定情報がある場合はホームタイムラインを合成したタブを出す
+                if(2 < instanceSettings.size() ) {
+                    var hostname1 = instanceSettings.get(0).hostName;
+                    var accessToken1 = instanceSettings.get(0).accessToken;
+                    var hostname2 = instanceSettings.get(1).hostName;
+                    var accessToken2 = instanceSettings.get(1).accessToken;
+                    ITimelineGenerator mixTimelineGenerator = new MixTimelineGenerator(
+                            new TimelineGenerator(
+                                    new MastodonTimelineParser(hostname1, accessToken1,
+                                            new HomeTimelineGet(hostname1, accessToken1), myUserName)
+                            ),
+                            new TimelineGenerator(
+                                    new MastodonTimelineParser(hostname2, accessToken2,
+                                            new HomeTimelineGet(hostname2, accessToken2), myUserName)
+                            )
+                    );
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/timeline_view.fxml"));
+                    Tab tab = new Tab("mix");
+                    tab.setClosable(false);
+                    AnchorPane pane = loader.load();
+                    tab.setContent(pane);
+                    TimelineViewController controller = loader.getController();
+                    tabPane.getTabs().add(tab);
+                    controller.registerParentControllerObject(
+                            this,
+                            mixTimelineGenerator,
+                            new MastodonAPI(hostname1, accessToken1),
+                            hostname1);
+                    controller.registerWebViewOutput(webView);
+                    contentControllers.put("mix<" + hostname1 + "," + hostname2 + ">", controller);
+                    controllersForReload.add(controller);
+                }
+            }
 
         } catch (Exception e){
             e.printStackTrace();
         }
 
+        this.reloadTask = new ReloadTask(controllersForReload);
+    }
+
+    @Override
+    public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
+        settings = new Settings();
+        if(true) { // For Developper:　設定保存用
+            SettingsLoadOnStart settingsLoadOnStart = new SettingsLoadOnStart(settings);
+            settingsLoadOnStart.startSequence();
+        }
+
+        contentControllers = new HashMap<>();
+
+        initSpecificTab();
+
         postMastodonAPI = new MastodonAPI(settings.getInstanceSettings().get(0).hostName, settings.getInstanceSettings().get(0).accessToken);
 
-
-        final KeyCombination postTextAreaKey =
-                new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN);
-        final KeyCombination filterWordKey =
-                new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN);
+        initShortcutKey();
 
 
-        textArea.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            if(postTextAreaKey.match(event)) {
-                userPostEvent();
-            }
-        });
-
-        root.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            if(filterWordKey.match(event)){
-                userFilterWordBoxToggle();
-            }
-        });
-
-
-        this.reloadTask = new ReloadTask(controllersForReload);
         this.reloadTask.manualReload();
     }
 

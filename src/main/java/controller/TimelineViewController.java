@@ -15,6 +15,7 @@ import javafx.scene.web.WebView;
 import javafx.util.Callback;
 
 import timeline.TimelineGenerator;
+import timeline.parser.ITimelineGenerator;
 import timeline.parser.MastodonWriteAPIParser;
 
 import java.util.stream.Collectors;
@@ -24,7 +25,7 @@ public class TimelineViewController implements Initializable, IContentListContro
     private TableView<TimelineGenerator.RowContent> tableView;
 
     private Controller rootController;
-    private TimelineGenerator timelineGenerator;
+    private ITimelineGenerator timelineGenerator;
     private MastodonAPI postMastodonAPI;
 
     String hostname;
@@ -54,6 +55,7 @@ public class TimelineViewController implements Initializable, IContentListContro
         else {
             iconCol.getStyleClass().remove("u-hidden");
         }
+        // TODO: 初期化時にも処理したい
     }
 
     public void tableViewSetItems(ObservableList<TimelineGenerator.RowContent> rowContents){
@@ -82,7 +84,7 @@ public class TimelineViewController implements Initializable, IContentListContro
         reload();
     }
 
-    public void registerParentControllerObject(Controller rootController, TimelineGenerator timelineGenerator, MastodonAPI postMastodonAPI, String hostname){
+    public void registerParentControllerObject(Controller rootController, ITimelineGenerator timelineGenerator, MastodonAPI postMastodonAPI, String hostname){
         this.rootController = rootController;
         this.postMastodonAPI = postMastodonAPI;
         this.timelineGenerator = timelineGenerator;
