@@ -324,7 +324,7 @@ public class Controller implements Initializable {
                 // 今のところ2つ以上インスタンスを登録するには設定ファイルを弄る導線しかないため、上級者向け機能として動作する
                 // TODO: 2つ以上インスタンス登録するUIを作った場合は、この機能の有効無効をどこで決めるか仕様を定める
                 // 2つ以上インスタンスの設定情報がある場合はホームタイムラインを合成したタブを出す
-                if(2 < instanceSettings.size() ) {
+                if( 2 <= instanceSettings.size() ) {
                     var hostname1 = instanceSettings.get(0).hostName;
                     var accessToken1 = instanceSettings.get(0).accessToken;
                     var hostname2 = instanceSettings.get(1).hostName;
