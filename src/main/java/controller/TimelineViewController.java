@@ -139,6 +139,7 @@ public class TimelineViewController implements Initializable, IContentListContro
         MenuItem menuItemReblog = new MenuItem("リブログ");
         MenuItem menuItemUserTimeline = new MenuItem("このユーザーのタイムラインを見る");
         MenuItem menuItemReply = new MenuItem("返信");
+        MenuItem menuItemInfo = new MenuItem("情報");
         menuItemFavorite.setOnAction((ActionEvent t) -> {
             var selectedToot = tableView.getSelectionModel().getSelectedItem();
             var hostname = selectedToot.dataOriginInfo.hostname;
@@ -177,7 +178,26 @@ public class TimelineViewController implements Initializable, IContentListContro
             rootController.userReplyInputStart(statusId, acct);
         });
 
-        contextMenu.getItems().addAll(menuItemFavorite, menuItemReblog, menuItemUserTimeline, menuItemReply);
+        menuItemInfo.setOnAction((ActionEvent t) -> {
+            var selectedToot = tableView.getSelectionModel().getSelectedItem();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK);
+            alert.setTitle("投稿情報");
+            alert.getDialogPane().setHeaderText("投稿情報");
+            var contentText = "";
+            contentText = contentText + "データソース(種類): " + selectedToot.dataOriginInfo.serverType + "\n";
+            contentText = contentText + "データソース(ホスト): " + selectedToot.dataOriginInfo.hostname + "\n";
+            contentText = contentText + "データソース(ユーザー): " + selectedToot.dataOriginInfo.username + "\n";
+            contentText = contentText + "投稿(閲覧注意): " + selectedToot.sensitive + "\n";
+            contentText = contentText + "投稿(お気に入り状態): " + selectedToot.favorited + "\n";
+            contentText = contentText + "投稿(リブログ状態): " + selectedToot.reblogged + "\n";
+            contentText = contentText + "投稿(ID): " + selectedToot.id + "\n";
+            contentText = contentText + "投稿(アカウント): " + selectedToot.acct + "\n";
+            alert.getDialogPane().setContentText(contentText);
+            ButtonType button = alert.showAndWait().orElse(ButtonType.OK);
+            System.out.println(button.toString());
+        });
+
+        contextMenu.getItems().addAll(menuItemFavorite, menuItemReblog, menuItemUserTimeline, menuItemReply, menuItemInfo);
 
         tableView.setOnContextMenuRequested((ContextMenuEvent event) -> {
             contextMenu.show(tableView, event.getScreenX(), event.getScreenY());
