@@ -14,6 +14,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
 
+import misc.BrowserLauncher;
 import timeline.TimelineGenerator;
 import timeline.parser.ITimelineGenerator;
 import timeline.parser.MastodonWriteAPIParser;
@@ -139,6 +140,7 @@ public class TimelineViewController implements Initializable, IContentListContro
         MenuItem menuItemReblog = new MenuItem("リブログ");
         MenuItem menuItemUserTimeline = new MenuItem("このユーザーのタイムラインを見る");
         MenuItem menuItemReply = new MenuItem("返信");
+        MenuItem menuItemStatusURL = new MenuItem("この投稿をブラウザで開く");
         MenuItem menuItemInfo = new MenuItem("情報");
         menuItemFavorite.setOnAction((ActionEvent t) -> {
             var selectedToot = tableView.getSelectionModel().getSelectedItem();
@@ -178,6 +180,11 @@ public class TimelineViewController implements Initializable, IContentListContro
             rootController.userReplyInputStart(statusId, acct);
         });
 
+        menuItemStatusURL.setOnAction((ActionEvent t) -> {
+            var selectedToot = tableView.getSelectionModel().getSelectedItem();
+            BrowserLauncher.launch(selectedToot.url);
+        });
+
         menuItemInfo.setOnAction((ActionEvent t) -> {
             var selectedToot = tableView.getSelectionModel().getSelectedItem();
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK);
@@ -197,7 +204,7 @@ public class TimelineViewController implements Initializable, IContentListContro
             System.out.println(button.toString());
         });
 
-        contextMenu.getItems().addAll(menuItemFavorite, menuItemReblog, menuItemUserTimeline, menuItemReply, menuItemInfo);
+        contextMenu.getItems().addAll(menuItemFavorite, menuItemReblog, menuItemUserTimeline, menuItemReply, menuItemStatusURL, menuItemInfo);
 
         tableView.setOnContextMenuRequested((ContextMenuEvent event) -> {
             contextMenu.show(tableView, event.getScreenX(), event.getScreenY());

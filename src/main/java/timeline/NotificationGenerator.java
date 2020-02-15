@@ -13,7 +13,6 @@ import timeline.parser.MastodonNotificationParser;
 import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class NotificationGenerator {
 

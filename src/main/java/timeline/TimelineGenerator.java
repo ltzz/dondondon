@@ -15,7 +15,6 @@ import timeline.parser.MastodonTimelineParser;
 import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TimelineGenerator implements ITimelineGenerator {
 
@@ -54,6 +53,7 @@ public class TimelineGenerator implements ITimelineGenerator {
         String contentText;
         String contentHtml;
         String contentImageURL;
+        String url;
         Date date;
         String favorited;
         String reblogged;
@@ -67,6 +67,7 @@ public class TimelineGenerator implements ITimelineGenerator {
                          String username, String displayName,
                          String contentText, String contentHtml,
                          String contentImageURL,
+                         String url,
                          Date date,
                          String favorited, String reblogged, String sensitive,
                          String reblogOriginalUsername,
@@ -80,6 +81,7 @@ public class TimelineGenerator implements ITimelineGenerator {
             this.contentText = contentText;
             this.contentHtml = contentHtml;
             this.contentImageURL = contentImageURL;
+            this.url = url;
             this.date = date;
             this.favorited = favorited;
             this.reblogged = reblogged;
@@ -102,6 +104,7 @@ public class TimelineGenerator implements ITimelineGenerator {
         public String reblogged;
         public String sensitive;
         public String reblogOriginalUserId;
+        public String url;
         public Date date;
         private ObjectProperty<ImageView> userIcon = new SimpleObjectProperty<ImageView>();
         public StringProperty userNameForColumn = new SimpleStringProperty();
@@ -141,7 +144,7 @@ public class TimelineGenerator implements ITimelineGenerator {
             }
 
             this.contentHtml = tlContent.contentHtml;
-
+            this.url = tlContent.url;
             this.date = tlContent.date;
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat();

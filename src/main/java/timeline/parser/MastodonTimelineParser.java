@@ -215,6 +215,7 @@ public class MastodonTimelineParser {
                     toot.account.id, toot.account.acct,
                     toot.account.username, toot.account.display_name,
                     text, htmltext, imageURL,
+                    toot.url,
                     createdAt, toot.favourited, toot.reblogged, toot.sensitive, rebloggUser, avatarIcon));
         });
         return listForGenerator;
