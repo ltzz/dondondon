@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import timeline.parser.ITimelineGenerator;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.TreeMap;
@@ -63,14 +64,14 @@ public class MixTimelineGenerator implements ITimelineGenerator {
             fetchedContents.put(new MixTimelineId(rowContent.id, rowContent.date, rowContent.dataOriginInfo.hostname), rowContent);
         }
 
-        var fetchedList = fetchedContents.values().stream().collect(Collectors.toList());
+        var fetchedList = new ArrayList<>(fetchedContents.values());
         Collections.reverse(fetchedList);
 
         return FXCollections.observableArrayList(fetchedList);
     }
 
     public ObservableList<TimelineGenerator.RowContent> getRowContents(){
-        var fetchedList = fetchedContents.values().stream().collect(Collectors.toList());
+        var fetchedList = new ArrayList<>(fetchedContents.values());
         Collections.reverse(fetchedList);  // MastodonではIDの上位48bitは時刻なのでソートに使ってOK
         return FXCollections.observableArrayList(fetchedList);
     }

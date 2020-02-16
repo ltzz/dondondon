@@ -211,6 +211,7 @@ public class MastodonTimelineParser {
 
             TimelineGenerator.DataOriginInfo dataOriginInfo = new TimelineGenerator.DataOriginInfo("mastodon", MASTODON_HOST, loginUsername, MASTODON_TOKEN);
             listForGenerator.add(new TimelineGenerator.TLContent(dataOriginInfo,
+                    new MastodonWriteAPIParser(MASTODON_HOST, MASTODON_TOKEN),
                     toot.id,
                     toot.account.id, toot.account.acct,
                     toot.account.username, toot.account.display_name,

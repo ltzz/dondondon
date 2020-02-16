@@ -11,6 +11,7 @@ import javafx.scene.image.ImageView;
 
 import timeline.parser.ITimelineGenerator;
 import timeline.parser.MastodonTimelineParser;
+import timeline.parser.MastodonWriteAPIParser;
 
 import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
@@ -45,6 +46,7 @@ public class TimelineGenerator implements ITimelineGenerator {
     // 汎用タイムライン項目データクラス
     public static class TLContent{
         final DataOriginInfo dataOriginInfo;
+        MastodonWriteAPIParser writeActionApi;
         String id;
         String userId;
         String acct;
@@ -62,6 +64,7 @@ public class TimelineGenerator implements ITimelineGenerator {
         BufferedImage avatarIcon;
 
         public TLContent(DataOriginInfo dataOriginInfo,
+                         MastodonWriteAPIParser writeActionApi,
                          String id,
                          String userId, String acct,
                          String username, String displayName,
@@ -73,6 +76,7 @@ public class TimelineGenerator implements ITimelineGenerator {
                          String reblogOriginalUsername,
                          BufferedImage avatarIcon) {
             this.dataOriginInfo = dataOriginInfo;
+            this.writeActionApi = writeActionApi;
             this.id = id;
             this.userId = userId;
             this.acct = acct;
@@ -93,6 +97,7 @@ public class TimelineGenerator implements ITimelineGenerator {
 
     public static class RowContent {
         public DataOriginInfo dataOriginInfo;
+        public MastodonWriteAPIParser writeActionApi;
         public String id;
         public String userId;
         public String userName;
@@ -113,6 +118,7 @@ public class TimelineGenerator implements ITimelineGenerator {
 
         RowContent(TLContent tlContent){
             this.dataOriginInfo = tlContent.dataOriginInfo;
+            this.writeActionApi = tlContent.writeActionApi;
             this.id = tlContent.id;
             this.userId = tlContent.userId;
             this.acct = tlContent.acct;

@@ -148,8 +148,7 @@ public class TimelineViewController implements Initializable, IContentListContro
             var statusId = selectedToot.id;
 
             if( "mastodon".equals(selectedToot.dataOriginInfo.serverType) ) {
-                // TODO: データ読み込み元ホストに応じてAPI叩く鯖切り替え
-                MastodonWriteAPIParser mastodonWriteAPIParser = new MastodonWriteAPIParser(postMastodonAPI.mastodonHost, postMastodonAPI.accessToken);
+                MastodonWriteAPIParser mastodonWriteAPIParser = selectedToot.writeActionApi;
                 mastodonWriteAPIParser.addFavorite(statusId); // TODO: 成功時、TimelineGeneratorの内部状態への反映
             }
         });
@@ -160,8 +159,7 @@ public class TimelineViewController implements Initializable, IContentListContro
             var statusId = selectedToot.id;
 
             if( "mastodon".equals(selectedToot.dataOriginInfo.serverType) ) {
-                // TODO: データ読み込み元ホストに応じてAPI叩く鯖切り替え
-                MastodonWriteAPIParser mastodonWriteAPIParser = new MastodonWriteAPIParser(postMastodonAPI.mastodonHost, postMastodonAPI.accessToken);
+                MastodonWriteAPIParser mastodonWriteAPIParser = selectedToot.writeActionApi;
                 mastodonWriteAPIParser.reblog(statusId); // TODO: 成功時、TimelineGeneratorの内部状態への反映
             }
         });
