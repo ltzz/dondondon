@@ -166,7 +166,7 @@ public class TimelineViewController implements Initializable, IContentListContro
 
         menuItemUserTimeline.setOnAction((ActionEvent t) -> {
             var selectedToot = tableView.getSelectionModel().getSelectedItem();
-            rootController.addUserTab(selectedToot.userId, selectedToot.userName, hostname, selectedToot.dataOriginInfo.getToken());
+            rootController.addUserTab(selectedToot.userId, selectedToot.userName, selectedToot.dataOriginInfo.hostname, selectedToot.dataOriginInfo.getToken());
         });
 
         menuItemReply.setOnAction((ActionEvent t) -> {
