@@ -54,15 +54,9 @@ public class MastodonNotificationParser {
         List<NotificationGenerator.NotificationContent> listForGenerator = new ArrayList<>();
         notifications.forEach(notification -> {
             if(notification == null) return;
-            var statusText = "";
             var notificationText = "[" + notification.type + "]";
             if(notification.status != null) {
                 notificationText = notificationText + " " + Jsoup.parse(notification.status.content).text();
-            }
-
-            var avaterURL = "";
-            if (MastodonTimelineParser.validateURL(notification.account.avatar_static)) {
-                avaterURL = notification.account.avatar_static;
             }
 
             BufferedImage avatarIcon = null;
