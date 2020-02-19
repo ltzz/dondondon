@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 public class MastodonTimelineParser {
@@ -23,16 +24,16 @@ public class MastodonTimelineParser {
     public final String MASTODON_HOST;
     public final String MASTODON_TOKEN;
     public final String loginUsername;
-    private HashMap<String, BufferedImage> iconCache;
+    private ConcurrentHashMap<String, BufferedImage> iconCache;
 
     private MastodonTimelineEndPoint endPoint;
 
-    public MastodonTimelineParser(String mastodonHost, String mastodonToken, MastodonTimelineEndPoint endPoint, String username){
+    public MastodonTimelineParser(String mastodonHost, String mastodonToken, MastodonTimelineEndPoint endPoint, String username, ConcurrentHashMap<String, BufferedImage> iconCache){
         this.MASTODON_HOST = mastodonHost;
         this.MASTODON_TOKEN = mastodonToken;
         this.loginUsername = username;
         this.endPoint = endPoint;
-        this.iconCache = new HashMap<>();
+        this.iconCache = iconCache;
     }
 
     @JsonIgnoreProperties(ignoreUnknown=true)

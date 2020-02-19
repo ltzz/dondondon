@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class MastodonNotificationParser {
@@ -20,16 +21,16 @@ public class MastodonNotificationParser {
     public final String MASTODON_HOST;
     public final String MASTODON_TOKEN;
     public final String loginUsername;
-    private HashMap<String, BufferedImage> iconCache;
+    private ConcurrentHashMap<String, BufferedImage> iconCache;
 
     HashSet<String> receivedNotificationIds;
 
-    public MastodonNotificationParser(String mastodonHost, String mastodonToken, String username){
+    public MastodonNotificationParser(String mastodonHost, String mastodonToken, String username, ConcurrentHashMap<String, BufferedImage> iconCache){
         this.MASTODON_HOST = mastodonHost;
         this.MASTODON_TOKEN = mastodonToken;
         this.loginUsername = username;
         this.receivedNotificationIds = new HashSet<>();
-        this.iconCache = new HashMap<>();
+        this.iconCache = iconCache;
     }
 
     @JsonIgnoreProperties(ignoreUnknown=true)

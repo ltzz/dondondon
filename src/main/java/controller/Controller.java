@@ -35,9 +35,11 @@ import timeline.parser.timelineEndPoint.HomeTimelineGet;
 import timeline.parser.timelineEndPoint.LocalTimelineGet;
 import timeline.parser.timelineEndPoint.UserTimelineGet;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Controller implements Initializable {
@@ -52,6 +54,8 @@ public class Controller implements Initializable {
     private HashMap<String, IContentListController> contentControllers; // TODO: タイムライン以外も複製できるように
 
     private String inReplyToId;
+
+    private ConcurrentHashMap<String, BufferedImage> iconCache;
 
     @FXML
     private VBox root;
@@ -209,7 +213,7 @@ public class Controller implements Initializable {
                     new TimelineGenerator(
                             new MastodonTimelineParser(hostname, token, //FIXME: たぶん元のタブからもらってこないと開けない
                                     new UserTimelineGet(hostname, token, userId)
-                                    , myUserName)
+                                    , myUserName, iconCache)
                     ),
                     new MastodonAPI(settings.getInstanceSettings().get(0).hostName, settings.getInstanceSettings().get(0).accessToken),
                     hostname);
@@ -264,7 +268,7 @@ public class Controller implements Initializable {
                 {
                     var homeTimelineGenerator = new TimelineGenerator(
                             new MastodonTimelineParser(hostname, accessToken,
-                                    new HomeTimelineGet(hostname, accessToken), myUserName)
+                                    new HomeTimelineGet(hostname, accessToken), myUserName, iconCache)
                     );
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/timeline_view.fxml"));
                     Tab tab = new Tab("home");
@@ -293,7 +297,7 @@ public class Controller implements Initializable {
                     controller.registerParentControllerObject(
                             this,
                             new NotificationGenerator(
-                                    new MastodonNotificationParser(hostname, accessToken, myUserName)
+                                    new MastodonNotificationParser(hostname, accessToken, myUserName, iconCache)
                             ),
                             hostname);
                     contentControllers.put("Notification<"+hostname+">", controller);
@@ -302,7 +306,7 @@ public class Controller implements Initializable {
                 {
                     var localTimelineGenerator = new TimelineGenerator(
                             new MastodonTimelineParser(hostname, accessToken,
-                                    new LocalTimelineGet(hostname, accessToken), myUserName)
+                                    new LocalTimelineGet(hostname, accessToken), myUserName, iconCache)
                     );
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/timeline_view.fxml"));
                     Tab tab = new Tab("local");
@@ -332,11 +336,11 @@ public class Controller implements Initializable {
                     ITimelineGenerator mixTimelineGenerator = new MixTimelineGenerator(
                             new TimelineGenerator(
                                     new MastodonTimelineParser(hostname1, accessToken1,
-                                            new HomeTimelineGet(hostname1, accessToken1), myUserName)
+                                            new HomeTimelineGet(hostname1, accessToken1), myUserName, iconCache)
                             ),
                             new TimelineGenerator(
                                     new MastodonTimelineParser(hostname2, accessToken2,
-                                            new HomeTimelineGet(hostname2, accessToken2), myUserName)
+                                            new HomeTimelineGet(hostname2, accessToken2), myUserName, iconCache)
                             )
                     );
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/timeline_view.fxml"));
@@ -371,6 +375,8 @@ public class Controller implements Initializable {
             SettingsLoadOnStart settingsLoadOnStart = new SettingsLoadOnStart(settings);
             settingsLoadOnStart.startSequence();
         }
+
+        iconCache = new ConcurrentHashMap<String, BufferedImage>();
 
         contentControllers = new HashMap<>();
 
