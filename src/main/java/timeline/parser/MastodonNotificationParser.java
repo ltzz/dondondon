@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import connection.MastodonAPI;
+import misc.ImageCommons;
 import org.jsoup.Jsoup;
 import timeline.NotificationGenerator;
 import timeline.TimelineGenerator;
@@ -69,8 +70,9 @@ public class MastodonNotificationParser {
                         avatarIcon = iconCache.get(avatarURL);
                     }
                     else {
-                        avatarIcon = ImageIO.read(new URL(avatarURL));
-                        if(avatarIcon != null) {
+                        byte[] buffer = ImageCommons.readImageAsByte(new URL(avatarURL));
+                        if(buffer != null) {
+                            avatarIcon = ImageCommons.readImage(buffer);
                             iconCache.put(avatarURL, avatarIcon);
                         }
                     }
