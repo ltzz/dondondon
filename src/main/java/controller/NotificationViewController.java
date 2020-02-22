@@ -62,7 +62,7 @@ public class NotificationViewController implements Initializable, IContentListCo
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemUserTimeline = new MenuItem("このユーザーのタイムラインを見る");
         menuItemUserTimeline.setOnAction((ActionEvent t) -> {
-            var selectedNotification = tableView.getSelectionModel().getSelectedItem();
+            NotificationGenerator.RowContent selectedNotification = tableView.getSelectionModel().getSelectedItem();
             rootController.addUserTab(selectedNotification.userId, selectedNotification.userName, hostname, selectedNotification.dataOriginInfo.getToken());
         });
 
@@ -84,13 +84,13 @@ public class NotificationViewController implements Initializable, IContentListCo
 
         if(tableView != null) {
 
-            var columns = tableView.getColumns();
-            for( var column : columns ) column.setSortable(false);
+            ObservableList<TableColumn<NotificationGenerator.RowContent, ?>> columns = tableView.getColumns();
+            for( TableColumn<NotificationGenerator.RowContent, ?> column : columns ) column.setSortable(false);
 
             tableView.setRowFactory(new Callback<TableView<NotificationGenerator.RowContent>, TableRow<NotificationGenerator.RowContent>>() {
                 @Override
                 public TableRow<NotificationGenerator.RowContent> call(TableView<NotificationGenerator.RowContent> tootCellTableView) {
-                    var notificationCell = new NotificationViewController.NotificationCell();
+                    NotificationViewController.NotificationCell notificationCell = new NotificationViewController.NotificationCell();
                     notificationCell.getStyleClass().add("notification-row");
                     return notificationCell;
                 }

@@ -38,7 +38,7 @@ public class TimelineViewController implements Initializable, IContentListContro
     @FXML private TextField filterWordField;
 
     public void userFilterWordBoxToggle(){
-        var styleClass = filterWordPane.getStyleClass();
+        ObservableList<String> styleClass = filterWordPane.getStyleClass();
         if(styleClass.contains("u-hidden")){
             styleClass.remove("u-hidden");
             filterWordField.requestFocus();
@@ -71,13 +71,13 @@ public class TimelineViewController implements Initializable, IContentListContro
     }
 
     private void filterWord(){
-        var filterWord = filterWordField.getText();
-        var rowContents = timelineGenerator.getRowContents();
+        String filterWord = filterWordField.getText();
+        ObservableList<TimelineGenerator.RowContent> rowContents = timelineGenerator.getRowContents();
 
         if( filterWord.isEmpty() ){
             tableViewSetItems(rowContents);
         }
-        var filteredRowContents = FXCollections.observableList(rowContents.stream().filter(rowContent -> rowContent.contentText.contains(filterWord)).collect(Collectors.toList()));
+        ObservableList<TimelineGenerator.RowContent> filteredRowContents = FXCollections.observableList(rowContents.stream().filter(rowContent -> rowContent.contentText.contains(filterWord)).collect(Collectors.toList()));
         tableViewSetItems(filteredRowContents);
     }
 
@@ -107,12 +107,12 @@ public class TimelineViewController implements Initializable, IContentListContro
         selectedCells.addListener(new ListChangeListener() {
             @Override
             public void onChanged(Change c) {
-                var tootContent = tableView.getSelectionModel().getSelectedItem();
+                TimelineGenerator.RowContent tootContent = tableView.getSelectionModel().getSelectedItem();
                 if(tootContent == null) return;
-                var contentImage = "<img src=\"" + tootContent.contentImageURL + "\" />";
-                var contentImageElement = "<div class=\"ContentImage\">" + contentImage + "</div>";
-                var contentHtml = toCharacterReference(tootContent.contentHtml);
-                var contentBodyElement = "<div class=\"ContentBody\">" + contentHtml + "</div>";
+                String contentImage = "<img src=\"" + tootContent.contentImageURL + "\" />";
+                String contentImageElement = "<div class=\"ContentImage\">" + contentImage + "</div>";
+                String contentHtml = toCharacterReference(tootContent.contentHtml);
+                String contentBodyElement = "<div class=\"ContentBody\">" + contentHtml + "</div>";
                 String htmlString = contentHeader + contentBodyElement + contentImageElement + contentFooter;
                 WebEngine webEngine = webView.getEngine();
                 webEngine.setUserStyleSheetLocation(getClass().getResource("webview.css").toString());
@@ -143,9 +143,9 @@ public class TimelineViewController implements Initializable, IContentListContro
         MenuItem menuItemStatusURL = new MenuItem("この投稿をブラウザで開く");
         MenuItem menuItemInfo = new MenuItem("情報");
         menuItemFavorite.setOnAction((ActionEvent t) -> {
-            var selectedToot = tableView.getSelectionModel().getSelectedItem();
-            var hostname = selectedToot.dataOriginInfo.hostname;
-            var statusId = selectedToot.id;
+            TimelineGenerator.RowContent selectedToot = tableView.getSelectionModel().getSelectedItem();
+            String hostname = selectedToot.dataOriginInfo.hostname;
+            String statusId = selectedToot.id;
 
             if( "mastodon".equals(selectedToot.dataOriginInfo.serverType) ) {
                 MastodonWriteAPIParser mastodonWriteAPIParser = selectedToot.writeActionApi;
@@ -154,9 +154,9 @@ public class TimelineViewController implements Initializable, IContentListContro
         });
 
         menuItemReblog.setOnAction((ActionEvent t) -> {
-            var selectedToot = tableView.getSelectionModel().getSelectedItem();
-            var hostname = selectedToot.dataOriginInfo.hostname;
-            var statusId = selectedToot.id;
+            TimelineGenerator.RowContent selectedToot = tableView.getSelectionModel().getSelectedItem();
+            String hostname = selectedToot.dataOriginInfo.hostname;
+            String statusId = selectedToot.id;
 
             if( "mastodon".equals(selectedToot.dataOriginInfo.serverType) ) {
                 MastodonWriteAPIParser mastodonWriteAPIParser = selectedToot.writeActionApi;
@@ -165,30 +165,30 @@ public class TimelineViewController implements Initializable, IContentListContro
         });
 
         menuItemUserTimeline.setOnAction((ActionEvent t) -> {
-            var selectedToot = tableView.getSelectionModel().getSelectedItem();
+            TimelineGenerator.RowContent selectedToot = tableView.getSelectionModel().getSelectedItem();
             rootController.addUserTab(selectedToot.userId, selectedToot.userName, selectedToot.dataOriginInfo.hostname, selectedToot.dataOriginInfo.getToken());
         });
 
         menuItemReply.setOnAction((ActionEvent t) -> {
-            var selectedToot = tableView.getSelectionModel().getSelectedItem();
-            var statusId = selectedToot.id;
-            var acct = selectedToot.acct;
+            TimelineGenerator.RowContent selectedToot = tableView.getSelectionModel().getSelectedItem();
+            String statusId = selectedToot.id;
+            String acct = selectedToot.acct;
 
             // TODO: データ読み込み元ホストに応じてAPI叩く鯖切り替え
             rootController.userReplyInputStart(statusId, acct);
         });
 
         menuItemStatusURL.setOnAction((ActionEvent t) -> {
-            var selectedToot = tableView.getSelectionModel().getSelectedItem();
+            TimelineGenerator.RowContent selectedToot = tableView.getSelectionModel().getSelectedItem();
             BrowserLauncher.launch(selectedToot.url);
         });
 
         menuItemInfo.setOnAction((ActionEvent t) -> {
-            var selectedToot = tableView.getSelectionModel().getSelectedItem();
+            TimelineGenerator.RowContent selectedToot = tableView.getSelectionModel().getSelectedItem();
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK);
             alert.setTitle("投稿情報");
             alert.getDialogPane().setHeaderText("投稿情報");
-            var contentText = "";
+            String contentText = "";
             contentText = contentText + "データソース(種類): " + selectedToot.dataOriginInfo.serverType + "\n";
             contentText = contentText + "データソース(ホスト): " + selectedToot.dataOriginInfo.hostname + "\n";
             contentText = contentText + "データソース(ユーザー): " + selectedToot.dataOriginInfo.username + "\n";
@@ -229,13 +229,13 @@ public class TimelineViewController implements Initializable, IContentListContro
 
         if(tableView != null) {
 
-            var columns = tableView.getColumns();
-            for( var column : columns ) column.setSortable(false);
+            ObservableList<TableColumn<TimelineGenerator.RowContent, ? >> columns = tableView.getColumns();
+            for( TableColumn<TimelineGenerator.RowContent, ?>  column : columns ) column.setSortable(false);
 
             tableView.setRowFactory(new Callback<TableView<TimelineGenerator.RowContent>, TableRow<TimelineGenerator.RowContent>>() {
                 @Override
                 public TableRow<TimelineGenerator.RowContent> call(TableView<TimelineGenerator.RowContent> tootCellTableView) {
-                    var tootCell = new TootCell();
+                    TimelineViewController.TootCell tootCell = new TootCell();
                     tootCell.getStyleClass().add("toot-row");
                     return tootCell;
                 }

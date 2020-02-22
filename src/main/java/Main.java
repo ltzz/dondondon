@@ -16,7 +16,7 @@ public class Main extends Application {
         Controller controller = loader.getController();
         controller.setStage(primaryStage);
         primaryStage.setTitle("${CLIENT_NAME}");
-        var scene = new Scene(root, 600, 500);
+        Scene scene = new Scene(root, 600, 500);
         scene.getStylesheets().add("dark.css");
         primaryStage.setScene(scene);
         primaryStage.setMinHeight(300);

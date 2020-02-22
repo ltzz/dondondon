@@ -139,7 +139,11 @@ public class TimelineGenerator implements ITimelineGenerator {
                 this.contentTextForColumn.set(tlContent.contentText);
             }
             else {
-                this.contentTextForColumn.set("█".repeat(tlContent.contentText.length() * 2));
+                StringBuffer stringBuffer = new StringBuffer();
+                for(int i=0; i < tlContent.contentText.length() * 2; ++i){
+                    stringBuffer.append("█");
+                }
+                this.contentTextForColumn.set(stringBuffer.toString());
             }
 
             if(tlContent.reblogOriginalUsername != null){
@@ -174,19 +178,19 @@ public class TimelineGenerator implements ITimelineGenerator {
 
     public ObservableList<RowContent> createRowContents(){
 
-        var timelineData = mastodonParser.getTimeline();
+        List<TimelineGenerator.TLContent> timelineData = mastodonParser.getTimeline();
 
         for (TLContent tldata : timelineData) {
             fetchedContents.put(tldata.id, new RowContent(tldata)); // FIXME: 上書きなので投稿削除とかの時の挙動が謎
         }
-        var fetchedList = new ArrayList<>(fetchedContents.values());
+        List<TimelineGenerator.RowContent> fetchedList = new ArrayList<>(fetchedContents.values());
         Collections.reverse(fetchedList);
 
         return FXCollections.observableArrayList(fetchedList);
     }
 
     public ObservableList<RowContent> getRowContents(){
-        var fetchedList = new ArrayList<>(fetchedContents.values());
+        List<TimelineGenerator.RowContent>  fetchedList = new ArrayList<>(fetchedContents.values());
         Collections.reverse(fetchedList);  // MastodonではIDの上位48bitは時刻なのでソートに使ってOK
         return FXCollections.observableArrayList(fetchedList);
     }

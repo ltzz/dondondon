@@ -149,7 +149,7 @@ public class MastodonTimelineParser {
     }
 
     public List<TimelineGenerator.TLContent> getTimeline(){
-        var toots = getTimelineDto(endPoint.get());
+        List<Toot> toots = getTimelineDto(endPoint.get());
         return toTLContent(toots);
     }
 
@@ -157,7 +157,7 @@ public class MastodonTimelineParser {
         List<TimelineGenerator.TLContent> listForGenerator = new ArrayList<>();
         toots.forEach(toot -> {
             String text = Jsoup.parse(toot.content).text();
-            var htmltext = Jsoup.clean(toot.content, "", Whitelist.basic(), new Document.OutputSettings().prettyPrint(false));
+            String htmltext = Jsoup.clean(toot.content, "", Whitelist.basic(), new Document.OutputSettings().prettyPrint(false));
             System.out.println(text);
             String rebloggUser;
             if(toot.reblog == null){
@@ -168,7 +168,7 @@ public class MastodonTimelineParser {
             }
 
             // TODO: 複数画像の対応
-            var imageURL = "";
+            String imageURL = "";
 
             if(toot.media_attachments.size() > 0) {
                 if (validateURL(toot.media_attachments.get(0).preview_url)) {
@@ -184,7 +184,7 @@ public class MastodonTimelineParser {
 
             BufferedImage avatarIcon = null;
             if (validateURL(toot.account.avatar_static)) {
-                var avatarURL = toot.account.avatar_static;
+                String avatarURL = toot.account.avatar_static;
                 try {
                     // TODO: この実装セキュリティ的に大丈夫かどうか詳しい人に聞く
                     if(iconCache.containsKey(avatarURL)){
@@ -234,7 +234,7 @@ public class MastodonTimelineParser {
         }catch (Exception e){
             e.printStackTrace();
         }
-        return List.of();
+        return Arrays.asList();
     }
 
     static Toot getStatus(String json){

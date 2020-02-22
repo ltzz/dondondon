@@ -98,13 +98,13 @@ public class NotificationGenerator {
     }
 
     public ObservableList<RowContent> createRowContents() {
-        var notificationData = mastodonParser.diffNotification();
+        List<NotificationGenerator.NotificationContent> notificationData = mastodonParser.diffNotification();
 
         for (NotificationContent notification : notificationData) {
             fetchedContents.put(notification.id, new RowContent(notification));
         }
 
-        var fetchedList = new ArrayList<>(fetchedContents.values());
+        List<RowContent> fetchedList = new ArrayList<>(fetchedContents.values());
         Collections.reverse(fetchedList);  // MastodonではIDの上位48bitは時刻なのでソートに使ってOK
         return FXCollections.observableArrayList(fetchedList);
     }

@@ -8,6 +8,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class WebRequest {
@@ -30,7 +31,7 @@ public class WebRequest {
             connection.setConnectTimeout(10000);
             connection.setReadTimeout(10000);
 
-            for(var entry: headers.entrySet()) {
+            for(Map.Entry<String,String> entry: headers.entrySet()) {
                 connection.setRequestProperty(entry.getKey(), entry.getValue());
             }
 
@@ -98,7 +99,7 @@ public class WebRequest {
             connection.setConnectTimeout(10000);
             connection.setReadTimeout(10000);
             connection.setRequestMethod("GET");
-            for(var entry: headers.entrySet()) {
+            for(Map.Entry<String,String> entry: headers.entrySet()) {
                 connection.setRequestProperty(entry.getKey(), entry.getValue());
             }
             connection.connect();

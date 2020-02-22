@@ -2,6 +2,7 @@ package misc;
 
 import javafx.scene.control.TextInputDialog;
 
+import java.util.List;
 import java.util.Optional;
 
 public class SettingsLoadOnStart {
@@ -13,7 +14,7 @@ public class SettingsLoadOnStart {
 
     public void startSequence(){ // TODO: 多インスタンス対応
         settings.load();
-        var instanceSetting = settings.getInstanceSettings();
+        List<Settings.InstanceSetting> instanceSetting = settings.getInstanceSettings();
         if( instanceSetting != null ){
 
         }
@@ -25,8 +26,8 @@ public class SettingsLoadOnStart {
                 if (msg.isPresent()) {// データがあるか？
                     // TODO: validation
                     System.out.println("https：//" + msg.get());
-                    var MASTDON_HOST = "https://" + msg.get();
-                    var mastodonAuth = new MastodonAuth(MASTDON_HOST);
+                    String MASTDON_HOST = "https://" + msg.get();
+                    MastodonAuth mastodonAuth = new MastodonAuth(MASTDON_HOST);
                     MastodonAuth.ClientRegisterResponse clientResponse = mastodonAuth.registerClient();
                     MastodonAuth.AccessTokenResponse accessTokenResponse = mastodonAuth.getAccessToken(clientResponse.client_id, clientResponse.client_secret);
                     System.out.println(accessTokenResponse.access_token);

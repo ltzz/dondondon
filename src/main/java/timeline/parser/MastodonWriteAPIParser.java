@@ -15,14 +15,14 @@ public class MastodonWriteAPIParser {
 
     public boolean addFavorite(String tootId) {
         MastodonAPI mastodonAPI = new MastodonAPI(MASTODON_HOST, MASTODON_TOKEN);
-        var response = mastodonAPI.addFavorite(tootId);
+        String response = mastodonAPI.addFavorite(tootId);
         MastodonTimelineParser.Toot toot = getStatus(response);
         return "true".equals(toot.favourited);
     }
 
     public boolean reblog(String tootId) {
         MastodonAPI mastodonAPI = new MastodonAPI(MASTODON_HOST, MASTODON_TOKEN);
-        var response = mastodonAPI.reblog(tootId);
+        String response = mastodonAPI.reblog(tootId);
         MastodonTimelineParser.Toot toot = getStatus(response);
         return "true".equals(toot.reblogged);
     }

@@ -45,9 +45,9 @@ public class MastodonNotificationParser {
 
     public List<NotificationGenerator.NotificationContent> diffNotification(){
         MastodonAPI mastodonAPI = new MastodonAPI(MASTODON_HOST, MASTODON_TOKEN);
-        var notifications = getNotificationDto(mastodonAPI.getNotification());
-        var filteredNotification = notifications.stream().filter(notification -> !receivedNotificationIds.contains(notification.id)).collect(Collectors.toList());
-        var received = notifications.stream().map(notification -> notification.id).collect(Collectors.toSet());
+        List<Notification> notifications = getNotificationDto(mastodonAPI.getNotification());
+        List<Notification> filteredNotification = notifications.stream().filter(notification -> !receivedNotificationIds.contains(notification.id)).collect(Collectors.toList());
+        Set<String> received = notifications.stream().map(notification -> notification.id).collect(Collectors.toSet());
         receivedNotificationIds.addAll(received);
         return toNotificationContent(filteredNotification);
     }
@@ -56,14 +56,14 @@ public class MastodonNotificationParser {
         List<NotificationGenerator.NotificationContent> listForGenerator = new ArrayList<>();
         notifications.forEach(notification -> {
             if(notification == null) return;
-            var notificationText = "[" + notification.type + "]";
+            String notificationText = "[" + notification.type + "]";
             if(notification.status != null) {
                 notificationText = notificationText + " " + Jsoup.parse(notification.status.content).text();
             }
 
             BufferedImage avatarIcon = null;
             if (MastodonTimelineParser.validateURL(notification.account.avatar_static)) {
-                var avatarURL = notification.account.avatar_static;
+                String avatarURL = notification.account.avatar_static;
                 try {
                     // TODO: この実装セキュリティ的に大丈夫かどうか詳しい人に聞く
                     if(iconCache.containsKey(avatarURL)){
@@ -109,6 +109,6 @@ public class MastodonNotificationParser {
         }catch (Exception e){
             e.printStackTrace();
         }
-        return List.of();
+        return Arrays.asList();
     }
 }

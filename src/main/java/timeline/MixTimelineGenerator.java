@@ -5,10 +5,7 @@ import javafx.collections.ObservableList;
 import timeline.parser.ITimelineGenerator;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MixTimelineGenerator implements ITimelineGenerator {
@@ -57,21 +54,21 @@ public class MixTimelineGenerator implements ITimelineGenerator {
         ObservableList<TimelineGenerator.RowContent> rowContents1 = timelineGenerator1.createRowContents();
         ObservableList<TimelineGenerator.RowContent> rowContents2 = timelineGenerator2.createRowContents();
 
-        for (var rowContent : rowContents1) {
+        for (TimelineGenerator.RowContent rowContent : rowContents1) {
             fetchedContents.put(new MixTimelineId(rowContent.id, rowContent.date, rowContent.dataOriginInfo.hostname), rowContent);
         }
-        for (var rowContent : rowContents2) {
+        for (TimelineGenerator.RowContent rowContent : rowContents2) {
             fetchedContents.put(new MixTimelineId(rowContent.id, rowContent.date, rowContent.dataOriginInfo.hostname), rowContent);
         }
 
-        var fetchedList = new ArrayList<>(fetchedContents.values());
+        List<TimelineGenerator.RowContent> fetchedList = new ArrayList<>(fetchedContents.values());
         Collections.reverse(fetchedList);
 
         return FXCollections.observableArrayList(fetchedList);
     }
 
     public ObservableList<TimelineGenerator.RowContent> getRowContents(){
-        var fetchedList = new ArrayList<>(fetchedContents.values());
+        List<TimelineGenerator.RowContent> fetchedList = new ArrayList<>(fetchedContents.values());
         Collections.reverse(fetchedList);  // MastodonではIDの上位48bitは時刻なのでソートに使ってOK
         return FXCollections.observableArrayList(fetchedList);
     }

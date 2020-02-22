@@ -32,8 +32,8 @@ public class ReloadTask {
     }
 
     private void reload(){
-        for(var generator : generators) {
-            var thread = new ReloadThread(generator);
+        for(IContentListController generator : generators) {
+            ReloadThread thread = new ReloadThread(generator);
             thread.start();
         }
     }
