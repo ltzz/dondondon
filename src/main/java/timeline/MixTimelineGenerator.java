@@ -72,4 +72,8 @@ public class MixTimelineGenerator implements ITimelineGenerator {
         Collections.reverse(fetchedList);  // MastodonではIDの上位48bitは時刻なのでソートに使ってOK
         return FXCollections.observableArrayList(fetchedList);
     }
+
+    public int getNumberOfContent(){
+        return fetchedContents.size();
+    }
 }

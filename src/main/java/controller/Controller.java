@@ -12,6 +12,7 @@ import javafx.scene.control.*;
 
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 
@@ -252,6 +253,21 @@ public class Controller implements Initializable {
         });
     }
 
+    private void registerTabContextMenu(ITimelineGenerator timelineGenerator, Tab tab, Pane pane){
+        // Context Menu
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuItemTabInfo = new MenuItem("情報");
+        menuItemTabInfo.setOnAction((ActionEvent t) -> {
+            Common.GenericInformationAlert("情報",String.format("読み込み個数: %d",timelineGenerator.getNumberOfContent()));
+        });
+
+        contextMenu.getItems().addAll(menuItemTabInfo);
+        pane.setOnContextMenuRequested(e ->
+                contextMenu.show(pane, e.getScreenX(), e.getScreenY()));
+        tab.setContent(pane);
+        tab.setContextMenu(contextMenu);
+    }
+
     private void initSpecificTab(){
         List<IContentListController> controllersForReload = new ArrayList<IContentListController>();
 
@@ -271,20 +287,7 @@ public class Controller implements Initializable {
                     Tab tab = new Tab("home");
                     tab.setClosable(false);
                     AnchorPane pane = loader.load();
-
-                    // Context Menu
-                    ContextMenu contextMenu = new ContextMenu();
-                    MenuItem menuItemTabInfo = new MenuItem("情報");
-                    menuItemTabInfo.setOnAction((ActionEvent t) -> {
-                        Common.GenericInformationAlert("情報",String.format("読み込み個数: %d",homeTimelineGenerator.getNumberOfContent()));
-                    });
-
-                    contextMenu.getItems().addAll(menuItemTabInfo);
-                    pane.setOnContextMenuRequested(e ->
-                            contextMenu.show(pane, e.getScreenX(), e.getScreenY()));
-                    tab.setContent(pane);
-                    tab.setContextMenu(contextMenu);
-
+                    registerTabContextMenu(homeTimelineGenerator, tab, pane);
 
                     tab.setContent(pane);
                     TimelineViewController controller = loader.getController();
@@ -324,6 +327,7 @@ public class Controller implements Initializable {
                     Tab tab = new Tab("local");
                     tab.setClosable(false);
                     AnchorPane pane = loader.load();
+                    registerTabContextMenu(localTimelineGenerator, tab, pane);
                     tab.setContent(pane);
                     TimelineViewController controller = loader.getController();
                     tabPane.getTabs().add(tab);
@@ -359,6 +363,7 @@ public class Controller implements Initializable {
                     Tab tab = new Tab("mix");
                     tab.setClosable(false);
                     AnchorPane pane = loader.load();
+                    registerTabContextMenu(mixTimelineGenerator, tab, pane);
                     tab.setContent(pane);
                     TimelineViewController controller = loader.getController();
                     tabPane.getTabs().add(tab);
