@@ -94,7 +94,7 @@ public class TimelineViewController implements Initializable, IContentListContro
 
     public void registerWebViewOutput(WebView webView){
         final String twemoji = "<script src=\"https://twemoji.maxcdn.com/v/12.1.5/twemoji.min.js\" integrity=\"sha384-E4PZh8MWwKQ2W7ANni7xwx6TTuPWtd3F8mDRnaMvJssp5j+gxvP2fTsk1GnFg2gG\" crossorigin=\"anonymous\"></script>";
-        final String styleString = "<style>html{font-size: 12px;background-color: #2B2B2B; color: #A9B7C6;font-family: Meiryo,\"メイリオ\",'Segoe UI Emoji',sans-serif;font-weight:500;}</style>";
+        final String styleString = "<style>html{font-size: 12px;background-color: #2B2B2B; color: #ffffff;font-family: Meiryo,\"メイリオ\",'Segoe UI Emoji',sans-serif;font-weight:500;}</style>";
         final String contentHeader = "<!DOCTYPE html><html lang=\"ja\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" + twemoji + styleString + "</head><body><div class=\"ContentWrapper\">";
         // final String EMOJI_TEST = "<span style=\"border: 1px #cccccc solid;\">絵文字でねえ🍑💯 &#x1F004</span>";
         //final String EMOJI_TEST = "\uD842\uDFB7野屋";
