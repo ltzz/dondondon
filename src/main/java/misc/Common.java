@@ -9,4 +9,10 @@ public class Common {
         alert.setTitle("未実装");
         ButtonType button = alert.showAndWait().orElse(ButtonType.OK);
     }
+
+    public static void GenericInformationAlert(String title, String message){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
+        alert.setTitle(title);
+        ButtonType button = alert.showAndWait().orElse(ButtonType.OK);
+    }
 }

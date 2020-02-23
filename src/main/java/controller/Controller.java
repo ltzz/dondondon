@@ -10,10 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
@@ -274,6 +271,21 @@ public class Controller implements Initializable {
                     Tab tab = new Tab("home");
                     tab.setClosable(false);
                     AnchorPane pane = loader.load();
+
+                    // Context Menu
+                    ContextMenu contextMenu = new ContextMenu();
+                    MenuItem menuItemTabInfo = new MenuItem("情報");
+                    menuItemTabInfo.setOnAction((ActionEvent t) -> {
+                        Common.GenericInformationAlert("情報",String.format("読み込み個数: %d",homeTimelineGenerator.getNumberOfContent()));
+                    });
+
+                    contextMenu.getItems().addAll(menuItemTabInfo);
+                    pane.setOnContextMenuRequested(e ->
+                            contextMenu.show(pane, e.getScreenX(), e.getScreenY()));
+                    tab.setContent(pane);
+                    tab.setContextMenu(contextMenu);
+
+
                     tab.setContent(pane);
                     TimelineViewController controller = loader.getController();
                     tabPane.getTabs().add(tab);
