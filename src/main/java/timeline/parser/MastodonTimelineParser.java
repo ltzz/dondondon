@@ -102,6 +102,12 @@ public class MastodonTimelineParser {
     }
 
     @JsonIgnoreProperties(ignoreUnknown=true)
+    public static class Application {
+        public String name;
+        public String website;
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown=true)
     public static class Toot{
         public String id;
         public String created_at;
@@ -123,13 +129,12 @@ public class MastodonTimelineParser {
         public Account account;
         public Reblog reblog;
         public List<Media> media_attachments;
+        public Application application;
         @JsonIgnore
         public Object pinned;
         public Object card;
         @JsonIgnore
         public Object poll;
-        @JsonIgnore
-        public Object application;
         @JsonIgnore
         public List<Object> mentions;
         @JsonIgnore
@@ -151,6 +156,24 @@ public class MastodonTimelineParser {
     public List<TimelineGenerator.TLContent> getTimeline(){
         List<Toot> toots = getTimelineDto(endPoint.get());
         return toTLContent(toots);
+    }
+
+    private String getApplicationName(Application application){
+        if(application != null){
+            return application.name;
+        }
+        else {
+            return "";
+        }
+    }
+
+    private String getApplicationWebSite(Application application){
+        if(application != null){
+            return application.website;
+        }
+        else {
+            return "";
+        }
     }
 
     List<TimelineGenerator.TLContent> toTLContent(List<Toot> toots){
@@ -220,6 +243,7 @@ public class MastodonTimelineParser {
                     toot.account.username, toot.account.display_name,
                     text, htmltext, imageURL,
                     toot.url,
+                    getApplicationName(toot.application), getApplicationWebSite(toot.application),
                     createdAt, toot.favourited, toot.reblogged, toot.sensitive, rebloggUser, avatarIcon));
         });
         return listForGenerator;

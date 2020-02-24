@@ -56,6 +56,8 @@ public class TimelineGenerator implements ITimelineGenerator {
         String contentHtml;
         String contentImageURL;
         String url;
+        String applicationName;
+        String applicationWebSite;
         Date date;
         String favorited;
         String reblogged;
@@ -71,6 +73,7 @@ public class TimelineGenerator implements ITimelineGenerator {
                          String contentText, String contentHtml,
                          String contentImageURL,
                          String url,
+                         String applicationName, String applicationWebSite,
                          Date date,
                          String favorited, String reblogged, String sensitive,
                          String reblogOriginalUsername,
@@ -86,6 +89,8 @@ public class TimelineGenerator implements ITimelineGenerator {
             this.contentHtml = contentHtml;
             this.contentImageURL = contentImageURL;
             this.url = url;
+            this.applicationName = applicationName;
+            this.applicationWebSite = applicationWebSite;
             this.date = date;
             this.favorited = favorited;
             this.reblogged = reblogged;
@@ -110,6 +115,8 @@ public class TimelineGenerator implements ITimelineGenerator {
         public String sensitive;
         public String reblogOriginalUserId;
         public String url;
+        public String applicationName;
+        public String applicationWebSite;
         public Date date;
         private ObjectProperty<ImageView> userIcon = new SimpleObjectProperty<ImageView>();
         public StringProperty userNameForColumn = new SimpleStringProperty();
@@ -155,6 +162,8 @@ public class TimelineGenerator implements ITimelineGenerator {
 
             this.contentHtml = tlContent.contentHtml;
             this.url = tlContent.url;
+            this.applicationName = tlContent.applicationName;
+            this.applicationWebSite = tlContent.applicationWebSite;
             this.date = tlContent.date;
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat();

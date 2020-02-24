@@ -197,6 +197,8 @@ public class TimelineViewController implements Initializable, IContentListContro
             contentText = contentText + "投稿(リブログ状態): " + selectedToot.reblogged + "\n";
             contentText = contentText + "投稿(ID): " + selectedToot.id + "\n";
             contentText = contentText + "投稿(アカウント): " + selectedToot.acct + "\n";
+            contentText = contentText + "クライアント(名前): " + selectedToot.applicationName + "\n";
+            contentText = contentText + "クライアント(WebSite): " + selectedToot.applicationWebSite + "\n";
             alert.getDialogPane().setContentText(contentText);
             ButtonType button = alert.showAndWait().orElse(ButtonType.OK);
             System.out.println(button.toString());
