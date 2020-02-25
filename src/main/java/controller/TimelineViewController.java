@@ -129,29 +129,6 @@ public class TimelineViewController implements Initializable, IContentListContro
                 WebEngine webEngine = webView.getEngine();
                 webEngine.setUserStyleSheetLocation(getClass().getResource("webview.css").toString());
                 webEngine.loadContent(htmlString);
-
-                webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
-                    public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
-                        if (newState == Worker.State.SUCCEEDED) {
-                            EventListener listener = new EventListener() {
-                                public void handleEvent(Event ev) {
-                                    EventTarget eventTarget = ev.getCurrentTarget();
-                                    HTMLAnchorElement anchorElement = (HTMLAnchorElement) eventTarget;
-                                    String href = anchorElement.getHref();
-                                    if(validateURL(href)) {
-                                        BrowserLauncher.launch(href);
-                                    }
-                                    ev.preventDefault();
-                                }
-                            };
-
-                            Document doc = webEngine.getDocument();
-                            NodeList anchorList = doc.getElementsByTagName("a");
-                            for (int i=0; i<anchorList.getLength(); i++)
-                                ((EventTarget)anchorList.item(i)).addEventListener("click", listener, false);
-                        }
-                    }
-                });
             }
         });
     }

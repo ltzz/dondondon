@@ -14,6 +14,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
 import javafx.stage.Modality;
@@ -403,6 +404,8 @@ public class Controller implements Initializable {
 
         initShortcutKey();
 
+        WebEngine webEngine = webView.getEngine();
+        webEngine.getLoadWorker().stateProperty().addListener(new BrowserOpenEventListener(webView));
 
         this.reloadTask.manualReload();
     }
