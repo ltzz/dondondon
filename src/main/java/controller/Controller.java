@@ -406,7 +406,7 @@ public class Controller implements Initializable {
 
         WebEngine webEngine = webView.getEngine();
         webEngine.getLoadWorker().stateProperty().addListener(new BrowserOpenEventListener(webView));
-
+        webView.setContextMenuEnabled(false);
         this.reloadTask.manualReload();
     }
 
