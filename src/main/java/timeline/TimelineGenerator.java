@@ -141,24 +141,26 @@ public class TimelineGenerator implements ITimelineGenerator {
             }
 
             this.userNameForColumn.set(tlContent.username + " / " + tlContent.displayName);
+            StringBuffer stringBuffer = new StringBuffer();
+
+            if(tlContent.reblogOriginalUsername != null){
+                stringBuffer.append("reblog " + tlContent.reblogOriginalUsername + ": ");
+            }
 
             if("false".equals(tlContent.sensitive)){
-                this.contentTextForColumn.set(tlContent.contentText);
+                stringBuffer.append(tlContent.contentText);
             }
             else {
-                StringBuffer stringBuffer = new StringBuffer();
                 for(int i=0; i < tlContent.contentText.length() * 2; ++i){
                     stringBuffer.append("█");
                 }
-                this.contentTextForColumn.set(stringBuffer.toString());
             }
 
-            if(tlContent.reblogOriginalUsername != null){
-                this.contentTextForColumn.set("reblog " + tlContent.reblogOriginalUsername + ": " + tlContent.contentText);
+
+            if(tlContent.contentImageURL != null && !tlContent.contentImageURL.isEmpty()){
+                stringBuffer.append("[画像]");
             }
-            else {
-                this.contentTextForColumn.set(tlContent.contentText);
-            }
+            this.contentTextForColumn.set(stringBuffer.toString());
 
             this.contentHtml = tlContent.contentHtml;
             this.url = tlContent.url;
