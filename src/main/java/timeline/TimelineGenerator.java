@@ -146,6 +146,9 @@ public class TimelineGenerator implements ITimelineGenerator {
             if(tlContent.reblogOriginalUsername != null){
                 stringBuffer.append("reblog " + tlContent.reblogOriginalUsername + ": ");
             }
+            if(tlContent.contentImageURL != null && !tlContent.contentImageURL.isEmpty()){
+                stringBuffer.append("[画像]");
+            }
 
             if("false".equals(tlContent.sensitive)){
                 stringBuffer.append(tlContent.contentText);
@@ -156,10 +159,6 @@ public class TimelineGenerator implements ITimelineGenerator {
                 }
             }
 
-
-            if(tlContent.contentImageURL != null && !tlContent.contentImageURL.isEmpty()){
-                stringBuffer.append("[画像]");
-            }
             this.contentTextForColumn.set(stringBuffer.toString());
 
             this.contentHtml = tlContent.contentHtml;
