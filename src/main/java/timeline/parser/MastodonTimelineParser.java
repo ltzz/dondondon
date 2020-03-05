@@ -190,18 +190,21 @@ public class MastodonTimelineParser {
                 rebloggUser = toot.reblog.account.username;
             }
 
-            // TODO: 複数画像の対応
-            String imageURL = "";
+            List<String> imagesURL = new ArrayList<>();
 
             if(toot.media_attachments.size() > 0) {
-                if (validateURL(toot.media_attachments.get(0).preview_url)) {
-                    imageURL = toot.media_attachments.get(0).preview_url;
+                for( Media media_attachment : toot.media_attachments ){
+                    if (validateURL(media_attachment.preview_url)) {
+                        imagesURL.add(media_attachment.preview_url);
+                    }
                 }
             }
             else if(toot.reblog != null && toot.reblog.media_attachments.size() > 0) {
                 // TODO: なんかReblogの時の画像はこっちにあるようだ（本文はtoot.contentにあるのに) よく分からんので調べる
-                if (validateURL(toot.reblog.media_attachments.get(0).preview_url)) {
-                    imageURL = toot.reblog.media_attachments.get(0).preview_url;
+                for( Media media_attachment : toot.reblog.media_attachments ){
+                    if (validateURL(media_attachment.preview_url)) {
+                        imagesURL.add(media_attachment.preview_url);
+                    }
                 }
             }
 
@@ -241,7 +244,7 @@ public class MastodonTimelineParser {
                     toot.id,
                     toot.account.id, toot.account.acct,
                     toot.account.username, toot.account.display_name,
-                    text, htmltext, imageURL,
+                    text, htmltext, imagesURL,
                     toot.url,
                     getApplicationName(toot.application), getApplicationWebSite(toot.application),
                     createdAt, toot.favourited, toot.reblogged, toot.sensitive, rebloggUser, avatarIcon));

@@ -54,7 +54,7 @@ public class TimelineGenerator implements ITimelineGenerator {
         String displayName;
         String contentText;
         String contentHtml;
-        String contentImageURL;
+        List<String> contentImageURL;
         String url;
         String applicationName;
         String applicationWebSite;
@@ -71,7 +71,7 @@ public class TimelineGenerator implements ITimelineGenerator {
                          String userId, String acct,
                          String username, String displayName,
                          String contentText, String contentHtml,
-                         String contentImageURL,
+                         List<String> contentImageURL,
                          String url,
                          String applicationName, String applicationWebSite,
                          Date date,
@@ -109,7 +109,7 @@ public class TimelineGenerator implements ITimelineGenerator {
         public String acct;
         public String contentText;
         public String contentHtml;
-        public String contentImageURL;
+        public List<String> contentImageURL;
         public String favorited;
         public String reblogged;
         public String sensitive;

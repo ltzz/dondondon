@@ -121,8 +121,12 @@ public class TimelineViewController implements Initializable, IContentListContro
             public void onChanged(Change c) {
                 TimelineGenerator.RowContent tootContent = tableView.getSelectionModel().getSelectedItem();
                 if(tootContent == null) return;
-                String contentImage = "<img src=\"" + tootContent.contentImageURL + "\" />";
-                String contentImageElement = "<div class=\"ContentImage\">" + contentImage + "</div>";
+                StringBuffer imagesString = new StringBuffer();
+                for(String imageURL : tootContent.contentImageURL) {
+                    String contentImageElement = "<img src=\"" + imageURL + "\" />";
+                    imagesString.append(contentImageElement);
+                }
+                String contentImageElement = "<div class=\"ContentImage\">" + imagesString.toString() + "</div>";
                 String contentHtml = toCharacterReference(tootContent.contentHtml);
                 String contentBodyElement = "<div class=\"ContentBody\">" + contentHtml + "</div>";
                 String htmlString = contentHeader + contentBodyElement + contentImageElement + contentFooter;
