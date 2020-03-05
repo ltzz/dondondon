@@ -28,8 +28,8 @@ public class WebRequest {
             //接続するURLを指定する
             URL url = new URL(URLStr);
             connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(10000);
-            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(30000);
+            connection.setReadTimeout(30000);
 
             for(Map.Entry<String,String> entry: headers.entrySet()) {
                 connection.setRequestProperty(entry.getKey(), entry.getValue());
@@ -96,8 +96,8 @@ public class WebRequest {
             //接続するURLを指定する
             URL url = new URL(URLStr);
             connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(10000);
-            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(30000);
+            connection.setReadTimeout(30000);
             connection.setRequestMethod("GET");
             for(Map.Entry<String,String> entry: headers.entrySet()) {
                 connection.setRequestProperty(entry.getKey(), entry.getValue());
