@@ -61,6 +61,7 @@ public class TimelineGenerator implements ITimelineGenerator {
         Date date;
         String favorited;
         String reblogged;
+        String spoilerText;
         String sensitive;
         String reblogOriginalUsername;
         BufferedImage avatarIcon;
@@ -75,7 +76,8 @@ public class TimelineGenerator implements ITimelineGenerator {
                          String url,
                          String applicationName, String applicationWebSite,
                          Date date,
-                         String favorited, String reblogged, String sensitive,
+                         String favorited, String reblogged,
+                         String spoilerText, String sensitive,
                          String reblogOriginalUsername,
                          BufferedImage avatarIcon) {
             this.dataOriginInfo = dataOriginInfo;
@@ -94,6 +96,7 @@ public class TimelineGenerator implements ITimelineGenerator {
             this.date = date;
             this.favorited = favorited;
             this.reblogged = reblogged;
+            this.spoilerText = spoilerText;
             this.sensitive = sensitive;
             this.reblogOriginalUsername = reblogOriginalUsername;
             this.avatarIcon = avatarIcon;
@@ -113,6 +116,7 @@ public class TimelineGenerator implements ITimelineGenerator {
         public String favorited;
         public String reblogged;
         public String sensitive;
+        public String spoilerText;
         public String reblogOriginalUserId;
         public String url;
         public String applicationName;
@@ -150,6 +154,10 @@ public class TimelineGenerator implements ITimelineGenerator {
                 stringBuffer.append("[画像]");
             }
 
+            if(!tlContent.spoilerText.isEmpty()){
+                stringBuffer.append(tlContent.spoilerText);
+            }
+
             if("false".equals(tlContent.sensitive)){
                 stringBuffer.append(tlContent.contentText);
             }
@@ -173,6 +181,7 @@ public class TimelineGenerator implements ITimelineGenerator {
             this.dateForColumn.set(simpleDateFormat.format(tlContent.date));
             this.favorited = tlContent.favorited;
             this.reblogged = tlContent.reblogged;
+            this.spoilerText = tlContent.spoilerText;
             this.sensitive = tlContent.sensitive;
             this.contentImageURL = tlContent.contentImageURL;
             this.contentText = tlContent.contentText;

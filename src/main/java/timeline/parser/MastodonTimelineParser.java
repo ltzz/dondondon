@@ -247,7 +247,9 @@ public class MastodonTimelineParser {
                     text, htmltext, imagesURL,
                     toot.url,
                     getApplicationName(toot.application), getApplicationWebSite(toot.application),
-                    createdAt, toot.favourited, toot.reblogged, toot.sensitive, rebloggUser, avatarIcon));
+                    createdAt, toot.favourited, toot.reblogged,
+                    toot.spoiler_text, toot.sensitive,
+                    rebloggUser, avatarIcon));
         });
         return listForGenerator;
     }
