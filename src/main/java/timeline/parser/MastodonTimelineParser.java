@@ -208,9 +208,16 @@ public class MastodonTimelineParser {
                 }
             }
 
+            final String avatarStatic;
             BufferedImage avatarIcon = null;
-            if (validateURL(toot.account.avatar_static)) {
-                String avatarURL = toot.account.avatar_static;
+            if(toot.reblog != null){
+                avatarStatic = toot.reblog.account.avatar_static;
+            }
+            else {
+                avatarStatic = toot.account.avatar_static;
+            }
+            if (validateURL(avatarStatic)) {
+                String avatarURL = avatarStatic;
                 try {
                     // TODO: この実装セキュリティ的に大丈夫かどうか詳しい人に聞く
                     if(iconCache.containsKey(avatarURL)){
