@@ -237,7 +237,7 @@ public class MastodonTimelineParser {
 
             Date createdAt = null;
             try {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                 format.setTimeZone(TimeZone.getTimeZone("UTC"));
                 createdAt = format.parse(toot.created_at);
             }
