@@ -19,10 +19,7 @@ import javafx.scene.web.WebView;
 
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import misc.Common;
-import misc.Settings;
-import misc.SettingsLoadOnStart;
-import misc.Version;
+import misc.*;
 
 import timeline.MixTimelineGenerator;
 import timeline.NotificationGenerator;
@@ -258,11 +255,21 @@ public class Controller implements Initializable {
         // Context Menu
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemTabInfo = new MenuItem("情報");
+        MenuItem menuItemTabGraph = new MenuItem("時間ごとの件数");
         menuItemTabInfo.setOnAction((ActionEvent t) -> {
             Common.GenericInformationAlert("情報",String.format("読み込み個数: %d",timelineGenerator.getNumberOfContent()));
         });
 
-        contextMenu.getItems().addAll(menuItemTabInfo);
+        menuItemTabGraph.setOnAction((ActionEvent t) -> {
+            Stage stage = new Stage();
+            stage.initOwner(this.stage);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Line Chart");
+            TransitionGraph.draw(stage, timelineGenerator.getNumberOfContentByHours());
+        });
+
+
+        contextMenu.getItems().addAll(menuItemTabInfo, menuItemTabGraph);
         pane.setOnContextMenuRequested(e ->
                 contextMenu.show(pane, e.getScreenX(), e.getScreenY()));
         tab.setContent(pane);

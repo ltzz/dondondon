@@ -217,5 +217,20 @@ public class TimelineGenerator implements ITimelineGenerator {
     public int getNumberOfContent(){
         return fetchedContents.size();
     }
+
+    public TreeMap<String, Integer> getNumberOfContentByHours(){
+        TreeMap<String, Integer> graphData = new TreeMap<String, Integer>();
+        for( TimelineGenerator.RowContent fetchedContent : fetchedContents.values()){
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd HH:00");
+            simpleDateFormat.setTimeZone(TimeZone.getDefault());
+
+            String dateLabel = simpleDateFormat.format(fetchedContent.date);
+            if( !graphData.containsKey(dateLabel) ){
+                graphData.put(dateLabel, 0);
+            }
+            graphData.put(dateLabel, graphData.get(dateLabel)+1);
+        }
+        return graphData;
+    }
 }
 
