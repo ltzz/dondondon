@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class MixTimelineGenerator implements ITimelineGenerator {
+    private String generatorName;
 
     public static class MixTimelineId implements Comparable<MixTimelineId> {
         private String id;
@@ -48,6 +49,13 @@ public class MixTimelineGenerator implements ITimelineGenerator {
         this.timelineGenerator2 = timelineGenerator2;
     }
 
+    public void setGeneratorName(String name){
+        this.generatorName = name;
+    }
+
+    public String getGeneratorName(){
+        return this.generatorName;
+    }
 
     public ObservableList<TimelineGenerator.RowContent> createRowContents(){
 

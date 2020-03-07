@@ -21,6 +21,7 @@ public class TimelineGenerator implements ITimelineGenerator {
 
     MastodonTimelineParser mastodonParser;
     private TreeMap<String, RowContent> fetchedContents;
+    private String generatorName;
 
     public TimelineGenerator(MastodonTimelineParser mastodonParser){
         this.mastodonParser = mastodonParser;
@@ -193,6 +194,14 @@ public class TimelineGenerator implements ITimelineGenerator {
         public StringProperty userNameProperty(){ return userNameForColumn; }
         public StringProperty contentTextProperty(){ return contentTextForColumn; }
         public StringProperty dateProperty(){ return dateForColumn; }
+    }
+
+    public void setGeneratorName(String name){
+        this.generatorName = name;
+    }
+
+    public String getGeneratorName(){
+        return this.generatorName;
     }
 
     public ObservableList<RowContent> createRowContents(){

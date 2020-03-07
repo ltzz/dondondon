@@ -14,16 +14,16 @@ import java.util.stream.Collectors;
 
 
 public class Graph {
-    public static void draw(Stage stage, TreeMap<String, Integer> data){
+    public static void draw(String title, String name, Stage stage, TreeMap<String, Integer> data){
         final CategoryAxis xAxis = new CategoryAxis();
         final NumberAxis yAxis = new NumberAxis();
         xAxis.setLabel("Number of Hours");
         final LineChart<String,Number> lineChart =
                 new LineChart<String,Number>(xAxis,yAxis);
 
-        lineChart.setTitle("Transition graph");
+        lineChart.setTitle(title);
         XYChart.Series series = new XYChart.Series();
-        series.setName("Transition graph");
+        series.setName(name);
         List<XYChart.Data<String,Integer>> dataList =
                 data.entrySet().stream().map(
                         item -> {

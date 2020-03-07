@@ -265,7 +265,7 @@ public class Controller implements Initializable {
             stage.initOwner(this.stage);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Line Chart");
-            TransitionGraph.draw(stage, timelineGenerator.getNumberOfContentByHours());
+            TransitionGraph.draw(timelineGenerator.getGeneratorName(),stage, timelineGenerator.getNumberOfContentByHours());
         });
 
 
@@ -291,6 +291,8 @@ public class Controller implements Initializable {
                             new MastodonTimelineParser(hostname, accessToken,
                                     new HomeTimelineGet(hostname, accessToken), myUserName, iconCache)
                     );
+                    String generatorName = "Home<"+hostname+">";
+                    homeTimelineGenerator.setGeneratorName(generatorName);
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/timeline_view.fxml"));
                     Tab tab = new Tab("home");
                     tab.setClosable(false);
@@ -306,7 +308,7 @@ public class Controller implements Initializable {
                             new MastodonAPI(hostname, accessToken),
                             hostname);
                     controller.registerWebViewOutput(webView);
-                    contentControllers.put("Home<"+hostname+">", controller);
+                    contentControllers.put(generatorName, controller);
                     controllersForReload.add(controller);
                 }
                 {
@@ -331,6 +333,8 @@ public class Controller implements Initializable {
                             new MastodonTimelineParser(hostname, accessToken,
                                     new LocalTimelineGet(hostname, accessToken), myUserName, iconCache)
                     );
+                    String generatorName = "Local<"+hostname+">";
+                    localTimelineGenerator.setGeneratorName(generatorName);
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/timeline_view.fxml"));
                     Tab tab = new Tab("local");
                     tab.setClosable(false);
@@ -344,7 +348,7 @@ public class Controller implements Initializable {
                             new MastodonAPI(hostname, accessToken),
                             hostname);
                     controller.registerWebViewOutput(webView);
-                    contentControllers.put("Local<"+hostname+">", controller);
+                    contentControllers.put(generatorName, controller);
                     controllersForReload.add(controller);
                 }
             }
@@ -367,6 +371,8 @@ public class Controller implements Initializable {
                                             new HomeTimelineGet(hostname2, accessToken2), myUserName, iconCache)
                             )
                     );
+                    String generatorName = "Mix<" + hostname1 + "," + hostname2 + ">";
+                    mixTimelineGenerator.setGeneratorName(generatorName);
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/timeline_view.fxml"));
                     Tab tab = new Tab("mix");
                     tab.setClosable(false);
@@ -381,7 +387,7 @@ public class Controller implements Initializable {
                             new MastodonAPI(hostname1, accessToken1),
                             hostname1);
                     controller.registerWebViewOutput(webView);
-                    contentControllers.put("mix<" + hostname1 + "," + hostname2 + ">", controller);
+                    contentControllers.put(generatorName, controller);
                     controllersForReload.add(controller);
                 }
             }
