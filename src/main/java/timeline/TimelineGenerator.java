@@ -44,6 +44,28 @@ public class TimelineGenerator implements ITimelineGenerator {
         }
     }
 
+    public static class EmojiData {
+        private String imageURL;
+        private String shortCode;
+        public EmojiData(String shortCode, String imageURL){
+            if(MastodonTimelineParser.validateURL(imageURL)) {
+                this.imageURL = imageURL;
+            }
+            else {
+                this.imageURL = "";
+            }
+            this.shortCode = shortCode;
+        }
+
+        public String getShortCode() {
+            return shortCode;
+        }
+
+        public String toImageTag(){
+            return "<img src='"+ this.imageURL +"' class='emoji' />";
+        }
+    }
+
     // 汎用タイムライン項目データクラス
     public static class TLContent{
         final DataOriginInfo dataOriginInfo;
@@ -55,6 +77,7 @@ public class TimelineGenerator implements ITimelineGenerator {
         String displayName;
         String contentText;
         String contentHtml;
+        List<EmojiData> emojis;
         List<String> contentImageURL;
         String url;
         String applicationName;
@@ -73,6 +96,7 @@ public class TimelineGenerator implements ITimelineGenerator {
                          String userId, String acct,
                          String username, String displayName,
                          String contentText, String contentHtml,
+                         List<EmojiData> emojis,
                          List<String> contentImageURL,
                          String url,
                          String applicationName, String applicationWebSite,
@@ -90,6 +114,7 @@ public class TimelineGenerator implements ITimelineGenerator {
             this.displayName = displayName;
             this.contentText = contentText;
             this.contentHtml = contentHtml;
+            this.emojis = emojis;
             this.contentImageURL = contentImageURL;
             this.url = url;
             this.applicationName = applicationName;
@@ -170,7 +195,9 @@ public class TimelineGenerator implements ITimelineGenerator {
 
             this.contentTextForColumn.set(stringBuffer.toString());
 
-            this.contentHtml = tlContent.contentHtml;
+
+
+            this.contentHtml = applyEmoji(tlContent.contentHtml, tlContent.emojis);
             this.url = tlContent.url;
             this.applicationName = tlContent.applicationName;
             this.applicationWebSite = tlContent.applicationWebSite;
@@ -194,6 +221,15 @@ public class TimelineGenerator implements ITimelineGenerator {
         public StringProperty userNameProperty(){ return userNameForColumn; }
         public StringProperty contentTextProperty(){ return contentTextForColumn; }
         public StringProperty dateProperty(){ return dateForColumn; }
+    }
+
+    private static String applyEmoji(String contentHtml, List<EmojiData> emojis ){
+        String retContentHtml = contentHtml;
+        for(EmojiData emojiData : emojis){
+            String targetShortCode = ":" + emojiData.getShortCode() + ":";
+            retContentHtml = retContentHtml.replaceAll(targetShortCode, emojiData.toImageTag());
+        }
+        return retContentHtml;
     }
 
     public void setGeneratorName(String name){

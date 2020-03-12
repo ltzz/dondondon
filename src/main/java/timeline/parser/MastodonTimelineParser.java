@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class MastodonTimelineParser {
 
@@ -130,6 +131,7 @@ public class MastodonTimelineParser {
         public Reblog reblog;
         public List<Media> media_attachments;
         public Application application;
+        public List<Emoji> emojis;
         @JsonIgnore
         public Object pinned;
         public Object card;
@@ -139,10 +141,15 @@ public class MastodonTimelineParser {
         public List<Object> mentions;
         @JsonIgnore
         public List<Object> tags;
-        @JsonIgnore
-        public List<Object> emojis;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown=true)
+    public static class Emoji{
+        public String shortcode;
+        public String url;
+        public String static_url;
+        public Boolean visible_in_picker;
+    }
 
     @JsonIgnoreProperties(ignoreUnknown=true)
     public static class Notification{
@@ -251,7 +258,9 @@ public class MastodonTimelineParser {
                     toot.id,
                     toot.account.id, toot.account.acct,
                     toot.account.username, toot.account.display_name,
-                    text, htmltext, imagesURL,
+                    text, htmltext,
+                    toot.emojis.stream().map(emoji -> new TimelineGenerator.EmojiData(emoji.shortcode,emoji.static_url)).collect(Collectors.toList()),
+                    imagesURL,
                     toot.url,
                     getApplicationName(toot.application), getApplicationWebSite(toot.application),
                     createdAt, toot.favourited, toot.reblogged,
