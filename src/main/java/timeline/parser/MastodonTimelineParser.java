@@ -252,6 +252,9 @@ public class MastodonTimelineParser {
                 e.printStackTrace();
             }
 
+            HashMap<String,Object> mastodonSpecificData =new HashMap<String,Object>();
+            mastodonSpecificData.put("visibility", toot.visibility);
+
             TimelineGenerator.DataOriginInfo dataOriginInfo = new TimelineGenerator.DataOriginInfo("mastodon", MASTODON_HOST, loginUsername, MASTODON_TOKEN);
             listForGenerator.add(new TimelineGenerator.TLContent(dataOriginInfo,
                     new MastodonWriteAPIParser(MASTODON_HOST, MASTODON_TOKEN),
@@ -265,7 +268,9 @@ public class MastodonTimelineParser {
                     getApplicationName(toot.application), getApplicationWebSite(toot.application),
                     createdAt, toot.favourited, toot.reblogged,
                     toot.spoiler_text, toot.sensitive,
-                    rebloggUser, avatarIcon));
+                    rebloggUser, avatarIcon,
+                    mastodonSpecificData
+                    ));
         });
         return listForGenerator;
     }

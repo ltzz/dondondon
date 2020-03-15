@@ -89,6 +89,7 @@ public class TimelineGenerator implements ITimelineGenerator {
         String sensitive;
         String reblogOriginalUsername;
         BufferedImage avatarIcon;
+        HashMap<String, Object> instanceSpecificData;
 
         public TLContent(DataOriginInfo dataOriginInfo,
                          MastodonWriteAPIParser writeActionApi,
@@ -104,7 +105,8 @@ public class TimelineGenerator implements ITimelineGenerator {
                          String favorited, String reblogged,
                          String spoilerText, String sensitive,
                          String reblogOriginalUsername,
-                         BufferedImage avatarIcon) {
+                         BufferedImage avatarIcon,
+                         HashMap<String, Object> instanceSpecificData) {
             this.dataOriginInfo = dataOriginInfo;
             this.writeActionApi = writeActionApi;
             this.id = id;
@@ -126,6 +128,7 @@ public class TimelineGenerator implements ITimelineGenerator {
             this.sensitive = sensitive;
             this.reblogOriginalUsername = reblogOriginalUsername;
             this.avatarIcon = avatarIcon;
+            this.instanceSpecificData = instanceSpecificData;
         }
     }
 
@@ -172,6 +175,10 @@ public class TimelineGenerator implements ITimelineGenerator {
 
             this.userNameForColumn.set(tlContent.username + " / " + tlContent.displayName);
             StringBuffer stringBuffer = new StringBuffer();
+            
+            if(tlContent.instanceSpecificData.get("visibility").equals("private")){
+                stringBuffer.append("[非公開投稿]");
+            }
 
             if(tlContent.reblogOriginalUsername != null){
                 stringBuffer.append("reblog " + tlContent.reblogOriginalUsername + ": ");
