@@ -181,6 +181,11 @@ public class TimelineGenerator implements ITimelineGenerator {
                 stringBuffer.append("[非公開投稿]");
             }
 
+            if(tlContent.reblogOriginalUsername == null
+                    &&(tlContent.instanceSpecificData.get("poll")) != null){
+                stringBuffer.append("[投票]");
+            }
+
             if(tlContent.reblogOriginalUsername != null){
                 stringBuffer.append("reblog " + tlContent.reblogOriginalUsername + ": ");
             }
