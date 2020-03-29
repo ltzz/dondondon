@@ -175,8 +175,9 @@ public class TimelineGenerator implements ITimelineGenerator {
 
             this.userNameForColumn.set(tlContent.username + " / " + tlContent.displayName);
             StringBuffer stringBuffer = new StringBuffer();
-            
-            if(tlContent.instanceSpecificData.get("visibility").equals("private")){
+
+            if(tlContent.reblogOriginalUsername == null
+                    &&((String)tlContent.instanceSpecificData.get("visibility")).equals("private")){
                 stringBuffer.append("[非公開投稿]");
             }
 
