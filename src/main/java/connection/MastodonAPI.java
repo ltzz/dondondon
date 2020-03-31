@@ -1,5 +1,6 @@
 package connection;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 
 import static connection.WebRequest.requestGET;
@@ -32,12 +33,17 @@ public class MastodonAPI {
         return responseBody;
     }
 
-    public void postStatus(String text, String inReplyToId) {
+    public void postStatus(String postText, String inReplyToId) {
         String url = mastodonHost + "/api/v1/statuses";
         HashMap<String,String> headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + accessToken);
 
-        String parameterString = "status=" + text;
+        String encodedText = "";
+        try {
+            encodedText = URLEncoder.encode(postText, "UTF-8");
+        }catch(Exception e){
+        }
+        String parameterString = "status=" + encodedText;
         if( inReplyToId != null ) {
             parameterString = parameterString + "&in_reply_to_id=" + inReplyToId;
         }
