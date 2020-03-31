@@ -132,11 +132,10 @@ public class MastodonTimelineParser {
         public List<Media> media_attachments;
         public Application application;
         public List<Emoji> emojis;
+        public Object poll;
         @JsonIgnore
         public Object pinned;
         public Object card;
-        @JsonIgnore
-        public Object poll;
         @JsonIgnore
         public List<Object> mentions;
         @JsonIgnore
@@ -254,6 +253,7 @@ public class MastodonTimelineParser {
 
             HashMap<String,Object> mastodonSpecificData =new HashMap<String,Object>();
             mastodonSpecificData.put("visibility", toot.visibility);
+            mastodonSpecificData.put("poll", toot.poll);
 
             TimelineGenerator.DataOriginInfo dataOriginInfo = new TimelineGenerator.DataOriginInfo("mastodon", MASTODON_HOST, loginUsername, MASTODON_TOKEN);
             listForGenerator.add(new TimelineGenerator.TLContent(dataOriginInfo,
