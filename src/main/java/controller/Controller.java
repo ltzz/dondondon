@@ -14,6 +14,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
@@ -34,8 +35,10 @@ import timeline.parser.timelineEndPoint.UserTimelineGet;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 
 public class Controller implements Initializable {
@@ -59,8 +62,16 @@ public class Controller implements Initializable {
     @FXML
     private TextArea textArea;
 
+    HashSet<String> statusTexts;
+    @FXML
+    private Text inputTextStatus;
+
     @FXML
     private TabPane tabPane;
+    /*
+    @FXML // TODO: SplitPane化試行
+    SplitPane splitPane;
+    */
 
     @FXML private WebView webView;
 
@@ -173,6 +184,8 @@ public class Controller implements Initializable {
         textArea.setText("@" + acct + " ");
         inReplyToId = inReplyToStatusId;
         textArea.lookup(".content").getStyleClass().add("u-bgLightPinkColor");
+        statusTexts.add("返信");
+        inputTextStatus.setText(String.join("/", statusTexts));
         textArea.requestFocus();
         int caretPosition = acct.length() + 2; // @と空白で+2
         textArea.positionCaret(caretPosition);
@@ -182,6 +195,8 @@ public class Controller implements Initializable {
     private void replyModeCancel(){
         inReplyToId = null;
         textArea.lookup(".content").getStyleClass().remove("u-bgLightPinkColor");
+        statusTexts.remove("返信");
+        inputTextStatus.setText(String.join("/", statusTexts));
     }
 
     private void userFilterWordBoxToggle(){
@@ -410,6 +425,7 @@ public class Controller implements Initializable {
         iconCache = new ConcurrentHashMap<String, BufferedImage>();
 
         contentControllers = new HashMap<>();
+        statusTexts = new HashSet<>();
 
         initSpecificTab();
 
