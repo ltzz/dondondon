@@ -73,9 +73,11 @@ public class Controller implements Initializable {
     SplitPane splitPane;
     */
 
-    @FXML private WebView webView;
+    @FXML
+    private WebView webView;
 
-    @FXML private CheckMenuItem userIconVisible;
+    @FXML
+    private CheckMenuItem userIconVisible;
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -93,7 +95,7 @@ public class Controller implements Initializable {
         alert.getDialogPane().setHeaderText("開発用情報");
         List<Settings.InstanceSetting> instanceSettings = settings.getInstanceSettings();
         String contentText = "";
-        for(Settings.InstanceSetting instanceSetting : instanceSettings){
+        for (Settings.InstanceSetting instanceSetting : instanceSettings) {
             String hostName = instanceSetting.hostName;
             contentText = contentText + "mastodon host: " + hostName + "\n";
         }
@@ -115,13 +117,12 @@ public class Controller implements Initializable {
 
     @FXML
     protected void onMenuItemUserIconInvisible(ActionEvent evt) {
-        if( userIconVisible.selectedProperty().get() ){
-            for( IContentListController contentController : contentControllers.values() ){
+        if (userIconVisible.selectedProperty().get()) {
+            for (IContentListController contentController : contentControllers.values()) {
                 contentController.iconInvisible(true);
             }
-        }
-        else {
-            for( IContentListController contentController : contentControllers.values() ){
+        } else {
+            for (IContentListController contentController : contentControllers.values()) {
                 contentController.iconInvisible(false);
             }
         }
@@ -131,7 +132,7 @@ public class Controller implements Initializable {
     @FXML
     protected void onMenuItemTabSetting(ActionEvent evt) {
         Common.NotImplementAlert();
-        if(true) return; // TODO:
+        if (true) return; // TODO:
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/specific_tab_setting.fxml"));
             Scene scene = new Scene(loader.load());
@@ -141,7 +142,7 @@ public class Controller implements Initializable {
             stage.setTitle("固有タブの設定");
             stage.setScene(scene);
             stage.showAndWait();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -161,9 +162,9 @@ public class Controller implements Initializable {
         userPostEvent();
     }
 
-    private void userPostEvent(){
+    private void userPostEvent() {
         String text = textArea.getText();
-        if(!text.isEmpty()) {
+        if (!text.isEmpty()) {
             postMastodonAPI.postStatus(text, inReplyToId);
             textArea.setText(""); // TODO: 成功時にのみクリア
             replyModeCancel();
@@ -180,7 +181,7 @@ public class Controller implements Initializable {
         Common.NotImplementAlert();
     }
 
-    public void userReplyInputStart(String inReplyToStatusId, String acct ){
+    public void userReplyInputStart(String inReplyToStatusId, String acct) {
         textArea.setText("@" + acct + " ");
         inReplyToId = inReplyToStatusId;
         textArea.lookup(".content").getStyleClass().add("u-bgLightPinkColor");
@@ -192,16 +193,16 @@ public class Controller implements Initializable {
         // TODO: 送信時データ読み込み元ホストに応じてAPI叩く鯖切り替えできるように
     }
 
-    private void replyModeCancel(){
+    private void replyModeCancel() {
         inReplyToId = null;
         textArea.lookup(".content").getStyleClass().remove("u-bgLightPinkColor");
         statusTexts.remove("返信");
         inputTextStatus.setText(String.join("/", statusTexts));
     }
 
-    private void userFilterWordBoxToggle(){
-        for(IContentListController controller : contentControllers.values()){
-            if(controller.getClass().equals(TimelineViewController.class)) {
+    private void userFilterWordBoxToggle() {
+        for (IContentListController controller : contentControllers.values()) {
+            if (controller.getClass().equals(TimelineViewController.class)) {
                 TimelineViewController timelineViewController = (TimelineViewController) controller;
                 timelineViewController.userFilterWordBoxToggle();
             }
@@ -210,10 +211,10 @@ public class Controller implements Initializable {
         // TODO: 選ばれてるタブのコントローラでやる必要がある
     }
 
-    public void addUserTab(String userId, String username, String hostname, String token){
+    public void addUserTab(String userId, String username, String hostname, String token) {
         try {
-            String tabKey = "UserTab<"+userId+">";
-            if( contentControllers.containsKey(tabKey) ) return;
+            String tabKey = "UserTab<" + userId + ">";
+            if (contentControllers.containsKey(tabKey)) return;
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/timeline_view.fxml"));
             Tab tab = new Tab("user: " + username);
             AnchorPane pane = loader.load();
@@ -240,13 +241,12 @@ public class Controller implements Initializable {
             });
             // リロードタスクでロードしないので手動読み込み
             timelineViewController.reload();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void initShortcutKey(){
+    private void initShortcutKey() {
         final KeyCombination postTextAreaKey =
                 new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN);
         final KeyCombination filterWordKey =
@@ -254,25 +254,25 @@ public class Controller implements Initializable {
 
 
         textArea.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            if(postTextAreaKey.match(event)) {
+            if (postTextAreaKey.match(event)) {
                 userPostEvent();
             }
         });
 
         root.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            if(filterWordKey.match(event)){
+            if (filterWordKey.match(event)) {
                 userFilterWordBoxToggle();
             }
         });
     }
 
-    private void registerTabContextMenu(ITimelineGenerator timelineGenerator, Tab tab, Pane pane){
+    private void registerTabContextMenu(ITimelineGenerator timelineGenerator, Tab tab, Pane pane) {
         // Context Menu
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemTabInfo = new MenuItem("情報");
         MenuItem menuItemTabGraph = new MenuItem("時間ごとの件数");
         menuItemTabInfo.setOnAction((ActionEvent t) -> {
-            Common.GenericInformationAlert("情報",String.format("読み込み個数: %d",timelineGenerator.getNumberOfContent()));
+            Common.GenericInformationAlert("情報", String.format("読み込み個数: %d", timelineGenerator.getNumberOfContent()));
         });
 
         menuItemTabGraph.setOnAction((ActionEvent t) -> {
@@ -280,7 +280,7 @@ public class Controller implements Initializable {
             stage.initOwner(this.stage);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Line Chart");
-            TransitionGraph.draw(timelineGenerator.getGeneratorName(),stage, timelineGenerator.getNumberOfContentByHours());
+            TransitionGraph.draw(timelineGenerator.getGeneratorName(), stage, timelineGenerator.getNumberOfContentByHours());
         });
 
 
@@ -291,14 +291,14 @@ public class Controller implements Initializable {
         tab.setContextMenu(contextMenu);
     }
 
-    private void initSpecificTab(){
+    private void initSpecificTab() {
         List<IContentListController> controllersForReload = new ArrayList<IContentListController>();
 
         try {
 
             List<Settings.InstanceSetting> instanceSettings = settings.getInstanceSettings();
 
-            for(Settings.InstanceSetting instanceSetting : instanceSettings){
+            for (Settings.InstanceSetting instanceSetting : instanceSettings) {
                 String hostname = instanceSetting.hostName;
                 String accessToken = instanceSetting.accessToken;
                 {
@@ -306,7 +306,7 @@ public class Controller implements Initializable {
                             new MastodonTimelineParser(hostname, accessToken,
                                     new HomeTimelineGet(hostname, accessToken), myUserName, iconCache)
                     );
-                    String generatorName = "Home<"+hostname+">";
+                    String generatorName = "Home<" + hostname + ">";
                     homeTimelineGenerator.setGeneratorName(generatorName);
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/timeline_view.fxml"));
                     Tab tab = new Tab("home");
@@ -340,7 +340,7 @@ public class Controller implements Initializable {
                                     new MastodonNotificationParser(hostname, accessToken, myUserName, iconCache)
                             ),
                             hostname);
-                    contentControllers.put("Notification<"+hostname+">", controller);
+                    contentControllers.put("Notification<" + hostname + ">", controller);
                     controllersForReload.add(controller);
                 }
                 {
@@ -348,7 +348,7 @@ public class Controller implements Initializable {
                             new MastodonTimelineParser(hostname, accessToken,
                                     new LocalTimelineGet(hostname, accessToken), myUserName, iconCache)
                     );
-                    String generatorName = "Local<"+hostname+">";
+                    String generatorName = "Local<" + hostname + ">";
                     localTimelineGenerator.setGeneratorName(generatorName);
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/timeline_view.fxml"));
                     Tab tab = new Tab("local");
@@ -371,7 +371,7 @@ public class Controller implements Initializable {
                 // 今のところ2つ以上インスタンスを登録するには設定ファイルを弄る導線しかないため、上級者向け機能として動作する
                 // TODO: 2つ以上インスタンス登録するUIを作った場合は、この機能の有効無効をどこで決めるか仕様を定める
                 // 2つ以上インスタンスの設定情報がある場合はホームタイムラインを合成したタブを出す
-                if( 2 <= instanceSettings.size() ) {
+                if (2 <= instanceSettings.size()) {
                     String hostname1 = instanceSettings.get(0).hostName;
                     String accessToken1 = instanceSettings.get(0).accessToken;
                     String hostname2 = instanceSettings.get(1).hostName;
@@ -407,7 +407,7 @@ public class Controller implements Initializable {
                 }
             }
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -417,7 +417,7 @@ public class Controller implements Initializable {
     @Override
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
         settings = new Settings();
-        if(true) { // For Developper:　設定保存用
+        if (true) { // For Developper:　設定保存用
             SettingsLoadOnStart settingsLoadOnStart = new SettingsLoadOnStart(settings);
             settingsLoadOnStart.startSequence();
         }

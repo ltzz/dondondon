@@ -21,16 +21,15 @@ public class NotificationViewController implements Initializable, IContentListCo
     @FXML
     private TableColumn iconCol;
 
-    public void iconInvisible(boolean value){
-        if(value) {
+    public void iconInvisible(boolean value) {
+        if (value) {
             iconCol.getStyleClass().add("u-hidden");
-        }
-        else {
+        } else {
             iconCol.getStyleClass().remove("u-hidden");
         }
     }
 
-    public void tableViewSetItems(ObservableList<NotificationGenerator.RowContent> rowContents){
+    public void tableViewSetItems(ObservableList<NotificationGenerator.RowContent> rowContents) {
         tableView.setItems(rowContents);
     }
 
@@ -40,25 +39,25 @@ public class NotificationViewController implements Initializable, IContentListCo
         tableViewSetItems(rowContents);
     }
 
-    public void viewRefresh(){
+    public void viewRefresh() {
         reload();
     }
 
 
     public static class NotificationCell extends TableRow<NotificationGenerator.RowContent> {
         @Override
-        protected void updateItem(NotificationGenerator.RowContent rowContent, boolean empty){
+        protected void updateItem(NotificationGenerator.RowContent rowContent, boolean empty) {
             super.updateItem(rowContent, empty);
         }
     }
 
-    public void registerParentControllerObject(Controller rootController, NotificationGenerator notificationGenerator, String hostname){
+    public void registerParentControllerObject(Controller rootController, NotificationGenerator notificationGenerator, String hostname) {
         this.rootController = rootController;
         this.notificationGenerator = notificationGenerator;
         this.hostname = hostname;
     }
 
-    private void contextMenuInit(){
+    private void contextMenuInit() {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemUserTimeline = new MenuItem("このユーザーのタイムラインを見る");
         menuItemUserTimeline.setOnAction((ActionEvent t) -> {
@@ -82,10 +81,10 @@ public class NotificationViewController implements Initializable, IContentListCo
 
         contextMenuInit();
 
-        if(tableView != null) {
+        if (tableView != null) {
 
             ObservableList<TableColumn<NotificationGenerator.RowContent, ?>> columns = tableView.getColumns();
-            for( TableColumn<NotificationGenerator.RowContent, ?> column : columns ) column.setSortable(false);
+            for (TableColumn<NotificationGenerator.RowContent, ?> column : columns) column.setSortable(false);
 
             tableView.setRowFactory(new Callback<TableView<NotificationGenerator.RowContent>, TableRow<NotificationGenerator.RowContent>>() {
                 @Override

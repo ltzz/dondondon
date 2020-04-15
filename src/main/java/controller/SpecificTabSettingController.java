@@ -10,6 +10,7 @@ import javafx.scene.control.cell.CheckBoxTreeCell;
 public class SpecificTabSettingController implements Initializable {
     @FXML
     private TreeView<String> treeView;
+
     @Override
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
         TreeItem<String> rootItem = new TreeItem<>("root");
