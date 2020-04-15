@@ -179,6 +179,9 @@ public class Controller implements Initializable {
     @FXML
     protected void onMenuItemUploadImage(ActionEvent evt) {
         Common.NotImplementAlert();
+        if (false) {
+            UploadImageChooser.choose();
+        }
     }
 
     public void userReplyInputStart(String inReplyToStatusId, String acct) {
