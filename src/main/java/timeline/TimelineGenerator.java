@@ -87,7 +87,7 @@ public class TimelineGenerator implements ITimelineGenerator {
         String reblogged;
         String spoilerText;
         String sensitive;
-        String reblogOriginalUsername;
+        String reblogUsername;
         BufferedImage avatarIcon;
         HashMap<String, Object> instanceSpecificData;
 
@@ -104,7 +104,7 @@ public class TimelineGenerator implements ITimelineGenerator {
                          Date date,
                          String favorited, String reblogged,
                          String spoilerText, String sensitive,
-                         String reblogOriginalUsername,
+                         String reblogUsername,
                          BufferedImage avatarIcon,
                          HashMap<String, Object> instanceSpecificData) {
             this.dataOriginInfo = dataOriginInfo;
@@ -126,7 +126,7 @@ public class TimelineGenerator implements ITimelineGenerator {
             this.reblogged = reblogged;
             this.spoilerText = spoilerText;
             this.sensitive = sensitive;
-            this.reblogOriginalUsername = reblogOriginalUsername;
+            this.reblogUsername = reblogUsername;
             this.avatarIcon = avatarIcon;
             this.instanceSpecificData = instanceSpecificData;
         }
@@ -146,7 +146,7 @@ public class TimelineGenerator implements ITimelineGenerator {
         public String reblogged;
         public String sensitive;
         public String spoilerText;
-        public String reblogOriginalUserId;
+        public String reblogUsername;
         public String url;
         public String applicationName;
         public String applicationWebSite;
@@ -176,18 +176,16 @@ public class TimelineGenerator implements ITimelineGenerator {
             this.userNameForColumn.set(tlContent.username + " / " + tlContent.displayName);
             StringBuffer stringBuffer = new StringBuffer();
 
-            if(tlContent.reblogOriginalUsername == null
-                    &&((String)tlContent.instanceSpecificData.get("visibility")).equals("private")){
+            if(((String)tlContent.instanceSpecificData.get("visibility")).equals("private")){
                 stringBuffer.append("[非公開投稿]");
             }
 
-            if(tlContent.reblogOriginalUsername == null
-                    &&(tlContent.instanceSpecificData.get("poll")) != null){
+            if((tlContent.instanceSpecificData.get("poll")) != null){
                 stringBuffer.append("[投票]");
             }
 
-            if(tlContent.reblogOriginalUsername != null){
-                stringBuffer.append("reblog " + tlContent.reblogOriginalUsername + ": ");
+            if(tlContent.reblogUsername != null){
+                stringBuffer.append("[reblog by " + tlContent.reblogUsername + "]");
             }
             if(tlContent.contentImageURL != null && !tlContent.contentImageURL.isEmpty()){
                 stringBuffer.append("[画像]");
@@ -208,8 +206,6 @@ public class TimelineGenerator implements ITimelineGenerator {
 
             this.contentTextForColumn.set(stringBuffer.toString());
 
-
-
             this.contentHtml = applyEmoji(tlContent.contentHtml, tlContent.emojis);
             this.url = tlContent.url;
             this.applicationName = tlContent.applicationName;
@@ -226,7 +222,7 @@ public class TimelineGenerator implements ITimelineGenerator {
             this.sensitive = tlContent.sensitive;
             this.contentImageURL = tlContent.contentImageURL;
             this.contentText = tlContent.contentText;
-            this.reblogOriginalUserId = tlContent.reblogOriginalUsername;
+            this.reblogUsername = tlContent.reblogUsername;
             // TODO
         }
 

@@ -74,35 +74,6 @@ public class MastodonTimelineParser {
     }
 
     @JsonIgnoreProperties(ignoreUnknown=true)
-    public static class Reblog {
-        public String id;
-        public String created_at;
-        public String in_reply_to_id;
-        public String in_reply_to_account_id;
-        public String sensitive;
-        public String spoiler_text;
-        public String visibility;
-        public String language;
-        public String uri;
-        public String url;
-        public String replies_count;
-        public String reblogs_count;
-        public String favourites_count;
-        public String favourited;
-        public String reblogged;
-        public String muted;
-        public String content;
-        public String reblog;
-        public Account account;
-        public List<Media> media_attachments;
-        public Object mentions;
-        public Object tags;
-        public String name;
-        public Object card;
-        public Object poll;
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown=true)
     public static class Application {
         public String name;
         public String website;
@@ -128,18 +99,17 @@ public class MastodonTimelineParser {
         public String muted;
         public String content;
         public Account account;
-        public Reblog reblog;
+        public Toot reblog;
         public List<Media> media_attachments;
+        public Object mentions;
+        public Object tags;
+        public String name;
+        public Object card;
         public Application application;
         public List<Emoji> emojis;
         public Object poll;
         @JsonIgnore
         public Object pinned;
-        public Object card;
-        @JsonIgnore
-        public List<Object> mentions;
-        @JsonIgnore
-        public List<Object> tags;
     }
 
     @JsonIgnoreProperties(ignoreUnknown=true)
@@ -164,7 +134,7 @@ public class MastodonTimelineParser {
         return toTLContent(toots);
     }
 
-    private String getApplicationName(Application application){
+    private static String getApplicationName(Application application){
         if(application != null){
             return application.name;
         }
@@ -173,12 +143,21 @@ public class MastodonTimelineParser {
         }
     }
 
-    private String getApplicationWebSite(Application application){
+    private static String getApplicationWebSite(Application application){
         if(application != null){
             return application.website;
         }
         else {
             return "";
+        }
+    }
+
+    private static Toot getTootOrReblog(Toot toot){
+        if(toot.reblog == null){
+            return toot;
+        }
+        else {
+            return toot.reblog;
         }
     }
 
@@ -188,16 +167,20 @@ public class MastodonTimelineParser {
             String text = Jsoup.parse(toot.content).text();
             String htmltext = Jsoup.clean(toot.content, "", Whitelist.basic(), new Document.OutputSettings().prettyPrint(false));
             System.out.println(text);
-            String rebloggUser;
+
+            Toot tootEntity = getTootOrReblog(toot);
+
+            String usernameReblogBy;
             if(toot.reblog == null){
-                rebloggUser = null;
+                usernameReblogBy = null;
             }
             else {
-                rebloggUser = toot.reblog.account.username;
+                usernameReblogBy = toot.account.username;
             }
 
             List<String> imagesURL = new ArrayList<>();
 
+            // TODO: typeを使って動画であることを画面上で明示
             if(toot.media_attachments.size() > 0) {
                 for( Media media_attachment : toot.media_attachments ){
                     if (validateURL(media_attachment.preview_url)) {
@@ -214,16 +197,9 @@ public class MastodonTimelineParser {
                 }
             }
 
-            final String avatarStatic;
             BufferedImage avatarIcon = null;
-            if(toot.reblog != null){
-                avatarStatic = toot.reblog.account.avatar_static;
-            }
-            else {
-                avatarStatic = toot.account.avatar_static;
-            }
-            if (validateURL(avatarStatic)) {
-                String avatarURL = avatarStatic;
+            if (validateURL(tootEntity.account.avatar_static)) {
+                String avatarURL = tootEntity.account.avatar_static;
                 try {
                     // TODO: この実装セキュリティ的に大丈夫かどうか詳しい人に聞く
                     if(iconCache.containsKey(avatarURL)){
@@ -252,23 +228,23 @@ public class MastodonTimelineParser {
             }
 
             HashMap<String,Object> mastodonSpecificData =new HashMap<String,Object>();
-            mastodonSpecificData.put("visibility", toot.visibility);
-            mastodonSpecificData.put("poll", toot.poll);
+            mastodonSpecificData.put("visibility", tootEntity.visibility);
+            mastodonSpecificData.put("poll", tootEntity.poll);
 
             TimelineGenerator.DataOriginInfo dataOriginInfo = new TimelineGenerator.DataOriginInfo("mastodon", MASTODON_HOST, loginUsername, MASTODON_TOKEN);
             listForGenerator.add(new TimelineGenerator.TLContent(dataOriginInfo,
                     new MastodonWriteAPIParser(MASTODON_HOST, MASTODON_TOKEN),
                     toot.id,
-                    toot.account.id, toot.account.acct,
-                    toot.account.username, toot.account.display_name,
+                    tootEntity.account.id, tootEntity.account.acct,
+                    tootEntity.account.username, tootEntity.account.display_name,
                     text, htmltext,
-                    toot.emojis.stream().map(emoji -> new TimelineGenerator.EmojiData(emoji.shortcode,emoji.static_url)).collect(Collectors.toList()),
+                    tootEntity.emojis.stream().map(emoji -> new TimelineGenerator.EmojiData(emoji.shortcode,emoji.static_url)).collect(Collectors.toList()),
                     imagesURL,
-                    toot.url,
+                    tootEntity.url,
                     getApplicationName(toot.application), getApplicationWebSite(toot.application),
                     createdAt, toot.favourited, toot.reblogged,
-                    toot.spoiler_text, toot.sensitive,
-                    rebloggUser, avatarIcon,
+                    tootEntity.spoiler_text, tootEntity.sensitive,
+                    usernameReblogBy, avatarIcon,
                     mastodonSpecificData
                     ));
         });
