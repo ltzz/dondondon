@@ -12,7 +12,6 @@ import org.jsoup.safety.Whitelist;
 import timeline.TimelineGenerator;
 import timeline.parser.timelineEndPoint.MastodonTimelineEndPoint;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -269,6 +268,29 @@ public class MastodonTimelineParser {
             Toot toot = mapper.readValue(json, new TypeReference<Toot>() {});
 
             return toot;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown=true)
+    public static class UploadMediaResponse{
+        public String id;
+        public String type;
+        public String url;
+        public String preview_url;
+        public String remote_url;
+        public String text_url;
+    }
+
+
+    public static UploadMediaResponse getUploadMediaResponse(String json){
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            UploadMediaResponse dto = mapper.readValue(json, new TypeReference<UploadMediaResponse>() {});
+
+            return dto;
         }catch (Exception e){
             e.printStackTrace();
         }

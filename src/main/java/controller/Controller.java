@@ -1,6 +1,7 @@
 package controller;
 
 import connection.MastodonAPI;
+import connection.MastodonAPIParser;
 import connection.MultipartFormData;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -53,7 +54,42 @@ public class Controller implements Initializable {
 
     private HashMap<String, IContentListController> contentControllers; // TODO: タイムライン以外も複製できるように
 
-    private String inReplyToId;
+    public static final class FormState{
+        private String inReplyToId;
+        private String imageId; // TODO: 複数持てるように
+        HashSet<String> statusTexts;
+        FormState(){
+            statusTexts = new HashSet<>();
+        }
+
+        public HashSet<String> getStatusTexts() {
+            return statusTexts;
+        }
+
+        public String getImageId() {
+            return imageId;
+        }
+
+        public String getInReplyToId() {
+            return inReplyToId;
+        }
+
+        public void setImageId(String imageId) {
+            this.imageId = imageId;
+        }
+
+        public void setInReplyToId(String inReplyToId) {
+            this.inReplyToId = inReplyToId;
+        }
+
+        public void initialize(){
+            statusTexts = new HashSet<>();
+            this.imageId = null;
+            this.inReplyToId = null;
+        }
+    }
+
+    FormState formState;
 
     private ConcurrentHashMap<String, BufferedImage> iconCache;
 
@@ -63,7 +99,6 @@ public class Controller implements Initializable {
     @FXML
     private TextArea textArea;
 
-    HashSet<String> statusTexts;
     @FXML
     private Text inputTextStatus;
 
@@ -166,9 +201,9 @@ public class Controller implements Initializable {
     private void userPostEvent() {
         String text = textArea.getText();
         if (!text.isEmpty()) {
-            postMastodonAPI.postStatus(text, inReplyToId);
+            postMastodonAPI.postStatus(text, formState);
             textArea.setText(""); // TODO: 成功時にのみクリア
-            replyModeCancel();
+            formInitialize();
         }
     }
 
@@ -178,39 +213,51 @@ public class Controller implements Initializable {
     }
 
     @FXML
+    protected void onMenuItemClearForm(ActionEvent evt) {
+        formInitialize();
+    }
+
+    @FXML
     protected void onMenuItemUploadImage(ActionEvent evt) {
-        if (false) {
-            try {
-                MultipartFormData.FileDto fileBytes = UploadImageChooser.choose();
-                String output = postMastodonAPI.uploadMedia(fileBytes);
-                System.out.println(output);
-            }
-            catch (Exception e){
-                e.printStackTrace();
+        try {
+            MultipartFormData.FileDto fileDto = UploadImageChooser.choose();
+            String output = postMastodonAPI.uploadMedia(fileDto);
+            if( output != null && !output.isEmpty() ){ // FIXME: 通信OKかどうかをレスポンスで持たす作りにすること
+                MastodonTimelineParser.UploadMediaResponse response = MastodonAPIParser.upload(output);
+                formState.setImageId(response.id);
+                formState.getStatusTexts().add("画像");
+                inputTextStatus.setText(String.join("/", formState.getStatusTexts()));
+                textArea.setText(textArea.getText() + " " + response.text_url);
             }
         }
-        else {
-            Common.NotImplementAlert();
+        catch (Exception e){
+            e.printStackTrace();
         }
     }
 
     public void userReplyInputStart(String inReplyToStatusId, String acct) {
         textArea.setText("@" + acct + " ");
-        inReplyToId = inReplyToStatusId;
+        formState.setInReplyToId(inReplyToStatusId);
         textArea.lookup(".content").getStyleClass().add("u-bgLightPinkColor");
-        statusTexts.add("返信");
-        inputTextStatus.setText(String.join("/", statusTexts));
+        formState.getStatusTexts().add("返信");
+        inputTextStatus.setText(String.join("/", formState.getStatusTexts()));
         textArea.requestFocus();
         int caretPosition = acct.length() + 2; // @と空白で+2
         textArea.positionCaret(caretPosition);
         // TODO: 送信時データ読み込み元ホストに応じてAPI叩く鯖切り替えできるように
     }
 
-    private void replyModeCancel() {
-        inReplyToId = null;
+    private void formInitialize() {
+        formState.initialize();
         textArea.lookup(".content").getStyleClass().remove("u-bgLightPinkColor");
-        statusTexts.remove("返信");
-        inputTextStatus.setText(String.join("/", statusTexts));
+        inputTextStatus.setText(String.join("/", formState.getStatusTexts()));
+    }
+
+    private void replyModeCancel() {
+        formState.setInReplyToId(null);
+        formState.getStatusTexts().remove("返信");
+        textArea.lookup(".content").getStyleClass().remove("u-bgLightPinkColor");
+        inputTextStatus.setText(String.join("/", formState.getStatusTexts()));
     }
 
     private void userFilterWordBoxToggle() {
@@ -437,8 +484,9 @@ public class Controller implements Initializable {
 
         iconCache = new ConcurrentHashMap<String, BufferedImage>();
 
+        formState = new FormState();
+
         contentControllers = new HashMap<>();
-        statusTexts = new HashSet<>();
 
         initSpecificTab();
 

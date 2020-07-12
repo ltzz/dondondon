@@ -1,5 +1,7 @@
 package connection;
 
+import controller.Controller;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -38,7 +40,7 @@ public class MastodonAPI {
         return responseBody;
     }
 
-    public void postStatus(String postText, String inReplyToId) {
+    public void postStatus(String postText, Controller.FormState formState) {
         String url = mastodonHost + "/api/v1/statuses";
         HashMap<String,String> headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + accessToken);
@@ -49,8 +51,11 @@ public class MastodonAPI {
         }catch(Exception e){
         }
         String parameterString = "status=" + encodedText;
-        if( inReplyToId != null ) {
-            parameterString = parameterString + "&in_reply_to_id=" + inReplyToId;
+        if( formState.getInReplyToId() != null ) {
+            parameterString = parameterString + "&in_reply_to_id=" + formState.getInReplyToId();
+        }
+        if( formState.getImageId() != null ) {
+            parameterString = parameterString + "&media_ids[]=" + formState.getImageId();
         }
         String responseBody = WebRequest.requestPOST(url, headers, parameterString);
         // System.out.println(responseBody);
@@ -90,10 +95,11 @@ public class MastodonAPI {
         return responseBody;
     }
 
-    public String uploadMedia(MultipartFormData.FileDto fileDto) throws MalformedURLException {
+    public String uploadMedia(MultipartFormData.FileDto fileDto) {
         String url = mastodonHost + "/api/v1/media";
         HashMap<String,String> headers = new HashMap<String,String>();
         headers.put("Authorization", "Bearer " + accessToken);
-        return MultipartFormData.post(new URL(url), headers, new ArrayList<>(Arrays.asList(fileDto)));
+        String responseBody = MultipartFormData.post(url, headers, new ArrayList<>(Arrays.asList(fileDto)));
+        return responseBody;
     }
 }

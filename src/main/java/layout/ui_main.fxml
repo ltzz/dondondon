@@ -14,6 +14,7 @@
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.control.ComboBox?>
 <VBox fx:controller="controller.Controller"
       xmlns:fx="http://javafx.com/fxml"
       fx:id="root">
@@ -47,8 +48,10 @@
             <VBox>
                 <MenuButton><items>
                     <MenuItem text="返信モードを取り消す" onAction="#onMenuItemClearReply"></MenuItem>
+                    <MenuItem text="入力状態を取り消す" onAction="#onMenuItemClearForm"></MenuItem>
                     <MenuItem text="画像アップロード" onAction="#onMenuItemUploadImage"></MenuItem>
                 </items></MenuButton>
+                <ComboBox></ComboBox>
                 <Button onAction="#onButtonInputTextPost" text="投稿"/>
                 <Text fx:id="inputTextStatus"></Text>
             </VBox>

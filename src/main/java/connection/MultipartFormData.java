@@ -36,7 +36,7 @@ public class MultipartFormData {
         return "---*#" + randomString + "#";
     }
 
-    public static String post(URL url, HashMap<String,String> headers, List<FileDto> multipartFiles){
+    public static String post(String urlString, HashMap<String,String> headers, List<FileDto> multipartFiles){
         final byte[] CRLFBytes = "\r\n".getBytes(StandardCharsets.UTF_8);
         final String boundary = generateBoundary();
         HttpURLConnection connection = null;
@@ -45,6 +45,7 @@ public class MultipartFormData {
         OutputStream out = null;
 
         try {
+            URL url = new URL(urlString);
             connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(30000);
             connection.setReadTimeout(30000);

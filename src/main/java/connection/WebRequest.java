@@ -1,6 +1,5 @@
 package connection;
 
-import javafx.scene.control.TextInputDialog;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -9,7 +8,6 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class WebRequest {
 
