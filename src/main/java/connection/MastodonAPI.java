@@ -1,7 +1,12 @@
 package connection;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import static connection.WebRequest.requestGET;
 
@@ -83,5 +88,12 @@ public class MastodonAPI {
         headers.put("Authorization", "Bearer " + accessToken);
         String responseBody = requestGET(url, headers);
         return responseBody;
+    }
+
+    public String uploadMedia(MultipartFormData.FileDto fileDto) throws MalformedURLException {
+        String url = mastodonHost + "/api/v1/media";
+        HashMap<String,String> headers = new HashMap<String,String>();
+        headers.put("Authorization", "Bearer " + accessToken);
+        return MultipartFormData.post(new URL(url), headers, new ArrayList<>(Arrays.asList(fileDto)));
     }
 }

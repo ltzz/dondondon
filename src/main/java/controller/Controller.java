@@ -1,6 +1,7 @@
 package controller;
 
 import connection.MastodonAPI;
+import connection.MultipartFormData;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -178,9 +179,18 @@ public class Controller implements Initializable {
 
     @FXML
     protected void onMenuItemUploadImage(ActionEvent evt) {
-        Common.NotImplementAlert();
         if (false) {
-            UploadImageChooser.choose();
+            try {
+                MultipartFormData.FileDto fileBytes = UploadImageChooser.choose();
+                String output = postMastodonAPI.uploadMedia(fileBytes);
+                System.out.println(output);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        else {
+            Common.NotImplementAlert();
         }
     }
 
