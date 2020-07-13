@@ -14,29 +14,32 @@ public class MultipartFormData {
         private String fileName;
         private String mimeType;
         private byte[] bytes;
-        public FileDto(String fileName, String mimeType, byte[] bytes){
+
+        public FileDto(String fileName, String mimeType, byte[] bytes) {
             this.fileName = fileName;
             this.mimeType = mimeType;
             this.bytes = bytes;
         }
 
-        public String getFileName(){
+        public String getFileName() {
             return this.fileName;
         }
-        public String getMimeType(){
+
+        public String getMimeType() {
             return this.mimeType;
         }
-        public byte[] getBytes(){
+
+        public byte[] getBytes() {
             return this.bytes;
         }
     }
 
-    static protected String generateBoundary(){
+    static protected String generateBoundary() {
         final String randomString = "wbkuypnnawsgvb"; // TODO:
         return "---*#" + randomString + "#";
     }
 
-    public static String post(String urlString, HashMap<String,String> headers, List<FileDto> multipartFiles){
+    public static String post(String urlString, HashMap<String, String> headers, List<FileDto> multipartFiles) {
         final byte[] CRLFBytes = "\r\n".getBytes(StandardCharsets.UTF_8);
         final String boundary = generateBoundary();
         HttpURLConnection connection = null;
@@ -50,7 +53,7 @@ public class MultipartFormData {
             connection.setConnectTimeout(30000);
             connection.setReadTimeout(30000);
 
-            for(Map.Entry<String,String> entry: headers.entrySet()) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
                 connection.setRequestProperty(entry.getKey(), entry.getValue());
             }
 
@@ -137,7 +140,7 @@ public class MultipartFormData {
         private InputStream inputStream;
         private String mimeType;
 
-        public FileData(String filename, InputStream inputStream, String mimeType){
+        public FileData(String filename, InputStream inputStream, String mimeType) {
             this.filename = filename;
             this.inputStream = inputStream;
             this.mimeType = mimeType;

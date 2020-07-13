@@ -12,11 +12,11 @@ import java.util.Map;
 public class WebRequest {
 
 
-    public static String requestPOST(String URLStr, String parameterString){
+    public static String requestPOST(String URLStr, String parameterString) {
         return requestPOST(URLStr, new HashMap<>(), parameterString);
     }
 
-    public static String requestPOST(String URLStr, HashMap<String,String> headers, String parameterString){
+    public static String requestPOST(String URLStr, HashMap<String, String> headers, String parameterString) {
         HttpURLConnection connection = null;
         InputStream in = null;
         BufferedReader reader = null;
@@ -29,7 +29,7 @@ public class WebRequest {
             connection.setConnectTimeout(30000);
             connection.setReadTimeout(30000);
 
-            for(Map.Entry<String,String> entry: headers.entrySet()) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
                 connection.setRequestProperty(entry.getKey(), entry.getValue());
             }
 
@@ -84,7 +84,7 @@ public class WebRequest {
         return "";
     }
 
-    public static String requestGET(String URLStr, HashMap<String,String> headers){
+    public static String requestGET(String URLStr, HashMap<String, String> headers) {
         HttpURLConnection connection = null;
         InputStream in = null;
         BufferedReader reader = null;
@@ -97,7 +97,7 @@ public class WebRequest {
             connection.setConnectTimeout(30000);
             connection.setReadTimeout(30000);
             connection.setRequestMethod("GET");
-            for(Map.Entry<String,String> entry: headers.entrySet()) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
                 connection.setRequestProperty(entry.getKey(), entry.getValue());
             }
             connection.connect();
@@ -119,9 +119,9 @@ public class WebRequest {
                 }
                 return output.toString();
             }
-        }catch (UnknownHostException e) {
+        } catch (UnknownHostException e) {
             System.err.println("ホストとの接続に失敗");
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {

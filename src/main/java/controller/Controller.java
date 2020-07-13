@@ -54,11 +54,12 @@ public class Controller implements Initializable {
 
     private HashMap<String, IContentListController> contentControllers; // TODO: タイムライン以外も複製できるように
 
-    public static final class FormState{
+    public static final class FormState {
         private String inReplyToId;
         private String imageId; // TODO: 複数持てるように
         HashSet<String> statusTexts;
-        FormState(){
+
+        FormState() {
             statusTexts = new HashSet<>();
         }
 
@@ -82,7 +83,7 @@ public class Controller implements Initializable {
             this.inReplyToId = inReplyToId;
         }
 
-        public void initialize(){
+        public void initialize() {
             statusTexts = new HashSet<>();
             this.imageId = null;
             this.inReplyToId = null;
@@ -222,15 +223,14 @@ public class Controller implements Initializable {
         try {
             MultipartFormData.FileDto fileDto = UploadImageChooser.choose();
             String output = postMastodonAPI.uploadMedia(fileDto);
-            if( output != null && !output.isEmpty() ){ // FIXME: 通信OKかどうかをレスポンスで持たす作りにすること
+            if (output != null && !output.isEmpty()) { // FIXME: 通信OKかどうかをレスポンスで持たす作りにすること
                 MastodonTimelineParser.UploadMediaResponse response = MastodonAPIParser.upload(output);
                 formState.setImageId(response.id);
                 formState.getStatusTexts().add("画像");
                 inputTextStatus.setText(String.join("/", formState.getStatusTexts()));
                 textArea.setText(textArea.getText() + " " + response.text_url);
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
