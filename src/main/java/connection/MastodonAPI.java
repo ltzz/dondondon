@@ -1,5 +1,6 @@
 package connection;
 
+import controller.BottomForm;
 import controller.Controller;
 
 import java.net.URLEncoder;
@@ -37,7 +38,7 @@ public class MastodonAPI {
         return responseBody;
     }
 
-    public void postStatus(String postText, Controller.FormState formState) {
+    public void postStatus(String postText, BottomForm.FormState formState) {
         String url = mastodonHost + "/api/v1/statuses";
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + accessToken);
