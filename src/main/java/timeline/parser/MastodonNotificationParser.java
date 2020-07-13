@@ -26,7 +26,7 @@ public class MastodonNotificationParser {
 
     HashSet<String> receivedNotificationIds;
 
-    public MastodonNotificationParser(String mastodonHost, String mastodonToken, String username, ConcurrentHashMap<String, BufferedImage> iconCache){
+    public MastodonNotificationParser(String mastodonHost, String mastodonToken, String username, ConcurrentHashMap<String, BufferedImage> iconCache) {
         this.MASTODON_HOST = mastodonHost;
         this.MASTODON_TOKEN = mastodonToken;
         this.loginUsername = username;
@@ -34,8 +34,8 @@ public class MastodonNotificationParser {
         this.iconCache = iconCache;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown=true)
-    public static class Notification{
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Notification {
         public String id;
         public String type;
         public String created_at;
@@ -43,7 +43,7 @@ public class MastodonNotificationParser {
         public MastodonTimelineParser.Toot status;
     }
 
-    public List<NotificationGenerator.NotificationContent> diffNotification(){
+    public List<NotificationGenerator.NotificationContent> diffNotification() {
         MastodonAPI mastodonAPI = new MastodonAPI(MASTODON_HOST, MASTODON_TOKEN);
         List<Notification> notifications = getNotificationDto(mastodonAPI.getNotification());
         List<Notification> filteredNotification = notifications.stream().filter(notification -> !receivedNotificationIds.contains(notification.id)).collect(Collectors.toList());
@@ -52,12 +52,12 @@ public class MastodonNotificationParser {
         return toNotificationContent(filteredNotification);
     }
 
-    List<NotificationGenerator.NotificationContent> toNotificationContent(List<Notification> notifications){
+    List<NotificationGenerator.NotificationContent> toNotificationContent(List<Notification> notifications) {
         List<NotificationGenerator.NotificationContent> listForGenerator = new ArrayList<>();
         notifications.forEach(notification -> {
-            if(notification == null) return;
+            if (notification == null) return;
             String notificationText = "[" + notification.type + "]";
-            if(notification.status != null) {
+            if (notification.status != null) {
                 notificationText = notificationText + " " + Jsoup.parse(notification.status.content).text();
             }
 
@@ -66,17 +66,16 @@ public class MastodonNotificationParser {
                 String avatarURL = notification.account.avatar_static;
                 try {
                     // TODO: この実装セキュリティ的に大丈夫かどうか詳しい人に聞く
-                    if(iconCache.containsKey(avatarURL)){
+                    if (iconCache.containsKey(avatarURL)) {
                         avatarIcon = iconCache.get(avatarURL);
-                    }
-                    else {
+                    } else {
                         byte[] buffer = ImageCommons.readImageAsByte(new URL(avatarURL));
-                        if(buffer != null) {
+                        if (buffer != null) {
                             avatarIcon = ImageCommons.readImage(buffer);
                             iconCache.put(avatarURL, avatarIcon);
                         }
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -87,8 +86,7 @@ public class MastodonNotificationParser {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                 format.setTimeZone(TimeZone.getTimeZone("UTC"));
                 createdAt = format.parse(notification.created_at);
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -100,13 +98,14 @@ public class MastodonNotificationParser {
         return listForGenerator;
     }
 
-    List<Notification> getNotificationDto(String json){
+    List<Notification> getNotificationDto(String json) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            List<Notification> notifications = mapper.readValue(json, new TypeReference<List<Notification>>() {});
+            List<Notification> notifications = mapper.readValue(json, new TypeReference<List<Notification>>() {
+            });
 
             return notifications;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return Arrays.asList();

@@ -23,7 +23,7 @@ public class TimelineGenerator implements ITimelineGenerator {
     private TreeMap<String, RowContent> fetchedContents;
     private String generatorName;
 
-    public TimelineGenerator(MastodonTimelineParser mastodonParser){
+    public TimelineGenerator(MastodonTimelineParser mastodonParser) {
         this.mastodonParser = mastodonParser;
         this.fetchedContents = new TreeMap<String, RowContent>();
     }
@@ -33,13 +33,15 @@ public class TimelineGenerator implements ITimelineGenerator {
         public String hostname;
         public String username;
         private String token;
-        public DataOriginInfo(String serverType, String hostname, String username, String token){
+
+        public DataOriginInfo(String serverType, String hostname, String username, String token) {
             this.serverType = serverType;
             this.hostname = hostname;
             this.username = username;
             this.token = token;
         }
-        public String getToken(){
+
+        public String getToken() {
             return token;
         }
     }
@@ -47,11 +49,11 @@ public class TimelineGenerator implements ITimelineGenerator {
     public static class EmojiData {
         private String imageURL;
         private String shortCode;
-        public EmojiData(String shortCode, String imageURL){
-            if(MastodonTimelineParser.validateURL(imageURL)) {
+
+        public EmojiData(String shortCode, String imageURL) {
+            if (MastodonTimelineParser.validateURL(imageURL)) {
                 this.imageURL = imageURL;
-            }
-            else {
+            } else {
                 this.imageURL = "";
             }
             this.shortCode = shortCode;
@@ -61,13 +63,13 @@ public class TimelineGenerator implements ITimelineGenerator {
             return shortCode;
         }
 
-        public String toImageTag(){
-            return "<img src='"+ this.imageURL +"' class='emoji' />";
+        public String toImageTag() {
+            return "<img src='" + this.imageURL + "' class='emoji' />";
         }
     }
 
     // 汎用タイムライン項目データクラス
-    public static class TLContent{
+    public static class TLContent {
         final DataOriginInfo dataOriginInfo;
         MastodonWriteAPIParser writeActionApi;
         String id;
@@ -156,7 +158,7 @@ public class TimelineGenerator implements ITimelineGenerator {
         public StringProperty contentTextForColumn = new SimpleStringProperty();
         public StringProperty dateForColumn = new SimpleStringProperty();
 
-        RowContent(TLContent tlContent){
+        RowContent(TLContent tlContent) {
             this.dataOriginInfo = tlContent.dataOriginInfo;
             this.writeActionApi = tlContent.writeActionApi;
             this.id = tlContent.id;
@@ -169,37 +171,36 @@ public class TimelineGenerator implements ITimelineGenerator {
                 iconView.setFitWidth(20);
                 iconView.setFitHeight(20);
                 this.userIcon.set(iconView);
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
 
             this.userNameForColumn.set(tlContent.username + " / " + tlContent.displayName);
             StringBuffer stringBuffer = new StringBuffer();
 
-            if(((String)tlContent.instanceSpecificData.get("visibility")).equals("private")){
+            if (((String) tlContent.instanceSpecificData.get("visibility")).equals("private")) {
                 stringBuffer.append("[非公開投稿]");
             }
 
-            if((tlContent.instanceSpecificData.get("poll")) != null){
+            if ((tlContent.instanceSpecificData.get("poll")) != null) {
                 stringBuffer.append("[投票]");
             }
 
-            if(tlContent.reblogUsername != null){
+            if (tlContent.reblogUsername != null) {
                 stringBuffer.append("[reblog by " + tlContent.reblogUsername + "]");
             }
-            if(tlContent.contentImageURL != null && !tlContent.contentImageURL.isEmpty()){
+            if (tlContent.contentImageURL != null && !tlContent.contentImageURL.isEmpty()) {
                 stringBuffer.append("[画像]");
             }
 
-            if(!tlContent.spoilerText.isEmpty()){
+            if (!tlContent.spoilerText.isEmpty()) {
                 stringBuffer.append(tlContent.spoilerText);
             }
 
-            if("false".equals(tlContent.sensitive)){
+            if ("false".equals(tlContent.sensitive)) {
                 stringBuffer.append(tlContent.contentText);
-            }
-            else {
-                for(int i=0; i < tlContent.contentText.length() * 2; ++i){
+            } else {
+                for (int i = 0; i < tlContent.contentText.length() * 2; ++i) {
                     stringBuffer.append("█");
                 }
             }
@@ -226,30 +227,41 @@ public class TimelineGenerator implements ITimelineGenerator {
             // TODO
         }
 
-        public ObjectProperty<ImageView> userIconProperty(){ return userIcon; }
-        public StringProperty userNameProperty(){ return userNameForColumn; }
-        public StringProperty contentTextProperty(){ return contentTextForColumn; }
-        public StringProperty dateProperty(){ return dateForColumn; }
+        public ObjectProperty<ImageView> userIconProperty() {
+            return userIcon;
+        }
+
+        public StringProperty userNameProperty() {
+            return userNameForColumn;
+        }
+
+        public StringProperty contentTextProperty() {
+            return contentTextForColumn;
+        }
+
+        public StringProperty dateProperty() {
+            return dateForColumn;
+        }
     }
 
-    private static String applyEmoji(String contentHtml, List<EmojiData> emojis ){
+    private static String applyEmoji(String contentHtml, List<EmojiData> emojis) {
         String retContentHtml = contentHtml;
-        for(EmojiData emojiData : emojis){
+        for (EmojiData emojiData : emojis) {
             String targetShortCode = ":" + emojiData.getShortCode() + ":";
             retContentHtml = retContentHtml.replaceAll(targetShortCode, emojiData.toImageTag());
         }
         return retContentHtml;
     }
 
-    public void setGeneratorName(String name){
+    public void setGeneratorName(String name) {
         this.generatorName = name;
     }
 
-    public String getGeneratorName(){
+    public String getGeneratorName() {
         return this.generatorName;
     }
 
-    public ObservableList<RowContent> createRowContents(){
+    public ObservableList<RowContent> createRowContents() {
 
         List<TimelineGenerator.TLContent> timelineData = mastodonParser.getTimeline();
 
@@ -262,27 +274,27 @@ public class TimelineGenerator implements ITimelineGenerator {
         return FXCollections.observableArrayList(fetchedList);
     }
 
-    public ObservableList<RowContent> getRowContents(){
-        List<TimelineGenerator.RowContent>  fetchedList = new ArrayList<>(fetchedContents.values());
+    public ObservableList<RowContent> getRowContents() {
+        List<TimelineGenerator.RowContent> fetchedList = new ArrayList<>(fetchedContents.values());
         Collections.reverse(fetchedList);  // MastodonではIDの上位48bitは時刻なのでソートに使ってOK
         return FXCollections.observableArrayList(fetchedList);
     }
 
-    public int getNumberOfContent(){
+    public int getNumberOfContent() {
         return fetchedContents.size();
     }
 
-    public TreeMap<String, Integer> getNumberOfContentByHours(){
+    public TreeMap<String, Integer> getNumberOfContentByHours() {
         TreeMap<String, Integer> graphData = new TreeMap<String, Integer>();
-        for( TimelineGenerator.RowContent fetchedContent : fetchedContents.values()){
+        for (TimelineGenerator.RowContent fetchedContent : fetchedContents.values()) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd HH:00");
             simpleDateFormat.setTimeZone(TimeZone.getDefault());
 
             String dateLabel = simpleDateFormat.format(fetchedContent.date);
-            if( !graphData.containsKey(dateLabel) ){
+            if (!graphData.containsKey(dateLabel)) {
                 graphData.put(dateLabel, 0);
             }
-            graphData.put(dateLabel, graphData.get(dateLabel)+1);
+            graphData.put(dateLabel, graphData.get(dateLabel) + 1);
         }
         return graphData;
     }

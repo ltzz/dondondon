@@ -18,7 +18,8 @@ public class NotificationGenerator {
 
     MastodonNotificationParser mastodonParser;
     private TreeMap<String, RowContent> fetchedContents;
-    public NotificationGenerator(MastodonNotificationParser mastodonParser){
+
+    public NotificationGenerator(MastodonNotificationParser mastodonParser) {
         this.mastodonParser = mastodonParser;
         this.fetchedContents = new TreeMap<String, RowContent>();
     }
@@ -63,7 +64,7 @@ public class NotificationGenerator {
         private ObjectProperty<ImageView> userIcon = new SimpleObjectProperty<ImageView>();
         public StringProperty contentTextForColumn = new SimpleStringProperty();
 
-        RowContent(NotificationContent notificationContent){
+        RowContent(NotificationContent notificationContent) {
             this.dataOriginInfo = notificationContent.dataOriginInfo;
             this.id = notificationContent.id;
             this.userId = notificationContent.userId;
@@ -74,7 +75,7 @@ public class NotificationGenerator {
                 iconView.setFitWidth(20);
                 iconView.setFitHeight(20);
                 this.userIcon.set(iconView);
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
 
@@ -91,10 +92,21 @@ public class NotificationGenerator {
 
         }
 
-        public ObjectProperty<ImageView> userIconProperty(){ return userIcon; }
-        public StringProperty userNameProperty(){ return contentTextForColumn; }
-        public StringProperty contentTextProperty(){ return contentText; }
-        public StringProperty dateProperty(){ return dateForColumn; }
+        public ObjectProperty<ImageView> userIconProperty() {
+            return userIcon;
+        }
+
+        public StringProperty userNameProperty() {
+            return contentTextForColumn;
+        }
+
+        public StringProperty contentTextProperty() {
+            return contentText;
+        }
+
+        public StringProperty dateProperty() {
+            return dateForColumn;
+        }
     }
 
     public ObservableList<RowContent> createRowContents() {

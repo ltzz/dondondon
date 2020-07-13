@@ -1,12 +1,9 @@
 package controller;
 
 import connection.MastodonAPI;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,20 +15,11 @@ import javafx.scene.web.WebView;
 import javafx.util.Callback;
 
 import misc.BrowserLauncher;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.events.Event;
-import org.w3c.dom.events.EventListener;
-import org.w3c.dom.events.EventTarget;
-import org.w3c.dom.html.HTMLAnchorElement;
 import timeline.TimelineGenerator;
 import timeline.parser.ITimelineGenerator;
 import timeline.parser.MastodonWriteAPIParser;
 
 import java.util.stream.Collectors;
-
-import static timeline.parser.MastodonTimelineParser.validateURL;
 
 public class TimelineViewController implements Initializable, IContentListController {
     @FXML
@@ -163,6 +151,7 @@ public class TimelineViewController implements Initializable, IContentListContro
             String hostname = selectedToot.dataOriginInfo.hostname;
             String statusId = selectedToot.id;
 
+            // FIXME: 投稿削除などでAPIリクエスト失敗したときにメニューが閉じない
             if( "mastodon".equals(selectedToot.dataOriginInfo.serverType) ) {
                 MastodonWriteAPIParser mastodonWriteAPIParser = selectedToot.writeActionApi;
                 mastodonWriteAPIParser.addFavorite(statusId); // TODO: 成功時、TimelineGeneratorの内部状態への反映
@@ -174,6 +163,7 @@ public class TimelineViewController implements Initializable, IContentListContro
             String hostname = selectedToot.dataOriginInfo.hostname;
             String statusId = selectedToot.id;
 
+            // FIXME: 投稿削除などでAPIリクエスト失敗したときにメニューが閉じない
             if( "mastodon".equals(selectedToot.dataOriginInfo.serverType) ) {
                 MastodonWriteAPIParser mastodonWriteAPIParser = selectedToot.writeActionApi;
                 mastodonWriteAPIParser.reblog(statusId); // TODO: 成功時、TimelineGeneratorの内部状態への反映

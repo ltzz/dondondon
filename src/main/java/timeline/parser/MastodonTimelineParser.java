@@ -29,7 +29,7 @@ public class MastodonTimelineParser {
 
     private MastodonTimelineEndPoint endPoint;
 
-    public MastodonTimelineParser(String mastodonHost, String mastodonToken, MastodonTimelineEndPoint endPoint, String username, ConcurrentHashMap<String, BufferedImage> iconCache){
+    public MastodonTimelineParser(String mastodonHost, String mastodonToken, MastodonTimelineEndPoint endPoint, String username, ConcurrentHashMap<String, BufferedImage> iconCache) {
         this.MASTODON_HOST = mastodonHost;
         this.MASTODON_TOKEN = mastodonToken;
         this.loginUsername = username;
@@ -37,8 +37,8 @@ public class MastodonTimelineParser {
         this.iconCache = iconCache;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown=true)
-    public static class Account{
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Account {
         public String id;
         public String username;
         public String acct;
@@ -63,7 +63,7 @@ public class MastodonTimelineParser {
 
     }
 
-    @JsonIgnoreProperties(ignoreUnknown=true)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Media {
         public String id;
         public String type;
@@ -72,14 +72,14 @@ public class MastodonTimelineParser {
         public Object meta;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown=true)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Application {
         public String name;
         public String website;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown=true)
-    public static class Toot{
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Toot {
         public String id;
         public String created_at;
         public String in_reply_to_id;
@@ -111,16 +111,16 @@ public class MastodonTimelineParser {
         public Object pinned;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown=true)
-    public static class Emoji{
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Emoji {
         public String shortcode;
         public String url;
         public String static_url;
         public Boolean visible_in_picker;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown=true)
-    public static class Notification{
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Notification {
         public String id;
         public String type;
         public String created_at;
@@ -128,39 +128,36 @@ public class MastodonTimelineParser {
         public Toot status;
     }
 
-    public List<TimelineGenerator.TLContent> getTimeline(){
+    public List<TimelineGenerator.TLContent> getTimeline() {
         List<Toot> toots = getTimelineDto(endPoint.get());
         return toTLContent(toots);
     }
 
-    private static String getApplicationName(Application application){
-        if(application != null){
+    private static String getApplicationName(Application application) {
+        if (application != null) {
             return application.name;
-        }
-        else {
+        } else {
             return "";
         }
     }
 
-    private static String getApplicationWebSite(Application application){
-        if(application != null){
+    private static String getApplicationWebSite(Application application) {
+        if (application != null) {
             return application.website;
-        }
-        else {
+        } else {
             return "";
         }
     }
 
-    private static Toot getTootOrReblog(Toot toot){
-        if(toot.reblog == null){
+    private static Toot getTootOrReblog(Toot toot) {
+        if (toot.reblog == null) {
             return toot;
-        }
-        else {
+        } else {
             return toot.reblog;
         }
     }
 
-    List<TimelineGenerator.TLContent> toTLContent(List<Toot> toots){
+    List<TimelineGenerator.TLContent> toTLContent(List<Toot> toots) {
         List<TimelineGenerator.TLContent> listForGenerator = new ArrayList<>();
         toots.forEach(toot -> {
             String text = Jsoup.parse(toot.content).text();
@@ -170,26 +167,24 @@ public class MastodonTimelineParser {
             Toot tootEntity = getTootOrReblog(toot);
 
             String usernameReblogBy;
-            if(toot.reblog == null){
+            if (toot.reblog == null) {
                 usernameReblogBy = null;
-            }
-            else {
+            } else {
                 usernameReblogBy = toot.account.username;
             }
 
             List<String> imagesURL = new ArrayList<>();
 
             // TODO: typeを使って動画であることを画面上で明示
-            if(toot.media_attachments.size() > 0) {
-                for( Media media_attachment : toot.media_attachments ){
+            if (toot.media_attachments.size() > 0) {
+                for (Media media_attachment : toot.media_attachments) {
                     if (validateURL(media_attachment.preview_url)) {
                         imagesURL.add(media_attachment.preview_url);
                     }
                 }
-            }
-            else if(toot.reblog != null && toot.reblog.media_attachments.size() > 0) {
+            } else if (toot.reblog != null && toot.reblog.media_attachments.size() > 0) {
                 // TODO: なんかReblogの時の画像はこっちにあるようだ（本文はtoot.contentにあるのに) よく分からんので調べる
-                for( Media media_attachment : toot.reblog.media_attachments ){
+                for (Media media_attachment : toot.reblog.media_attachments) {
                     if (validateURL(media_attachment.preview_url)) {
                         imagesURL.add(media_attachment.preview_url);
                     }
@@ -201,17 +196,16 @@ public class MastodonTimelineParser {
                 String avatarURL = tootEntity.account.avatar_static;
                 try {
                     // TODO: この実装セキュリティ的に大丈夫かどうか詳しい人に聞く
-                    if(iconCache.containsKey(avatarURL)){
+                    if (iconCache.containsKey(avatarURL)) {
                         avatarIcon = iconCache.get(avatarURL);
-                    }
-                    else {
+                    } else {
                         byte[] buffer = ImageCommons.readImageAsByte(new URL(avatarURL));
-                        if(buffer != null) {
+                        if (buffer != null) {
                             avatarIcon = ImageCommons.readImage(buffer);
                             iconCache.put(avatarURL, avatarIcon);
                         }
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -221,12 +215,11 @@ public class MastodonTimelineParser {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                 format.setTimeZone(TimeZone.getTimeZone("UTC"));
                 createdAt = format.parse(toot.created_at);
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            HashMap<String,Object> mastodonSpecificData =new HashMap<String,Object>();
+            HashMap<String, Object> mastodonSpecificData = new HashMap<String, Object>();
             mastodonSpecificData.put("visibility", tootEntity.visibility);
             mastodonSpecificData.put("poll", tootEntity.poll);
 
@@ -237,7 +230,7 @@ public class MastodonTimelineParser {
                     tootEntity.account.id, tootEntity.account.acct,
                     tootEntity.account.username, tootEntity.account.display_name,
                     text, htmltext,
-                    tootEntity.emojis.stream().map(emoji -> new TimelineGenerator.EmojiData(emoji.shortcode,emoji.static_url)).collect(Collectors.toList()),
+                    tootEntity.emojis.stream().map(emoji -> new TimelineGenerator.EmojiData(emoji.shortcode, emoji.static_url)).collect(Collectors.toList()),
                     imagesURL,
                     tootEntity.url,
                     getApplicationName(toot.application), getApplicationWebSite(toot.application),
@@ -245,37 +238,39 @@ public class MastodonTimelineParser {
                     tootEntity.spoiler_text, tootEntity.sensitive,
                     usernameReblogBy, avatarIcon,
                     mastodonSpecificData
-                    ));
+            ));
         });
         return listForGenerator;
     }
 
-    static List<Toot> getTimelineDto(String json){
+    static List<Toot> getTimelineDto(String json) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            List<Toot> toots = mapper.readValue(json, new TypeReference<List<Toot>>() {});
+            List<Toot> toots = mapper.readValue(json, new TypeReference<List<Toot>>() {
+            });
 
             return toots;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return Arrays.asList();
     }
 
-    static Toot getStatus(String json){
+    static Toot getStatus(String json) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            Toot toot = mapper.readValue(json, new TypeReference<Toot>() {});
+            Toot toot = mapper.readValue(json, new TypeReference<Toot>() {
+            });
 
             return toot;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown=true)
-    public static class UploadMediaResponse{
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class UploadMediaResponse {
         public String id;
         public String type;
         public String url;
@@ -285,19 +280,20 @@ public class MastodonTimelineParser {
     }
 
 
-    public static UploadMediaResponse getUploadMediaResponse(String json){
+    public static UploadMediaResponse getUploadMediaResponse(String json) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            UploadMediaResponse dto = mapper.readValue(json, new TypeReference<UploadMediaResponse>() {});
+            UploadMediaResponse dto = mapper.readValue(json, new TypeReference<UploadMediaResponse>() {
+            });
 
             return dto;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public static boolean validateURL(String url){
+    public static boolean validateURL(String url) {
         // URLとしてあり得る記号のみ許可する
         // TODO: 詳しい人にこれで安全か聞く
         return Pattern.compile("^https?://[a-zA-Z0-9/:%#&~=_!'\\$\\?\\(\\)\\.\\+\\*\\-]+$").matcher(url).matches();

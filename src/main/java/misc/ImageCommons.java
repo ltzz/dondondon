@@ -11,7 +11,7 @@ import java.net.URL;
 
 public final class ImageCommons {
     public static BufferedImage resizeImage(BufferedImage bufferedImage, int resizeWidth, int resizeHeight) throws IOException {
-        if(bufferedImage.getWidth() < resizeWidth && bufferedImage.getHeight() < resizeHeight){
+        if (bufferedImage.getWidth() < resizeWidth && bufferedImage.getHeight() < resizeHeight) {
             return bufferedImage;
         }
         Image tmp = bufferedImage.getScaledInstance(resizeWidth, resizeHeight, Image.SCALE_SMOOTH);
@@ -33,7 +33,7 @@ public final class ImageCommons {
             byte[] buffer = byteArrayOutputStream.toByteArray();
             byteArrayOutputStream.close();
             return buffer;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

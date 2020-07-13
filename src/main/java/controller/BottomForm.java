@@ -32,7 +32,7 @@ public class BottomForm {
             this.inReplyToId = inReplyToId;
         }
 
-        public String getStatusDisplayText(){
+        public String getStatusDisplayText() {
             return String.join("/", getStatusTexts());
         }
 
