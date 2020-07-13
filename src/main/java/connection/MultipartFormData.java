@@ -134,28 +134,4 @@ public class MultipartFormData {
         }
         return "";
     }
-
-    static class FileData {
-        private String filename;
-        private InputStream inputStream;
-        private String mimeType;
-
-        public FileData(String filename, InputStream inputStream, String mimeType) {
-            this.filename = filename;
-            this.inputStream = inputStream;
-            this.mimeType = mimeType;
-        }
-
-        public InputStream getInputStream() {
-            return this.inputStream;
-        }
-
-        public String getFileName() {
-            return this.filename;
-        }
-
-        public String getMimeType() {
-            return this.mimeType;
-        }
-    }
 }

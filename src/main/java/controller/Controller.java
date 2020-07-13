@@ -83,6 +83,10 @@ public class Controller implements Initializable {
             this.inReplyToId = inReplyToId;
         }
 
+        public String getStatusDisplayText(){
+            return String.join("/", getStatusTexts());
+        }
+
         public void initialize() {
             statusTexts = new HashSet<>();
             this.imageId = null;
@@ -227,7 +231,7 @@ public class Controller implements Initializable {
                 MastodonTimelineParser.UploadMediaResponse response = MastodonAPIParser.upload(output);
                 formState.setImageId(response.id);
                 formState.getStatusTexts().add("画像");
-                inputTextStatus.setText(String.join("/", formState.getStatusTexts()));
+                inputTextStatus.setText(formState.getStatusDisplayText());
                 textArea.setText(textArea.getText() + " " + response.text_url);
             }
         } catch (Exception e) {
@@ -240,7 +244,7 @@ public class Controller implements Initializable {
         formState.setInReplyToId(inReplyToStatusId);
         textArea.lookup(".content").getStyleClass().add("u-bgLightPinkColor");
         formState.getStatusTexts().add("返信");
-        inputTextStatus.setText(String.join("/", formState.getStatusTexts()));
+        inputTextStatus.setText(formState.getStatusDisplayText());
         textArea.requestFocus();
         int caretPosition = acct.length() + 2; // @と空白で+2
         textArea.positionCaret(caretPosition);
@@ -250,14 +254,14 @@ public class Controller implements Initializable {
     private void formInitialize() {
         formState.initialize();
         textArea.lookup(".content").getStyleClass().remove("u-bgLightPinkColor");
-        inputTextStatus.setText(String.join("/", formState.getStatusTexts()));
+        inputTextStatus.setText(formState.getStatusDisplayText());
     }
 
     private void replyModeCancel() {
         formState.setInReplyToId(null);
         formState.getStatusTexts().remove("返信");
         textArea.lookup(".content").getStyleClass().remove("u-bgLightPinkColor");
-        inputTextStatus.setText(String.join("/", formState.getStatusTexts()));
+        inputTextStatus.setText(formState.getStatusDisplayText());
     }
 
     private void userFilterWordBoxToggle() {
@@ -311,7 +315,6 @@ public class Controller implements Initializable {
                 new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN);
         final KeyCombination filterWordKey =
                 new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN);
-
 
         textArea.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if (postTextAreaKey.match(event)) {
