@@ -219,6 +219,17 @@ public class MastodonTimelineParser {
                 e.printStackTrace();
             }
 
+            Date reblogCreatedAt = null;
+            if(toot.reblog != null) {
+                try {
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                    format.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    reblogCreatedAt = format.parse(toot.reblog.created_at);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
             HashMap<String, Object> mastodonSpecificData = new HashMap<String, Object>();
             mastodonSpecificData.put("visibility", tootEntity.visibility);
             mastodonSpecificData.put("poll", tootEntity.poll);
@@ -234,7 +245,7 @@ public class MastodonTimelineParser {
                     imagesURL,
                     tootEntity.url,
                     getApplicationName(toot.application), getApplicationWebSite(toot.application),
-                    createdAt, toot.favourited, toot.reblogged,
+                    createdAt, reblogCreatedAt, toot.favourited, toot.reblogged,
                     tootEntity.spoiler_text, tootEntity.sensitive,
                     usernameReblogBy, avatarIcon,
                     mastodonSpecificData

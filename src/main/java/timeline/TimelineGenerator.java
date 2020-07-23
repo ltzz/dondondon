@@ -85,6 +85,7 @@ public class TimelineGenerator implements ITimelineGenerator {
         String applicationName;
         String applicationWebSite;
         Date date;
+        Date reblogDate;
         String favorited;
         String reblogged;
         String spoilerText;
@@ -104,6 +105,7 @@ public class TimelineGenerator implements ITimelineGenerator {
                          String url,
                          String applicationName, String applicationWebSite,
                          Date date,
+                         Date reblogDate,
                          String favorited, String reblogged,
                          String spoilerText, String sensitive,
                          String reblogUsername,
@@ -124,6 +126,7 @@ public class TimelineGenerator implements ITimelineGenerator {
             this.applicationName = applicationName;
             this.applicationWebSite = applicationWebSite;
             this.date = date;
+            this.reblogDate = reblogDate;
             this.favorited = favorited;
             this.reblogged = reblogged;
             this.spoilerText = spoilerText;
@@ -153,6 +156,7 @@ public class TimelineGenerator implements ITimelineGenerator {
         public String applicationName;
         public String applicationWebSite;
         public Date date;
+        public Date reblogOriginDate;
         private ObjectProperty<ImageView> userIcon = new SimpleObjectProperty<ImageView>();
         public StringProperty userNameForColumn = new SimpleStringProperty();
         public StringProperty contentTextForColumn = new SimpleStringProperty();
@@ -212,6 +216,7 @@ public class TimelineGenerator implements ITimelineGenerator {
             this.applicationName = tlContent.applicationName;
             this.applicationWebSite = tlContent.applicationWebSite;
             this.date = tlContent.date;
+            this.reblogOriginDate = tlContent.reblogDate;
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
             simpleDateFormat.setTimeZone(TimeZone.getDefault());

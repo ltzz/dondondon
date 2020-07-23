@@ -20,6 +20,8 @@ import timeline.TimelineGenerator;
 import timeline.parser.ITimelineGenerator;
 import timeline.parser.MastodonWriteAPIParser;
 
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import static lib.htmlBuilder.HtmlBuilder.attribute;
@@ -101,7 +103,7 @@ public class TimelineViewController implements Initializable, IContentListContro
         this.hostname = hostname;
     }
 
-    private String buildHtml(String innerHTML){
+    private String buildHtml(String contentInnerHTML, String imagesInnerHTML) {
         return HtmlBuilder.buildHtml(
                 html(
                         attributes(attribute("lang", "ja")),
@@ -114,8 +116,8 @@ public class TimelineViewController implements Initializable, IContentListContro
                                 ),
                                 script(
                                         attributes(
-                                                attribute("src", "https://twemoji.maxcdn.com/v/12.1.5/twemoji.min.js"),
-                                                attribute("integrity", "sha384-E4PZh8MWwKQ2W7ANni7xwx6TTuPWtd3F8mDRnaMvJssp5j+gxvP2fTsk1GnFg2gG"),
+                                                attribute("src", "https://twemoji.maxcdn.com/v/13.0.1/twemoji.min.js"),
+                                                attribute("integrity", "sha384-5f4X0lBluNY/Ib4VhGx0Pf6iDCF99VGXJIyYy7dDLY5QlEd7Ap0hICSSZA1XYbc4"),
                                                 attribute("crossorigin", "anonymous")
 
                                         ),
@@ -135,7 +137,18 @@ public class TimelineViewController implements Initializable, IContentListContro
                                         attributes(
                                                 attribute("class", "ContentWrapper")
                                         ),
-                                        rawString(innerHTML)
+                                        div(
+                                                attributes(
+                                                        attribute("class", "ContentBody")
+                                                ),
+                                                rawString(contentInnerHTML)
+                                        ),
+                                        div(
+                                                attributes(
+                                                        attribute("class", "ContentImage")
+                                                ),
+                                                rawString(imagesInnerHTML)
+                                        )
                                 ),
                                 script(
                                         rawString("twemoji.parse(document.body)")
@@ -167,8 +180,16 @@ public class TimelineViewController implements Initializable, IContentListContro
                 String contentHtml = toCharacterReference(tootContent.contentHtml);
                 String contentBodyElement = "<div class=\"ContentBody\">" + contentHtml + "</div>";
 
+
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+                simpleDateFormat.setTimeZone(TimeZone.getDefault());
+                String dateString =
+                        tootContent.reblogOriginDate != null ?
+                                ("reblogged: " + simpleDateFormat.format(tootContent.date) + "　posted: " + simpleDateFormat.format(tootContent.reblogOriginDate))
+                                : ("posted: " + simpleDateFormat.format(tootContent.date));
                 final String htmlString = buildHtml(
-                        contentBodyElement + contentImageElement + toCharacterReference(EMOJI_TEST)
+                        contentBodyElement + dateString + toCharacterReference(EMOJI_TEST),
+                        contentImageElement
                 );
 
                 WebEngine webEngine = webView.getEngine();
