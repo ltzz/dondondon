@@ -176,10 +176,8 @@ public class TimelineViewController implements Initializable, IContentListContro
                     imagesString.append(contentImageElement);
                 }
 
-                String contentImageElement = "<div class=\"ContentImage\">" + imagesString.toString() + "</div>";
+                String imagesInnerHTML = imagesString.toString();
                 String contentHtml = toCharacterReference(tootContent.contentHtml);
-                String contentBodyElement = "<div class=\"ContentBody\">" + contentHtml + "</div>";
-
 
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
                 simpleDateFormat.setTimeZone(TimeZone.getDefault());
@@ -188,8 +186,8 @@ public class TimelineViewController implements Initializable, IContentListContro
                                 ("reblogged: " + simpleDateFormat.format(tootContent.date) + "　posted: " + simpleDateFormat.format(tootContent.reblogOriginDate))
                                 : ("posted: " + simpleDateFormat.format(tootContent.date));
                 final String htmlString = buildHtml(
-                        contentBodyElement + dateString + toCharacterReference(EMOJI_TEST),
-                        contentImageElement
+                        contentHtml + dateString + toCharacterReference(EMOJI_TEST),
+                        imagesInnerHTML
                 );
 
                 WebEngine webEngine = webView.getEngine();
