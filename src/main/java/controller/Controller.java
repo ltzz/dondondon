@@ -12,6 +12,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -35,6 +38,7 @@ import timeline.parser.timelineEndPoint.LocalTimelineGet;
 import timeline.parser.timelineEndPoint.UserTimelineGet;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -170,6 +174,23 @@ public class Controller implements Initializable {
         }
     }
 
+    private void imagePreviewBeforeUploadEvent() {
+        File file = ClipboardService.readImage();
+        try {
+            MultipartFormData.FileDto fileDto = UploadImageChooser.readFile(file);
+            String output = postMastodonAPI.uploadMedia(fileDto);
+            if (output != null && !output.isEmpty()) { // FIXME: 通信OKかどうかをレスポンスで持たす作りにすること
+                MastodonTimelineParser.UploadMediaResponse response = MastodonAPIParser.upload(output);
+                formState.setImageId(response.id);
+                formState.getStatusTexts().add("画像");
+                inputTextStatus.setText(formState.getStatusDisplayText());
+                textArea.setText(textArea.getText() + " " + response.text_url);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @FXML
     protected void onMenuItemClearReply(ActionEvent evt) {
         replyModeCancel();
@@ -273,10 +294,18 @@ public class Controller implements Initializable {
                 new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN);
         final KeyCombination filterWordKey =
                 new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN);
+        final KeyCombination pasteKey =
+                new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN);
 
         textArea.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if (postTextAreaKey.match(event)) {
                 userPostEvent();
+            }
+        });
+
+        textArea.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (pasteKey.match(event)) {
+                imagePreviewBeforeUploadEvent();
             }
         });
 

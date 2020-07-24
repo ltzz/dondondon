@@ -18,7 +18,10 @@ public class UploadImageChooser {
                 new FileChooser.ExtensionFilter("すべてのファイル", "*.*")
         );
         File file = fileChooser.showOpenDialog(null); // TODO: stage渡す
+        return readFile(file);
+    }
 
+    public static MultipartFormData.FileDto readFile(File file) throws IOException {
         if (file != null && file.isFile()) {
             System.out.println(file.getPath());
             String[] strings = file.getPath().split("\\.");
