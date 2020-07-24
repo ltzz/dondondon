@@ -42,6 +42,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -178,13 +179,23 @@ public class Controller implements Initializable {
         File file = ClipboardService.readImage();
         try {
             MultipartFormData.FileDto fileDto = UploadImageChooser.readFile(file);
-            String output = postMastodonAPI.uploadMedia(fileDto);
-            if (output != null && !output.isEmpty()) { // FIXME: 通信OKかどうかをレスポンスで持たす作りにすること
-                MastodonTimelineParser.UploadMediaResponse response = MastodonAPIParser.upload(output);
-                formState.setImageId(response.id);
-                formState.getStatusTexts().add("画像");
-                inputTextStatus.setText(formState.getStatusDisplayText());
-                textArea.setText(textArea.getText() + " " + response.text_url);
+
+            ButtonType buttonYes = new ButtonType("YES", ButtonBar.ButtonData.OK_DONE);
+            ButtonType buttonNo = new ButtonType("NO", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "画像をアップロードします。", buttonNo, buttonYes);
+            alert.setTitle("画像アップロード");
+            Optional<ButtonType> result = alert.showAndWait();
+
+            if( result.isPresent() && result.get() == buttonYes ){
+                String output = postMastodonAPI.uploadMedia(fileDto);
+                if (output != null && !output.isEmpty()) { // FIXME: 通信OKかどうかをレスポンスで持たす作りにすること
+                    MastodonTimelineParser.UploadMediaResponse response = MastodonAPIParser.upload(output);
+                    formState.setImageId(response.id);
+                    formState.getStatusTexts().add("画像");
+                    inputTextStatus.setText(formState.getStatusDisplayText());
+                    textArea.setText(textArea.getText() + " " + response.text_url);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
