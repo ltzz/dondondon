@@ -1,7 +1,7 @@
 package controller;
 
-import connection.MastodonAPI;
-import connection.MastodonAPIParser;
+import services.MastodonAPI;
+import services.MastodonAPIParser;
 import connection.MultipartFormData;
 import javafx.event.ActionEvent;
 import javafx.event.Event;

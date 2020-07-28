@@ -1,6 +1,6 @@
 package timeline.parser;
 
-import connection.MastodonAPI;
+import services.MastodonAPI;
 
 import static timeline.parser.MastodonTimelineParser.getStatus;
 

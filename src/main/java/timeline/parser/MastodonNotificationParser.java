@@ -3,13 +3,12 @@ package timeline.parser;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import connection.MastodonAPI;
+import services.MastodonAPI;
 import misc.ImageCommons;
 import org.jsoup.Jsoup;
 import timeline.NotificationGenerator;
 import timeline.TimelineGenerator;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -46,7 +45,8 @@ public class MastodonNotificationParser {
     public List<NotificationGenerator.NotificationContent> diffNotification() {
         MastodonAPI mastodonAPI = new MastodonAPI(MASTODON_HOST, MASTODON_TOKEN);
         List<Notification> notifications = getNotificationDto(mastodonAPI.getNotification());
-        List<Notification> filteredNotification = notifications.stream().filter(notification -> !receivedNotificationIds.contains(notification.id)).collect(Collectors.toList());
+        List<Notification> filteredNotification = notifications.stream()
+                .filter(notification -> !receivedNotificationIds.contains(notification.id)).collect(Collectors.toList());
         Set<String> received = notifications.stream().map(notification -> notification.id).collect(Collectors.toSet());
         receivedNotificationIds.addAll(received);
         return toNotificationContent(filteredNotification);

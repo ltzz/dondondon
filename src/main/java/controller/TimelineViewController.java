@@ -1,6 +1,6 @@
 package controller;
 
-import connection.MastodonAPI;
+import services.MastodonAPI;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;

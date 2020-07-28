@@ -1,4 +1,4 @@
-package connection;
+package services;
 
 import timeline.parser.MastodonTimelineParser;
 
