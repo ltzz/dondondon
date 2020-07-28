@@ -1,13 +1,13 @@
 package services.dao;
 
-import connection.MultipartFormData;
-import connection.WebRequest;
+import utils.http.MultipartFormData;
+import utils.http.WebRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static connection.WebRequest.requestGET;
+import static utils.http.WebRequest.requestGET;
 
 public class MastodonDao {
     public final String mastodonHost;

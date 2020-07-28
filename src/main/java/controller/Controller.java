@@ -1,8 +1,7 @@
 package controller;
 
-import services.MastodonAPI;
-import services.MastodonAPIParser;
-import connection.MultipartFormData;
+import services.*;
+import utils.http.MultipartFormData;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -24,7 +23,6 @@ import javafx.scene.web.WebView;
 
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import misc.*;
 
 import timeline.MixTimelineGenerator;
 import timeline.NotificationGenerator;
@@ -32,9 +30,6 @@ import timeline.TimelineGenerator;
 import timeline.parser.ITimelineGenerator;
 import timeline.parser.MastodonNotificationParser;
 import timeline.parser.MastodonTimelineParser;
-import services.HomeTimelineGet;
-import services.LocalTimelineGet;
-import services.UserTimelineGet;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

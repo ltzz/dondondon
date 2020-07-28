@@ -1,6 +1,6 @@
 package services;
 
-import connection.MultipartFormData;
+import utils.http.MultipartFormData;
 import controller.BottomForm;
 import services.dao.MastodonDao;
 

@@ -1,5 +1,5 @@
 package services;
 
-public interface MastodonTimelineEndPoint {
+public interface MastodonTimelineSource {
     public String get();
 }

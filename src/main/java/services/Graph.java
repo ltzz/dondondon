@@ -1,4 +1,4 @@
-package misc;
+package services;
 
 import javafx.collections.FXCollections;
 import javafx.scene.Scene;

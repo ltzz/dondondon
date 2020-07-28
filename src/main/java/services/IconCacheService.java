@@ -1,7 +1,7 @@
 package services;
 
 
-import misc.ImageCommons;
+import utils.ImageCommons;
 import timeline.parser.MastodonTimelineParser;
 
 import java.awt.image.BufferedImage;

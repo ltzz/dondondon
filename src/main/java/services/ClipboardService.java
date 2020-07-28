@@ -1,4 +1,4 @@
-package misc;
+package services;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;

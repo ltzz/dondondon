@@ -1,4 +1,4 @@
-package misc;
+package utils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 public final class ImageCommons {
-    public static BufferedImage resizeImage(BufferedImage bufferedImage, int resizeWidth, int resizeHeight) throws IOException {
+    public static BufferedImage resizeImage(BufferedImage bufferedImage, int resizeWidth, int resizeHeight) {
         if (bufferedImage.getWidth() < resizeWidth && bufferedImage.getHeight() < resizeHeight) {
             return bufferedImage;
         }

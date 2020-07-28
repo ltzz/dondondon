@@ -1,6 +1,6 @@
 package services;
 
-public class HomeTimelineGet implements MastodonTimelineEndPoint {
+public class HomeTimelineGet implements MastodonTimelineSource {
     private final String MASTODON_HOST;
     private final String MASTODON_TOKEN;
 

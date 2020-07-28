@@ -15,7 +15,7 @@ import javafx.scene.web.WebView;
 import javafx.util.Callback;
 
 import lib.htmlBuilder.HtmlBuilder;
-import misc.BrowserLauncher;
+import utils.BrowserLauncher;
 import timeline.TimelineGenerator;
 import timeline.parser.ITimelineGenerator;
 import timeline.parser.MastodonWriteAPIParser;

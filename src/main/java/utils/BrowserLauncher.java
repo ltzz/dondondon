@@ -1,4 +1,4 @@
-package misc;
+package utils;
 
 import java.awt.*;
 import java.io.IOException;

@@ -11,7 +11,7 @@ import org.jsoup.safety.Whitelist;
 import services.DateParseService;
 import services.IconCacheService;
 import timeline.TimelineGenerator;
-import services.MastodonTimelineEndPoint;
+import services.MastodonTimelineSource;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
@@ -26,10 +26,10 @@ public class MastodonTimelineParser {
     public final String loginUsername;
     private ConcurrentHashMap<String, BufferedImage> iconCache;
 
-    private MastodonTimelineEndPoint endPoint;
+    private MastodonTimelineSource endPoint;
 
     public MastodonTimelineParser(String mastodonHost, String mastodonToken,
-                                  MastodonTimelineEndPoint endPoint, String username,
+                                  MastodonTimelineSource endPoint, String username,
                                   ConcurrentHashMap<String, BufferedImage> iconCache) {
         this.MASTODON_HOST = mastodonHost;
         this.MASTODON_TOKEN = mastodonToken;

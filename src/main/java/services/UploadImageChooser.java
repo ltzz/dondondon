@@ -1,6 +1,6 @@
-package misc;
+package services;
 
-import connection.MultipartFormData;
+import utils.http.MultipartFormData;
 import javafx.stage.FileChooser;
 
 import java.io.File;

@@ -1,6 +1,8 @@
-package misc;
+package services;
 
 import javafx.scene.control.TextInputDialog;
+import services.MastodonAuth;
+import services.Settings;
 
 import java.util.List;
 import java.util.Optional;

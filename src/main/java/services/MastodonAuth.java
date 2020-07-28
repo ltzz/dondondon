@@ -1,12 +1,13 @@
-package misc;
+package services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.control.TextInputDialog;
+import utils.BrowserLauncher;
 
 import java.util.Optional;
 
-import static connection.WebRequest.requestPOST;
+import static utils.http.WebRequest.requestPOST;
 
 public class MastodonAuth {
     final String MASTODON_HOST;
