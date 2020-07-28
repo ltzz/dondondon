@@ -10,7 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
 
 import timeline.TimelineGenerator;
-import timeline.parser.timelineEndPoint.MastodonTimelineEndPoint;
+import services.MastodonTimelineEndPoint;
 
 import java.awt.image.BufferedImage;
 import java.net.URL;
@@ -234,9 +234,11 @@ public class MastodonTimelineParser {
             mastodonSpecificData.put("visibility", tootEntity.visibility);
             mastodonSpecificData.put("poll", tootEntity.poll);
 
+            MastodonWriteAPIParser mastodonWriteAPIParser = new MastodonWriteAPIParser(MASTODON_HOST, MASTODON_TOKEN);
+
             TimelineGenerator.DataOriginInfo dataOriginInfo = new TimelineGenerator.DataOriginInfo("mastodon", MASTODON_HOST, loginUsername, MASTODON_TOKEN);
             listForGenerator.add(new TimelineGenerator.TLContent(dataOriginInfo,
-                    new MastodonWriteAPIParser(MASTODON_HOST, MASTODON_TOKEN),
+                    mastodonWriteAPIParser,
                     toot.id,
                     tootEntity.account.id, tootEntity.account.acct,
                     tootEntity.account.username, tootEntity.account.display_name,

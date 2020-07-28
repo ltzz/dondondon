@@ -32,9 +32,9 @@ import timeline.TimelineGenerator;
 import timeline.parser.ITimelineGenerator;
 import timeline.parser.MastodonNotificationParser;
 import timeline.parser.MastodonTimelineParser;
-import timeline.parser.timelineEndPoint.HomeTimelineGet;
-import timeline.parser.timelineEndPoint.LocalTimelineGet;
-import timeline.parser.timelineEndPoint.UserTimelineGet;
+import services.HomeTimelineGet;
+import services.LocalTimelineGet;
+import services.UserTimelineGet;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

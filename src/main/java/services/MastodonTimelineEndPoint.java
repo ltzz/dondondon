@@ -1,4 +1,4 @@
-package timeline.parser.timelineEndPoint;
+package services;
 
 public interface MastodonTimelineEndPoint {
     public String get();
