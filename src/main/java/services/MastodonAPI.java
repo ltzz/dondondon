@@ -14,11 +14,11 @@ public class MastodonAPI {
         this.mastodonDao = new MastodonDao(mastodonHost, accessToken);
     }
 
-    public String reblog(String tootId) {
+    public Result reblog(String tootId) {
         return mastodonDao.reblog(tootId);
     }
 
-    public String addFavorite(String tootId) {
+    public Result addFavorite(String tootId) {
         return mastodonDao.addFavorite(tootId);
     }
 

@@ -1,5 +1,6 @@
 package services.dao;
 
+import services.Result;
 import utils.http.MultipartFormData;
 import utils.http.WebRequest;
 
@@ -18,22 +19,31 @@ public class MastodonDao {
         this.accessToken = accessToken;
     }
 
-    public String reblog(String tootId) {
+    public Result reblog(String tootId) {
         String url = mastodonHost + "/api/v1/statuses/" + tootId + "/reblog";
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + accessToken);
 
-        String responseBody = WebRequest.requestPOST(url, headers, "");
-        return responseBody;
+        WebRequest.HttpResult response = WebRequest.requestPOST(url, headers, "");
+
+        Result result = response.status.equals("ok") ?
+                new Result(Result.Status.STATUS_OK, response.result) : new Result(Result.Status.STATUS_FAIL, response.result);
+
+        return result;
     }
 
-    public String addFavorite(String tootId) {
+    public Result addFavorite(String tootId) {
         String url = mastodonHost + "/api/v1/statuses/" + tootId + "/favourite";
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + accessToken);
 
-        String responseBody = WebRequest.requestPOST(url, headers, "");
-        return responseBody;
+        WebRequest.HttpResult response = WebRequest.requestPOST(url, headers, "");
+
+
+        Result result = response.status.equals("ok") ?
+                new Result(Result.Status.STATUS_OK, response.result) : new Result(Result.Status.STATUS_FAIL, response.result);
+
+        return result;
     }
 
     public String postStatus(String parameterString) {
@@ -41,7 +51,7 @@ public class MastodonDao {
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + accessToken);
 
-        String responseBody = WebRequest.requestPOST(url, headers, parameterString);
+        String responseBody = WebRequest.requestPOST(url, headers, parameterString).result;
         return responseBody;
     }
 
@@ -49,7 +59,7 @@ public class MastodonDao {
         String url = mastodonHost + "/api/v1/timelines/home";
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + accessToken);
-        String responseBody = requestGET(url, headers);
+        String responseBody = requestGET(url, headers).result;
         return responseBody;
     }
 
@@ -57,7 +67,7 @@ public class MastodonDao {
         String url = mastodonHost + "/api/v1/timelines/public?local=true";
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + accessToken);
-        String responseBody = requestGET(url, headers);
+        String responseBody = requestGET(url, headers).result;
         return responseBody;
     }
 
@@ -65,7 +75,7 @@ public class MastodonDao {
         String url = mastodonHost + "/api/v1/accounts/" + userId + "/statuses";
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + accessToken);
-        String responseBody = requestGET(url, headers);
+        String responseBody = requestGET(url, headers).result;
         return responseBody;
     }
 
@@ -73,7 +83,7 @@ public class MastodonDao {
         String url = mastodonHost + "/api/v1/notifications";
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + accessToken);
-        String responseBody = requestGET(url, headers);
+        String responseBody = requestGET(url, headers).result;
         return responseBody;
     }
 
@@ -81,7 +91,7 @@ public class MastodonDao {
         String url = mastodonHost + "/api/v1/media";
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + accessToken);
-        String responseBody = MultipartFormData.post(url, headers, new ArrayList<>(Arrays.asList(fileDto)));
+        String responseBody = MultipartFormData.post(url, headers, new ArrayList<>(Arrays.asList(fileDto))).result;
         return responseBody;
     }
 }

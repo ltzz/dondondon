@@ -39,7 +39,7 @@ public class MultipartFormData {
         return "---*#" + randomString + "#";
     }
 
-    public static String post(String urlString, HashMap<String, String> headers, List<FileDto> multipartFiles) {
+    public static WebRequest.HttpResult post(String urlString, HashMap<String, String> headers, List<FileDto> multipartFiles) {
         final byte[] CRLFBytes = "\r\n".getBytes(StandardCharsets.UTF_8);
         final String boundary = generateBoundary();
         HttpURLConnection connection = null;
@@ -112,7 +112,7 @@ public class MultipartFormData {
                 while ((line = reader.readLine()) != null) {
                     output.append(line);
                 }
-                return output.toString();
+                return new WebRequest.HttpResult("ok", output.toString());
             }
 
         } catch (IOException e) {
@@ -132,6 +132,6 @@ public class MultipartFormData {
                 e.printStackTrace();
             }
         }
-        return "";
+        return new WebRequest.HttpResult("ng", "");
     }
 }

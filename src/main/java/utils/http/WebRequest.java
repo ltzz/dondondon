@@ -11,12 +11,20 @@ import java.util.Map;
 
 public class WebRequest {
 
+    public static final class HttpResult {
+        public final String status;
+        public final String result;
+        HttpResult(String status, String result){
+            this.status = status;
+            this.result = result;
+        }
+    }
 
-    public static String requestPOST(String URLStr, String parameterString) {
+    public static HttpResult requestPOST(String URLStr, String parameterString) {
         return requestPOST(URLStr, new HashMap<>(), parameterString);
     }
 
-    public static String requestPOST(String URLStr, HashMap<String, String> headers, String parameterString) {
+    public static HttpResult requestPOST(String URLStr, HashMap<String, String> headers, String parameterString) {
         HttpURLConnection connection = null;
         InputStream in = null;
         BufferedReader reader = null;
@@ -62,7 +70,7 @@ public class WebRequest {
                 while ((line = reader.readLine()) != null) {
                     output.append(line);
                 }
-                return output.toString();
+                return new HttpResult("ok", output.toString());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,10 +89,10 @@ public class WebRequest {
                 e.printStackTrace();
             }
         }
-        return "";
+        return new HttpResult("ng", "");
     }
 
-    public static String requestGET(String URLStr, HashMap<String, String> headers) {
+    public static HttpResult requestGET(String URLStr, HashMap<String, String> headers) {
         HttpURLConnection connection = null;
         InputStream in = null;
         BufferedReader reader = null;
@@ -117,7 +125,7 @@ public class WebRequest {
                 while ((line = reader.readLine()) != null) {
                     output.append(line);
                 }
-                return output.toString();
+                return new HttpResult("ok", output.toString());
             }
         } catch (UnknownHostException e) {
             System.err.println("ホストとの接続に失敗");
@@ -138,7 +146,7 @@ public class WebRequest {
                 e.printStackTrace();
             }
         }
-        return "";
+        return new HttpResult("ng", "");
     }
 }
 

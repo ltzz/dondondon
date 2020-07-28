@@ -66,7 +66,7 @@ public class MastodonAuth {
                 + "&grant_type=authorization_code&code=" + authCode
                 + "&redirect_uri=urn:ietf:wg:oauth:2.0:oob"
                 + "&scopes=read write follow");
-        String response = requestPOST(TokenURL, parameterString);
+        String response = requestPOST(TokenURL, parameterString).status;
         System.out.println(response);
 
         try {
@@ -94,7 +94,7 @@ public class MastodonAuth {
 
     public ClientRegisterResponse registerClient() {
         String parameterString = new String("client_name=" + CLIENT_NAME + "&redirect_uris=urn:ietf:wg:oauth:2.0:oob&scopes=read write follow");
-        String response = requestPOST(RegisterURL, parameterString);
+        String response = requestPOST(RegisterURL, parameterString).status;
         System.out.println(response);
 
         try {
