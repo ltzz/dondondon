@@ -4,17 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import misc.ImageCommons;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
 
+import services.DateParseService;
+import services.IconCacheService;
 import timeline.TimelineGenerator;
 import services.MastodonTimelineEndPoint;
 
 import java.awt.image.BufferedImage;
-import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
@@ -29,7 +28,9 @@ public class MastodonTimelineParser {
 
     private MastodonTimelineEndPoint endPoint;
 
-    public MastodonTimelineParser(String mastodonHost, String mastodonToken, MastodonTimelineEndPoint endPoint, String username, ConcurrentHashMap<String, BufferedImage> iconCache) {
+    public MastodonTimelineParser(String mastodonHost, String mastodonToken,
+                                  MastodonTimelineEndPoint endPoint, String username,
+                                  ConcurrentHashMap<String, BufferedImage> iconCache) {
         this.MASTODON_HOST = mastodonHost;
         this.MASTODON_TOKEN = mastodonToken;
         this.loginUsername = username;
@@ -191,44 +192,10 @@ public class MastodonTimelineParser {
                 }
             }
 
-            BufferedImage avatarIcon = null;
-            if (validateURL(tootEntity.account.avatar_static)) {
-                String avatarURL = tootEntity.account.avatar_static;
-                try {
-                    // TODO: この実装セキュリティ的に大丈夫かどうか詳しい人に聞く
-                    if (iconCache.containsKey(avatarURL)) {
-                        avatarIcon = iconCache.get(avatarURL);
-                    } else {
-                        byte[] buffer = ImageCommons.readImageAsByte(new URL(avatarURL));
-                        if (buffer != null) {
-                            avatarIcon = ImageCommons.readImage(buffer);
-                            iconCache.put(avatarURL, avatarIcon);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            BufferedImage avatarIcon = IconCacheService.addIcon(iconCache, tootEntity.account.avatar_static);
 
-            Date createdAt = null;
-            try {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                createdAt = format.parse(toot.created_at);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            Date reblogCreatedAt = null;
-            if(toot.reblog != null) {
-                try {
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                    format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                    reblogCreatedAt = format.parse(toot.reblog.created_at);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            Date createdAt = DateParseService.parse(toot.created_at);
+            Date reblogCreatedAt = toot.reblog != null ? DateParseService.parse(toot.reblog.created_at) : null;
 
             HashMap<String, Object> mastodonSpecificData = new HashMap<String, Object>();
             mastodonSpecificData.put("visibility", tootEntity.visibility);
@@ -236,14 +203,17 @@ public class MastodonTimelineParser {
 
             MastodonWriteAPIParser mastodonWriteAPIParser = new MastodonWriteAPIParser(MASTODON_HOST, MASTODON_TOKEN);
 
-            TimelineGenerator.DataOriginInfo dataOriginInfo = new TimelineGenerator.DataOriginInfo("mastodon", MASTODON_HOST, loginUsername, MASTODON_TOKEN);
+            TimelineGenerator.DataOriginInfo dataOriginInfo =
+                    new TimelineGenerator.DataOriginInfo("mastodon", MASTODON_HOST, loginUsername, MASTODON_TOKEN);
             listForGenerator.add(new TimelineGenerator.TLContent(dataOriginInfo,
                     mastodonWriteAPIParser,
                     toot.id,
                     tootEntity.account.id, tootEntity.account.acct,
                     tootEntity.account.username, tootEntity.account.display_name,
                     text, htmltext,
-                    tootEntity.emojis.stream().map(emoji -> new TimelineGenerator.EmojiData(emoji.shortcode, emoji.static_url)).collect(Collectors.toList()),
+                    tootEntity.emojis.stream()
+                            .map(emoji -> new TimelineGenerator.EmojiData(emoji.shortcode, emoji.static_url))
+                            .collect(Collectors.toList()),
                     imagesURL,
                     tootEntity.url,
                     getApplicationName(toot.application), getApplicationWebSite(toot.application),

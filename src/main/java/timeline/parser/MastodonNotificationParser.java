@@ -3,15 +3,14 @@ package timeline.parser;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import services.DateParseService;
+import services.IconCacheService;
 import services.MastodonAPI;
-import misc.ImageCommons;
 import org.jsoup.Jsoup;
 import timeline.NotificationGenerator;
 import timeline.TimelineGenerator;
 
 import java.awt.image.BufferedImage;
-import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -25,7 +24,8 @@ public class MastodonNotificationParser {
 
     HashSet<String> receivedNotificationIds;
 
-    public MastodonNotificationParser(String mastodonHost, String mastodonToken, String username, ConcurrentHashMap<String, BufferedImage> iconCache) {
+    public MastodonNotificationParser(String mastodonHost, String mastodonToken, String username,
+                                      ConcurrentHashMap<String, BufferedImage> iconCache) {
         this.MASTODON_HOST = mastodonHost;
         this.MASTODON_TOKEN = mastodonToken;
         this.loginUsername = username;
@@ -61,37 +61,12 @@ public class MastodonNotificationParser {
                 notificationText = notificationText + " " + Jsoup.parse(notification.status.content).text();
             }
 
-            BufferedImage avatarIcon = null;
-            if (MastodonTimelineParser.validateURL(notification.account.avatar_static)) {
-                String avatarURL = notification.account.avatar_static;
-                try {
-                    // TODO: この実装セキュリティ的に大丈夫かどうか詳しい人に聞く
-                    if (iconCache.containsKey(avatarURL)) {
-                        avatarIcon = iconCache.get(avatarURL);
-                    } else {
-                        byte[] buffer = ImageCommons.readImageAsByte(new URL(avatarURL));
-                        if (buffer != null) {
-                            avatarIcon = ImageCommons.readImage(buffer);
-                            iconCache.put(avatarURL, avatarIcon);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            BufferedImage avatarIcon = IconCacheService.addIcon(iconCache, notification.account.avatar_static);
 
+            Date createdAt = DateParseService.parse(notification.created_at);
 
-            Date createdAt = null;
-            try {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                createdAt = format.parse(notification.created_at);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-            TimelineGenerator.DataOriginInfo dataOriginInfo = new TimelineGenerator.DataOriginInfo("mastodon", loginUsername, MASTODON_HOST, MASTODON_TOKEN);
+            TimelineGenerator.DataOriginInfo dataOriginInfo =
+                    new TimelineGenerator.DataOriginInfo("mastodon", loginUsername, MASTODON_HOST, MASTODON_TOKEN);
             listForGenerator.add(new NotificationGenerator.NotificationContent(dataOriginInfo, notification.id, notification.account.id,
                     notification.account.username, notification.account.display_name, notificationText, createdAt, avatarIcon));
         });
