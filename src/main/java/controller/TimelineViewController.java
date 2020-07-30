@@ -250,9 +250,10 @@ public class TimelineViewController implements Initializable, IContentListContro
             TimelineGenerator.RowContent selectedToot = tableView.getSelectionModel().getSelectedItem();
             String statusId = selectedToot.id;
             String acct = selectedToot.acct;
+            String visiblity = selectedToot.visibility;
 
             // TODO: データ読み込み元ホストに応じてAPI叩く鯖切り替え
-            rootController.userReplyInputStart(statusId, acct);
+            rootController.userReplyInputStart(statusId, acct, visiblity);
         });
 
         menuItemStatusURL.setOnAction((ActionEvent t) -> {

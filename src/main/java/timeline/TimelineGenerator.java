@@ -153,6 +153,7 @@ public class TimelineGenerator implements ITimelineGenerator {
         public String spoilerText;
         public String reblogUsername;
         public String url;
+        public String visibility;
         public String applicationName;
         public String applicationWebSite;
         public Date date;
@@ -181,6 +182,8 @@ public class TimelineGenerator implements ITimelineGenerator {
 
             this.userNameForColumn.set(tlContent.username + " / " + tlContent.displayName);
             StringBuffer stringBuffer = new StringBuffer();
+
+            this.visibility = (String) tlContent.instanceSpecificData.get("visibility");
 
             if (((String) tlContent.instanceSpecificData.get("visibility")).equals("private")) {
                 stringBuffer.append("[非公開投稿]");

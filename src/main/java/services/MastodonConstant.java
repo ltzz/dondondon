@@ -3,5 +3,5 @@ package services;
 import java.util.List;
 
 public class MastodonConstant {
-    static final List<String> publishingLevels = List.of("public", "unlisted", "private", "direct");
+    public static final List<String> publishingLevels = List.of("default", "public", "unlisted", "private", "direct");
 }

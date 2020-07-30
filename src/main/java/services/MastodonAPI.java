@@ -22,7 +22,7 @@ public class MastodonAPI {
         return mastodonDao.addFavorite(tootId);
     }
 
-    public Result postStatus(String postText, BottomForm.FormState formState) {
+    public Result postStatus(String postText, BottomForm.FormState formState, int publishingLevelIndex) {
         String encodedText = "";
         try {
             encodedText = URLEncoder.encode(postText, "UTF-8");
@@ -34,6 +34,9 @@ public class MastodonAPI {
         }
         if (formState.getImageId() != null) {
             parameterString = parameterString + "&media_ids[]=" + formState.getImageId();
+        }
+        if (!MastodonConstant.publishingLevels.get(publishingLevelIndex).equals("default")) {
+            parameterString = parameterString + "&visibility=" + MastodonConstant.publishingLevels.get(publishingLevelIndex);
         }
         return mastodonDao.postStatus(parameterString);
     }

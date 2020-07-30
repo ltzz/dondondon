@@ -1,5 +1,6 @@
 package controller;
 
+import javafx.collections.FXCollections;
 import services.*;
 import utils.http.MultipartFormData;
 import javafx.event.ActionEvent;
@@ -55,6 +56,8 @@ public class Controller implements Initializable {
 
     private ConcurrentHashMap<String, BufferedImage> iconCache;
 
+    private int publishLevelComboBoxIndexOld;
+
     @FXML
     private VBox root;
 
@@ -73,9 +76,9 @@ public class Controller implements Initializable {
 
     @FXML
     private WebView webView;
-    
+
     @FXML
-    private ComboBox comboBox;
+    private ComboBox<String> publishLevelComboBox;
 
     @FXML
     private CheckMenuItem userIconVisible;
@@ -166,9 +169,13 @@ public class Controller implements Initializable {
     private void userPostEvent() {
         String text = textArea.getText();
         if (!text.isEmpty()) {
-            postMastodonAPI.postStatus(text, formState);
+            int publishingLevelIndex = publishLevelComboBox.getSelectionModel().getSelectedIndex();
+            postMastodonAPI.postStatus(text, formState, publishingLevelIndex);
             textArea.setText(""); // TODO: 成功時にのみクリア
             // TODO: ここのレスポンスを見て投稿成功不成功を判断・リストに反映？
+            if( formState.getInReplyToId() != null ){
+                publishLevelComboBox.getSelectionModel().select(publishLevelComboBoxIndexOld);
+            }
             formInitialize();
         }
     }
@@ -229,8 +236,12 @@ public class Controller implements Initializable {
         }
     }
 
-    public void userReplyInputStart(String inReplyToStatusId, String acct) {
+    public void userReplyInputStart(String inReplyToStatusId, String acct, String visibility) {
         textArea.setText("@" + acct + " ");
+
+        publishLevelComboBoxIndexOld = publishLevelComboBox.getSelectionModel().getSelectedIndex();
+        int index = MastodonConstant.publishingLevels.indexOf(visibility);
+        publishLevelComboBox.getSelectionModel().select(index);
         formState.setInReplyToId(inReplyToStatusId);
         textArea.lookup(".content").getStyleClass().add("u-bgLightPinkColor");
         formState.getStatusTexts().add("返信");
@@ -248,6 +259,7 @@ public class Controller implements Initializable {
     }
 
     private void replyModeCancel() {
+        publishLevelComboBox.getSelectionModel().select(publishLevelComboBoxIndexOld);
         formState.setInReplyToId(null);
         formState.getStatusTexts().remove("返信");
         textArea.lookup(".content").getStyleClass().remove("u-bgLightPinkColor");
@@ -488,6 +500,11 @@ public class Controller implements Initializable {
         formState = new BottomForm.FormState();
 
         contentControllers = new HashMap<>();
+
+        publishLevelComboBox.setItems(FXCollections.observableArrayList(MastodonConstant.publishingLevels));
+        int index = MastodonConstant.publishingLevels.indexOf("unlisted"); // TODO: ユーザーのデフォルト値
+        publishLevelComboBox.getSelectionModel().select(index);
+        publishLevelComboBoxIndexOld = index;
 
         initSpecificTab();
 
