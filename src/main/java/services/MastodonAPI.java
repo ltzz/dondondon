@@ -22,7 +22,7 @@ public class MastodonAPI {
         return mastodonDao.addFavorite(tootId);
     }
 
-    public void postStatus(String postText, BottomForm.FormState formState) {
+    public Result postStatus(String postText, BottomForm.FormState formState) {
         String encodedText = "";
         try {
             encodedText = URLEncoder.encode(postText, "UTF-8");
@@ -35,27 +35,26 @@ public class MastodonAPI {
         if (formState.getImageId() != null) {
             parameterString = parameterString + "&media_ids[]=" + formState.getImageId();
         }
-        mastodonDao.postStatus(parameterString);
-        // TODO: ここのレスポンスを見て投稿成功不成功を判断・リストに反映？
+        return mastodonDao.postStatus(parameterString);
     }
 
-    public String getHomeTimeline() {
+    public Result getHomeTimeline() {
         return mastodonDao.getHomeTimeline();
     }
 
-    public String getLocalTimeline() {
+    public Result getLocalTimeline() {
         return mastodonDao.getLocalTimeline();
     }
 
-    public String getUserTimeline(String userId) {
+    public Result getUserTimeline(String userId) {
         return mastodonDao.getUserTimeline(userId);
     }
 
-    public String getNotification() {
+    public Result getNotification() {
         return mastodonDao.getNotification();
     }
 
-    public String uploadMedia(MultipartFormData.FileDto fileDto) {
+    public Result uploadMedia(MultipartFormData.FileDto fileDto) {
         return mastodonDao.uploadMedia(fileDto);
     }
 }

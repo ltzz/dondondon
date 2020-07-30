@@ -11,6 +11,6 @@ public class LocalTimelineGet implements MastodonTimelineSource {
 
     public String get(){
         MastodonAPI mastodonAPI = new MastodonAPI(MASTODON_HOST, MASTODON_TOKEN);
-        return mastodonAPI.getLocalTimeline();
+        return mastodonAPI.getLocalTimeline().result;
     }
 }

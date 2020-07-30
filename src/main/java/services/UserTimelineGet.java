@@ -13,6 +13,6 @@ public class UserTimelineGet implements MastodonTimelineSource {
 
     public String get(){
         MastodonAPI mastodonAPI = new MastodonAPI(MASTODON_HOST, MASTODON_TOKEN);
-        return mastodonAPI.getUserTimeline(userId);
+        return mastodonAPI.getUserTimeline(userId).result;
     }
 }

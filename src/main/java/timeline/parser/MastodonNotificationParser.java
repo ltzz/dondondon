@@ -44,7 +44,7 @@ public class MastodonNotificationParser {
 
     public List<NotificationGenerator.NotificationContent> diffNotification() {
         MastodonAPI mastodonAPI = new MastodonAPI(MASTODON_HOST, MASTODON_TOKEN);
-        List<Notification> notifications = getNotificationDto(mastodonAPI.getNotification());
+        List<Notification> notifications = getNotificationDto(mastodonAPI.getNotification().result);
         List<Notification> filteredNotification = notifications.stream()
                 .filter(notification -> !receivedNotificationIds.contains(notification.id)).collect(Collectors.toList());
         Set<String> received = notifications.stream().map(notification -> notification.id).collect(Collectors.toSet());

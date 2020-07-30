@@ -73,6 +73,9 @@ public class Controller implements Initializable {
 
     @FXML
     private WebView webView;
+    
+    @FXML
+    private ComboBox comboBox;
 
     @FXML
     private CheckMenuItem userIconVisible;
@@ -165,6 +168,7 @@ public class Controller implements Initializable {
         if (!text.isEmpty()) {
             postMastodonAPI.postStatus(text, formState);
             textArea.setText(""); // TODO: 成功時にのみクリア
+            // TODO: ここのレスポンスを見て投稿成功不成功を判断・リストに反映？
             formInitialize();
         }
     }
@@ -184,8 +188,8 @@ public class Controller implements Initializable {
             Optional<ButtonType> result = alert.showAndWait();
 
             if( result.isPresent() && result.get() == buttonYes ){
-                String output = postMastodonAPI.uploadMedia(fileDto);
-                if (output != null && !output.isEmpty()) { // FIXME: 通信OKかどうかをレスポンスで持たす作りにすること
+                String output = postMastodonAPI.uploadMedia(fileDto).result;
+                if (output != null && !output.isEmpty()) { // FIXME: 通信OKかどうかを見る作りにすること
                     MastodonTimelineParser.UploadMediaResponse response = MastodonAPIParser.upload(output);
                     formState.setImageId(response.id);
                     formState.getStatusTexts().add("画像");
@@ -212,8 +216,8 @@ public class Controller implements Initializable {
     protected void onMenuItemUploadImage(ActionEvent evt) {
         try {
             MultipartFormData.FileDto fileDto = UploadImageChooser.choose();
-            String output = postMastodonAPI.uploadMedia(fileDto);
-            if (output != null && !output.isEmpty()) { // FIXME: 通信OKかどうかをレスポンスで持たす作りにすること
+            String output = postMastodonAPI.uploadMedia(fileDto).result;
+            if (output != null && !output.isEmpty()) { // FIXME: 通信OKかどうかを見る作りにすること
                 MastodonTimelineParser.UploadMediaResponse response = MastodonAPIParser.upload(output);
                 formState.setImageId(response.id);
                 formState.getStatusTexts().add("画像");

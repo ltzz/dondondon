@@ -11,6 +11,6 @@ public class HomeTimelineGet implements MastodonTimelineSource {
 
     public String get(){
         MastodonAPI mastodonAPI = new MastodonAPI(MASTODON_HOST, MASTODON_TOKEN);
-        return mastodonAPI.getHomeTimeline();
+        return mastodonAPI.getHomeTimeline().result;
     }
 }
