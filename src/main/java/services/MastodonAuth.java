@@ -11,7 +11,7 @@ import static utils.http.WebRequest.requestPOST;
 
 public class MastodonAuth {
     final String MASTODON_HOST;
-    final String CLIENT_NAME = "test_client";
+    final String CLIENT_NAME = Constant.clientName;
     final String RegisterURL;
     final String TokenURL;
 
@@ -93,6 +93,7 @@ public class MastodonAuth {
     }
 
     public ClientRegisterResponse registerClient() {
+        // TODO: クライアント登録にGitHubのURLを追加する
         String parameterString = new String("client_name=" + CLIENT_NAME + "&redirect_uris=urn:ietf:wg:oauth:2.0:oob&scopes=read write follow");
         String response = requestPOST(RegisterURL, parameterString).status;
         System.out.println(response);

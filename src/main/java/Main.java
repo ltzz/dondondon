@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import services.Constant;
 
 public class Main extends Application {
 
@@ -15,7 +16,7 @@ public class Main extends Application {
         Parent root = loader.load();
         Controller controller = loader.getController();
         controller.setStage(primaryStage);
-        primaryStage.setTitle("${CLIENT_NAME}");
+        primaryStage.setTitle(Constant.clientName);
         Scene scene = new Scene(root, 600, 500);
         scene.getStylesheets().add("dark.css");
         primaryStage.setScene(scene);
