@@ -17,6 +17,7 @@ import timeline.parser.MastodonWriteAPIParser;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static services.date.DateParseService.dateToGraphString;
 import static services.date.DateParseService.dateToJapaneseString;
 
 public class TimelineGenerator implements ITimelineGenerator {
@@ -216,7 +217,7 @@ public class TimelineGenerator implements ITimelineGenerator {
     public TreeMap<String, Integer> getNumberOfContentByHours() {
         TreeMap<String, Integer> graphData = new TreeMap<String, Integer>();
         for (TimelineGenerator.RowContent fetchedContent : fetchedContents.values()) {
-            String dateLabel = dateToJapaneseString(fetchedContent.date);
+            String dateLabel = dateToGraphString(fetchedContent.date);
             if (!graphData.containsKey(dateLabel)) {
                 graphData.put(dateLabel, 0);
             }

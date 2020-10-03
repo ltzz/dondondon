@@ -6,7 +6,7 @@ import timeline.parser.ITimelineGenerator;
 
 import java.util.*;
 
-import static services.date.DateParseService.dateToJapaneseString;
+import static services.date.DateParseService.dateToGraphString;
 
 public class MixTimelineGenerator implements ITimelineGenerator {
     private String generatorName;
@@ -87,7 +87,7 @@ public class MixTimelineGenerator implements ITimelineGenerator {
     public TreeMap<String, Integer> getNumberOfContentByHours() {
         TreeMap<String, Integer> graphData = new TreeMap<String, Integer>();
         for (TimelineGenerator.RowContent fetchedContent : fetchedContents.values()) {
-            String dateLabel = dateToJapaneseString(fetchedContent.date);
+            String dateLabel = dateToGraphString(fetchedContent.date);
             if (!graphData.containsKey(dateLabel)) {
                 graphData.put(dateLabel, 0);
             }

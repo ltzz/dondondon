@@ -18,6 +18,15 @@ public class DateParseService {
     }
 
     public static String dateToJapaneseString(Date date){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+        simpleDateFormat.setTimeZone(TimeZone.getDefault());
+
+        String dateString = simpleDateFormat.format(date);
+
+        return dateString;
+    }
+
+    public static String dateToGraphString(Date date){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd HH:00");
         simpleDateFormat.setTimeZone(TimeZone.getDefault());
 
