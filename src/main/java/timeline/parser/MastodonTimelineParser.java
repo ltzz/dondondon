@@ -10,6 +10,7 @@ import org.jsoup.safety.Whitelist;
 
 import services.DateParseService;
 import services.IconCacheService;
+import timeline.DataStore;
 import timeline.TimelineGenerator;
 import services.MastodonTimelineSource;
 
@@ -129,7 +130,7 @@ public class MastodonTimelineParser {
         public Toot status;
     }
 
-    public List<TimelineGenerator.TLContent> getTimeline() {
+    public List<DataStore.TLContent> getTimeline() {
         List<Toot> toots = getTimelineDto(endPoint.get());
         return toTLContent(toots);
     }
@@ -158,8 +159,8 @@ public class MastodonTimelineParser {
         }
     }
 
-    List<TimelineGenerator.TLContent> toTLContent(List<Toot> toots) {
-        List<TimelineGenerator.TLContent> listForGenerator = new ArrayList<>();
+    List<DataStore.TLContent> toTLContent(List<Toot> toots) {
+        List<DataStore.TLContent> listForGenerator = new ArrayList<>();
         toots.forEach(toot -> {
             String text = Jsoup.parse(toot.content).text();
             String htmltext = Jsoup.clean(toot.content, "", Whitelist.basic(), new Document.OutputSettings().prettyPrint(false));
@@ -205,7 +206,7 @@ public class MastodonTimelineParser {
 
             TimelineGenerator.DataOriginInfo dataOriginInfo =
                     new TimelineGenerator.DataOriginInfo("mastodon", MASTODON_HOST, loginUsername, MASTODON_TOKEN);
-            listForGenerator.add(new TimelineGenerator.TLContent(dataOriginInfo,
+            listForGenerator.add(new DataStore.TLContent(dataOriginInfo,
                     mastodonWriteAPIParser,
                     toot.id,
                     tootEntity.account.id, tootEntity.account.acct,

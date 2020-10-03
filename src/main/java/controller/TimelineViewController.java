@@ -83,6 +83,7 @@ public class TimelineViewController implements Initializable, IContentListContro
 
         if (filterWord.isEmpty()) {
             tableViewSetItems(rowContents);
+            return;
         }
         ObservableList<TimelineGenerator.RowContent> filteredRowContents = FXCollections.observableList(
                 rowContents.stream()

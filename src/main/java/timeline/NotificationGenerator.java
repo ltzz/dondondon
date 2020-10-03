@@ -8,49 +8,19 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.ImageView;
-import timeline.parser.MastodonNotificationParser;
 
-import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class NotificationGenerator {
 
-    MastodonNotificationParser mastodonParser;
-    private TreeMap<String, RowContent> fetchedContents;
+    private String generatorName;
+    private DataStore dataStore;
 
-    public NotificationGenerator(MastodonNotificationParser mastodonParser) {
-        this.mastodonParser = mastodonParser;
-        this.fetchedContents = new TreeMap<String, RowContent>();
-    }
-
-    // 汎用通知項目データクラス
-    public static class NotificationContent {
-        TimelineGenerator.DataOriginInfo dataOriginInfo;
-        String id;
-        String userId;
-        String username;
-        String displayName;
-        String contentText;
-        Date createdAt;
-        BufferedImage avatarIcon;
-
-        public NotificationContent(TimelineGenerator.DataOriginInfo dataOriginInfo,
-                                   String id,
-                                   String userId,
-                                   String username, String displayName,
-                                   String contentText,
-                                   Date createdAt,
-                                   BufferedImage avatarIcon) {
-            this.dataOriginInfo = dataOriginInfo;
-            this.id = id;
-            this.userId = userId;
-            this.username = username;
-            this.displayName = displayName;
-            this.contentText = contentText;
-            this.createdAt = createdAt;
-            this.avatarIcon = avatarIcon;
-        }
+    public NotificationGenerator(String generatorName, DataStore dataStore) {
+        this.generatorName = generatorName;
+        this.dataStore = dataStore;
     }
 
     public static class RowContent {
@@ -64,7 +34,7 @@ public class NotificationGenerator {
         private ObjectProperty<ImageView> userIcon = new SimpleObjectProperty<ImageView>();
         public StringProperty contentTextForColumn = new SimpleStringProperty();
 
-        RowContent(NotificationContent notificationContent) {
+        RowContent(DataStore.NotificationContent notificationContent) {
             this.dataOriginInfo = notificationContent.dataOriginInfo;
             this.id = notificationContent.id;
             this.userId = notificationContent.userId;
@@ -110,15 +80,9 @@ public class NotificationGenerator {
     }
 
     public ObservableList<RowContent> createRowContents() {
-        List<NotificationGenerator.NotificationContent> notificationData = mastodonParser.diffNotification();
-
-        for (NotificationContent notification : notificationData) {
-            fetchedContents.put(notification.id, new RowContent(notification));
-        }
-
-        List<RowContent> fetchedList = new ArrayList<>(fetchedContents.values());
-        Collections.reverse(fetchedList);  // MastodonではIDの上位48bitは時刻なのでソートに使ってOK
-        return FXCollections.observableArrayList(fetchedList);
+        List<DataStore.NotificationContent> fetchedList = dataStore.getNotificationContentList(generatorName);
+        List<RowContent> rowContentList = fetchedList.stream().map(RowContent::new).collect(Collectors.toList());
+        return FXCollections.observableArrayList(rowContentList);
     }
 
 }

@@ -6,7 +6,6 @@ import timeline.TimelineGenerator;
 import java.util.TreeMap;
 
 public interface ITimelineGenerator {
-    public void setGeneratorName(String x);
     public String getGeneratorName();
     public ObservableList<TimelineGenerator.RowContent> createRowContents();
     public ObservableList<TimelineGenerator.RowContent> getRowContents();

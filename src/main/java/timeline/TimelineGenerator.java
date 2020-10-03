@@ -13,19 +13,21 @@ import timeline.parser.ITimelineGenerator;
 import timeline.parser.MastodonTimelineParser;
 import timeline.parser.MastodonWriteAPIParser;
 
-import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TimelineGenerator implements ITimelineGenerator {
 
-    MastodonTimelineParser mastodonParser;
     private TreeMap<String, RowContent> fetchedContents;
     private String generatorName;
+    private DataStore dataStore;
+    MastodonTimelineParser mastodonParser;
 
-    public TimelineGenerator(MastodonTimelineParser mastodonParser) {
-        this.mastodonParser = mastodonParser;
+    public TimelineGenerator(String generatorName, DataStore dataStore)  {
         this.fetchedContents = new TreeMap<String, RowContent>();
+        this.generatorName = generatorName;
+        this.dataStore = dataStore;
     }
 
     public static class DataOriginInfo {
@@ -68,75 +70,6 @@ public class TimelineGenerator implements ITimelineGenerator {
         }
     }
 
-    // 汎用タイムライン項目データクラス
-    public static class TLContent {
-        final DataOriginInfo dataOriginInfo;
-        MastodonWriteAPIParser writeActionApi;
-        String id;
-        String userId;
-        String acct;
-        String username;
-        String displayName;
-        String contentText;
-        String contentHtml;
-        List<EmojiData> emojis;
-        List<String> contentImageURL;
-        String url;
-        String applicationName;
-        String applicationWebSite;
-        Date date;
-        Date reblogDate;
-        String favorited;
-        String reblogged;
-        String spoilerText;
-        String sensitive;
-        String reblogUsername;
-        BufferedImage avatarIcon;
-        HashMap<String, Object> instanceSpecificData;
-
-        public TLContent(DataOriginInfo dataOriginInfo,
-                         MastodonWriteAPIParser writeActionApi,
-                         String id,
-                         String userId, String acct,
-                         String username, String displayName,
-                         String contentText, String contentHtml,
-                         List<EmojiData> emojis,
-                         List<String> contentImageURL,
-                         String url,
-                         String applicationName, String applicationWebSite,
-                         Date date,
-                         Date reblogDate,
-                         String favorited, String reblogged,
-                         String spoilerText, String sensitive,
-                         String reblogUsername,
-                         BufferedImage avatarIcon,
-                         HashMap<String, Object> instanceSpecificData) {
-            this.dataOriginInfo = dataOriginInfo;
-            this.writeActionApi = writeActionApi;
-            this.id = id;
-            this.userId = userId;
-            this.acct = acct;
-            this.username = username;
-            this.displayName = displayName;
-            this.contentText = contentText;
-            this.contentHtml = contentHtml;
-            this.emojis = emojis;
-            this.contentImageURL = contentImageURL;
-            this.url = url;
-            this.applicationName = applicationName;
-            this.applicationWebSite = applicationWebSite;
-            this.date = date;
-            this.reblogDate = reblogDate;
-            this.favorited = favorited;
-            this.reblogged = reblogged;
-            this.spoilerText = spoilerText;
-            this.sensitive = sensitive;
-            this.reblogUsername = reblogUsername;
-            this.avatarIcon = avatarIcon;
-            this.instanceSpecificData = instanceSpecificData;
-        }
-    }
-
     public static class RowContent {
         public DataOriginInfo dataOriginInfo;
         public MastodonWriteAPIParser writeActionApi;
@@ -163,7 +96,7 @@ public class TimelineGenerator implements ITimelineGenerator {
         public StringProperty contentTextForColumn = new SimpleStringProperty();
         public StringProperty dateForColumn = new SimpleStringProperty();
 
-        RowContent(TLContent tlContent) {
+        RowContent(DataStore.TLContent tlContent) {
             this.dataOriginInfo = tlContent.dataOriginInfo;
             this.writeActionApi = tlContent.writeActionApi;
             this.id = tlContent.id;
@@ -261,25 +194,15 @@ public class TimelineGenerator implements ITimelineGenerator {
         return retContentHtml;
     }
 
-    public void setGeneratorName(String name) {
-        this.generatorName = name;
-    }
-
     public String getGeneratorName() {
         return this.generatorName;
     }
 
     public ObservableList<RowContent> createRowContents() {
-
-        List<TimelineGenerator.TLContent> timelineData = mastodonParser.getTimeline();
-
-        for (TLContent tldata : timelineData) {
-            fetchedContents.put(tldata.id, new RowContent(tldata)); // FIXME: 上書きなので投稿削除とかの時の挙動が謎
-        }
-        List<TimelineGenerator.RowContent> fetchedList = new ArrayList<>(fetchedContents.values());
-        Collections.reverse(fetchedList);
-
-        return FXCollections.observableArrayList(fetchedList);
+        List<DataStore.TLContent> fetchedList = dataStore.getTLContentList(generatorName);
+        List<RowContent> rowContentList = fetchedList.stream().map(RowContent::new).collect(Collectors.toList());
+        rowContentList.forEach(item -> fetchedContents.put(item.id, item));
+        return FXCollections.observableArrayList(rowContentList);
     }
 
     public ObservableList<RowContent> getRowContents() {
@@ -307,4 +230,3 @@ public class TimelineGenerator implements ITimelineGenerator {
         return graphData;
     }
 }
-

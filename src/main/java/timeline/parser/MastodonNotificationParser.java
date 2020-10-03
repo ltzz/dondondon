@@ -7,7 +7,7 @@ import services.DateParseService;
 import services.IconCacheService;
 import services.MastodonAPI;
 import org.jsoup.Jsoup;
-import timeline.NotificationGenerator;
+import timeline.DataStore;
 import timeline.TimelineGenerator;
 
 import java.awt.image.BufferedImage;
@@ -42,7 +42,7 @@ public class MastodonNotificationParser {
         public MastodonTimelineParser.Toot status;
     }
 
-    public List<NotificationGenerator.NotificationContent> diffNotification() {
+    public List<DataStore.NotificationContent> diffNotification() {
         MastodonAPI mastodonAPI = new MastodonAPI(MASTODON_HOST, MASTODON_TOKEN);
         List<Notification> notifications = getNotificationDto(mastodonAPI.getNotification().result);
         List<Notification> filteredNotification = notifications.stream()
@@ -52,13 +52,17 @@ public class MastodonNotificationParser {
         return toNotificationContent(filteredNotification);
     }
 
-    List<NotificationGenerator.NotificationContent> toNotificationContent(List<Notification> notifications) {
-        List<NotificationGenerator.NotificationContent> listForGenerator = new ArrayList<>();
+    List<DataStore.NotificationContent> toNotificationContent(List<Notification> notifications) {
+        List<DataStore.NotificationContent> listForGenerator = new ArrayList<>();
         notifications.forEach(notification -> {
             if (notification == null) return;
+            HashMap<String, Object> mastodonSpecificData = new HashMap<>();
             String notificationText = "[" + notification.type + "]";
+            Optional<String> statusId = Optional.empty();
             if (notification.status != null) {
                 notificationText = notificationText + " " + Jsoup.parse(notification.status.content).text();
+                mastodonSpecificData.put("visibility", notification.status.visibility);
+                statusId = Optional.of(notification.status.id);
             }
 
             BufferedImage avatarIcon = IconCacheService.addIcon(iconCache, notification.account.avatar_static);
@@ -67,8 +71,10 @@ public class MastodonNotificationParser {
 
             TimelineGenerator.DataOriginInfo dataOriginInfo =
                     new TimelineGenerator.DataOriginInfo("mastodon", loginUsername, MASTODON_HOST, MASTODON_TOKEN);
-            listForGenerator.add(new NotificationGenerator.NotificationContent(dataOriginInfo, notification.id, notification.account.id,
-                    notification.account.username, notification.account.display_name, notificationText, createdAt, avatarIcon));
+            listForGenerator.add(new DataStore.NotificationContent(dataOriginInfo, notification.id, statusId, notification.account.id,
+                    notification.account.acct,
+                    notification.account.username, notification.account.display_name, notificationText, createdAt, avatarIcon,
+                    mastodonSpecificData));
         });
         return listForGenerator;
     }

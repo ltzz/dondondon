@@ -4,9 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import timeline.parser.ITimelineGenerator;
 
-import java.text.SimpleDateFormat;
+import java.text.SimpleDateFormat; // FIXME: DateFormatter
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class MixTimelineGenerator implements ITimelineGenerator {
     private String generatorName;
@@ -42,14 +41,11 @@ public class MixTimelineGenerator implements ITimelineGenerator {
     TimelineGenerator timelineGenerator2;
     private TreeMap<MixTimelineId, TimelineGenerator.RowContent> fetchedContents;
 
-    public MixTimelineGenerator(TimelineGenerator timelineGenerator1, TimelineGenerator timelineGenerator2) {
+    public MixTimelineGenerator(String generatorName, TimelineGenerator timelineGenerator1, TimelineGenerator timelineGenerator2) {
+        this.generatorName = generatorName;
         this.fetchedContents = new TreeMap<MixTimelineId, TimelineGenerator.RowContent>();
         this.timelineGenerator1 = timelineGenerator1;
         this.timelineGenerator2 = timelineGenerator2;
-    }
-
-    public void setGeneratorName(String name) {
-        this.generatorName = name;
     }
 
     public String getGeneratorName() {
@@ -57,7 +53,8 @@ public class MixTimelineGenerator implements ITimelineGenerator {
     }
 
     public ObservableList<TimelineGenerator.RowContent> createRowContents() {
-
+        // ここでAPIからデータ取得し、データ格納
+        // FIXME: Generator→dataStore化
         ObservableList<TimelineGenerator.RowContent> rowContents1 = timelineGenerator1.createRowContents();
         ObservableList<TimelineGenerator.RowContent> rowContents2 = timelineGenerator2.createRowContents();
 

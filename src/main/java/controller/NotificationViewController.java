@@ -8,11 +8,15 @@ import javafx.scene.control.*;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.util.Callback;
 
+import timeline.DataStore;
 import timeline.NotificationGenerator;
+import timeline.NotificationGenerator.*;
+
+import java.util.Optional;
 
 public class NotificationViewController implements Initializable, IContentListController {
     @FXML
-    private TableView<NotificationGenerator.RowContent> tableView;
+    private TableView<RowContent> tableView;
 
     private Controller rootController;
     private NotificationGenerator notificationGenerator;
@@ -29,13 +33,13 @@ public class NotificationViewController implements Initializable, IContentListCo
         }
     }
 
-    public void tableViewSetItems(ObservableList<NotificationGenerator.RowContent> rowContents) {
+    public void tableViewSetItems(ObservableList<RowContent> rowContents) {
         tableView.setItems(rowContents);
     }
 
     @Override
     public void reload() {
-        ObservableList<NotificationGenerator.RowContent> rowContents = notificationGenerator.createRowContents(); // TODO:
+        ObservableList<RowContent> rowContents = notificationGenerator.createRowContents(); // TODO:
         tableViewSetItems(rowContents);
     }
 
@@ -44,9 +48,9 @@ public class NotificationViewController implements Initializable, IContentListCo
     }
 
 
-    public static class NotificationCell extends TableRow<NotificationGenerator.RowContent> {
+    public static class NotificationCell extends TableRow<RowContent> {
         @Override
-        protected void updateItem(NotificationGenerator.RowContent rowContent, boolean empty) {
+        protected void updateItem(RowContent rowContent, boolean empty) {
             super.updateItem(rowContent, empty);
         }
     }
@@ -60,9 +64,29 @@ public class NotificationViewController implements Initializable, IContentListCo
     private void contextMenuInit() {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemUserTimeline = new MenuItem("このユーザーのタイムラインを見る");
+        MenuItem menuItemReply = new MenuItem("返信");
+
         menuItemUserTimeline.setOnAction((ActionEvent t) -> {
-            NotificationGenerator.RowContent selectedNotification = tableView.getSelectionModel().getSelectedItem();
+            RowContent selectedNotification = tableView.getSelectionModel().getSelectedItem();
             rootController.addUserTab(selectedNotification.userId, selectedNotification.userName, hostname, selectedNotification.dataOriginInfo.getToken());
+        });
+
+        menuItemReply.setOnAction((ActionEvent t) -> {
+            RowContent selectedNotification = tableView.getSelectionModel().getSelectedItem();
+            String notificationId = selectedNotification.id;
+            DataStore dataStore = rootController.dataStore;
+            Optional<String> statusId = dataStore.getNotification(hostname, notificationId).get().statusId;
+            if(!statusId.isPresent()){
+                return;
+            }
+            Optional<DataStore.TLContent> toot = dataStore.getToot(hostname, statusId.get());
+            if(!toot.isPresent()){
+                return;
+            }
+            String acct = toot.get().acct;
+            String visiblity = (String) toot.get().instanceSpecificData.getOrDefault("visibility", (Object)"");
+
+            rootController.userReplyInputStart(statusId.get(), acct, visiblity);
         });
 
         tableView.setOnContextMenuRequested((ContextMenuEvent event) -> {
@@ -74,7 +98,7 @@ public class NotificationViewController implements Initializable, IContentListCo
             contextMenu.hide();
         });
 
-        contextMenu.getItems().addAll(menuItemUserTimeline);
+        contextMenu.getItems().addAll(menuItemUserTimeline, menuItemReply);
     }
 
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
@@ -83,12 +107,12 @@ public class NotificationViewController implements Initializable, IContentListCo
 
         if (tableView != null) {
 
-            ObservableList<TableColumn<NotificationGenerator.RowContent, ?>> columns = tableView.getColumns();
-            for (TableColumn<NotificationGenerator.RowContent, ?> column : columns) column.setSortable(false);
+            ObservableList<TableColumn<RowContent, ?>> columns = tableView.getColumns();
+            for (TableColumn<RowContent, ?> column : columns) column.setSortable(false);
 
-            tableView.setRowFactory(new Callback<TableView<NotificationGenerator.RowContent>, TableRow<NotificationGenerator.RowContent>>() {
+            tableView.setRowFactory(new Callback<TableView<RowContent>, TableRow<RowContent>>() {
                 @Override
-                public TableRow<NotificationGenerator.RowContent> call(TableView<NotificationGenerator.RowContent> tootCellTableView) {
+                public TableRow<RowContent> call(TableView<RowContent> tootCellTableView) {
                     NotificationViewController.NotificationCell notificationCell = new NotificationViewController.NotificationCell();
                     notificationCell.getStyleClass().add("notification-row");
                     return notificationCell;

@@ -2,6 +2,7 @@ package controller;
 
 import javafx.collections.FXCollections;
 import services.*;
+import timeline.DataStore;
 import utils.http.MultipartFormData;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -57,6 +58,8 @@ public class Controller implements Initializable {
     private ConcurrentHashMap<String, BufferedImage> iconCache;
 
     private int publishLevelComboBoxIndexOld;
+
+    public DataStore dataStore;
 
     @FXML
     private VBox root;
@@ -287,13 +290,13 @@ public class Controller implements Initializable {
             tab.setContent(pane);
             TimelineViewController timelineViewController = loader.getController();
             tabPane.getTabs().add(tab);
+            String hostName = settings.getInstanceSettings().get(0).hostName;
+            dataStore.setTimelineParser(tabKey, hostName, new MastodonTimelineParser(hostname, token, //FIXME: たぶん元のタブからもらってこないと開けない
+                    new UserTimelineGet(hostname, token, userId)
+                    , myUserName, iconCache));
             timelineViewController.registerParentControllerObject(this,
-                    new TimelineGenerator(
-                            new MastodonTimelineParser(hostname, token, //FIXME: たぶん元のタブからもらってこないと開けない
-                                    new UserTimelineGet(hostname, token, userId)
-                                    , myUserName, iconCache)
-                    ),
-                    new MastodonAPI(settings.getInstanceSettings().get(0).hostName, settings.getInstanceSettings().get(0).accessToken),
+                    new TimelineGenerator(tabKey, dataStore),
+                    new MastodonAPI(hostName, settings.getInstanceSettings().get(0).accessToken),
                     hostname);
             timelineViewController.registerWebViewOutput(webView);
             contentControllers.put(tabKey, timelineViewController);
@@ -366,7 +369,7 @@ public class Controller implements Initializable {
 
     private void initSpecificTab() {
         List<IContentListController> controllersForReload = new ArrayList<IContentListController>();
-
+        this.dataStore = new DataStore();
         try {
 
             List<Settings.InstanceSetting> instanceSettings = settings.getInstanceSettings();
@@ -375,12 +378,14 @@ public class Controller implements Initializable {
                 String hostname = instanceSetting.hostName;
                 String accessToken = instanceSetting.accessToken;
                 {
-                    TimelineGenerator homeTimelineGenerator = new TimelineGenerator(
+                    String generatorName = "Home<" + hostname + ">";
+                    dataStore.setTimelineParser(
+                            generatorName,
+                            hostname,
                             new MastodonTimelineParser(hostname, accessToken,
                                     new HomeTimelineGet(hostname, accessToken), myUserName, iconCache)
                     );
-                    String generatorName = "Home<" + hostname + ">";
-                    homeTimelineGenerator.setGeneratorName(generatorName);
+                    TimelineGenerator homeTimelineGenerator = new TimelineGenerator(generatorName, dataStore);
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/timeline_view.fxml"));
                     Tab tab = new Tab("home");
                     tab.setClosable(false);
@@ -400,6 +405,12 @@ public class Controller implements Initializable {
                     controllersForReload.add(controller);
                 }
                 {
+                    String generatorName = "Notification<" + hostname + ">";
+                    dataStore.setNotificationParser(
+                            generatorName,
+                            hostname,
+                            new MastodonNotificationParser(hostname, accessToken, myUserName, iconCache)
+                    );
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/notification_view.fxml"));
                     Tab tab = new Tab("notification");
                     tab.setClosable(false);
@@ -409,20 +420,20 @@ public class Controller implements Initializable {
                     tabPane.getTabs().add(tab);
                     controller.registerParentControllerObject(
                             this,
-                            new NotificationGenerator(
-                                    new MastodonNotificationParser(hostname, accessToken, myUserName, iconCache)
-                            ),
+                            new NotificationGenerator(generatorName, dataStore),
                             hostname);
-                    contentControllers.put("Notification<" + hostname + ">", controller);
+                    contentControllers.put(generatorName, controller);
                     controllersForReload.add(controller);
                 }
                 {
-                    TimelineGenerator localTimelineGenerator = new TimelineGenerator(
+                    String generatorName = "Local<" + hostname + ">";
+                    dataStore.setTimelineParser(
+                            generatorName,
+                            hostname,
                             new MastodonTimelineParser(hostname, accessToken,
                                     new LocalTimelineGet(hostname, accessToken), myUserName, iconCache)
                     );
-                    String generatorName = "Local<" + hostname + ">";
-                    localTimelineGenerator.setGeneratorName(generatorName);
+                    TimelineGenerator localTimelineGenerator = new TimelineGenerator(generatorName, dataStore);
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/timeline_view.fxml"));
                     Tab tab = new Tab("local");
                     tab.setClosable(false);
@@ -449,18 +460,19 @@ public class Controller implements Initializable {
                     String accessToken1 = instanceSettings.get(0).accessToken;
                     String hostname2 = instanceSettings.get(1).hostName;
                     String accessToken2 = instanceSettings.get(1).accessToken;
+                    String generatorName = "Mix<" + hostname1 + "," + hostname2 + ">";
+
                     ITimelineGenerator mixTimelineGenerator = new MixTimelineGenerator(
+                            generatorName,
                             new TimelineGenerator(
-                                    new MastodonTimelineParser(hostname1, accessToken1,
-                                            new HomeTimelineGet(hostname1, accessToken1), myUserName, iconCache)
+                                    "Home<" + hostname1 + ">",
+                                    dataStore // FIXME: 同じparserを参照するのでクラッシュしないか
                             ),
                             new TimelineGenerator(
-                                    new MastodonTimelineParser(hostname2, accessToken2,
-                                            new HomeTimelineGet(hostname2, accessToken2), myUserName, iconCache)
+                                    "Home<" + hostname2 + ">",
+                                    dataStore // FIXME: 同じparserを参照するのでクラッシュしないか
                             )
                     );
-                    String generatorName = "Mix<" + hostname1 + "," + hostname2 + ">";
-                    mixTimelineGenerator.setGeneratorName(generatorName);
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("../layout/timeline_view.fxml"));
                     Tab tab = new Tab("mix");
                     tab.setClosable(false);
