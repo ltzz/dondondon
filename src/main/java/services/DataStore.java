@@ -7,6 +7,7 @@ import timeline.parser.MastodonWriteAPIParser;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DataStore {
 
@@ -30,12 +31,16 @@ public class DataStore {
         }
     }
 
-    private HashMap<String, TreeMap<String, TLContent>> tootsAll; // hostname単位で全Tootを持つ
-    private HashMap<String, TreeMap<String, TLContent>> timelines; // タイムライン単位で
-    private HashMap<String, TreeMap<String, NotificationContent>> notificationsAll; // hostname単位で全通知を持つ
-    private HashMap<String, TreeMap<String, NotificationContent>> notifications; // タイムライン単位で
-    private HashMap<String, TimelineParserWrapper> mastodonTimelineParsers;
-    private HashMap<String, NotificationParserWrapper> mastodonNotificationParsers;
+    private final HashMap<String, TreeMap<String, TLContent>> tootsAll; // hostname単位で全Tootを持つ
+    private final HashMap<String, TreeMap<String, TLContent>> timelines; // タイムライン単位で
+    private final HashMap<String, TreeMap<String, NotificationContent>> notificationsAll; // hostname単位で全通知を持つ
+    private final HashMap<String, TreeMap<String, NotificationContent>> notifications; // タイムライン単位で
+    private final HashMap<String, TimelineParserWrapper> mastodonTimelineParsers;
+    private final HashMap<String, NotificationParserWrapper> mastodonNotificationParsers;
+
+    private final List<String> hostNames;
+    private final HashMap<String, MastodonWriteAPIParser> writeAPIs; // hostname単位で書き込み用APIを持つ
+    private final HashMap<String, MastodonAPI> APIs; // hostname単位でAPIを持つ
 
     public DataStore(){
         this.tootsAll = new HashMap<>();
@@ -44,14 +49,44 @@ public class DataStore {
         this.notifications = new HashMap<>();
         this.mastodonTimelineParsers = new HashMap<>();
         this.mastodonNotificationParsers = new HashMap<>();
+        this.hostNames = new ArrayList<>();
+        this.writeAPIs = new HashMap<>();
+        this.APIs = new HashMap<>();
     }
 
-    public void setTimelineParser(String key, String hostname, MastodonTimelineParser parser){
+    public void putTimelineParser(String key, String hostname, MastodonTimelineParser parser){
         this.mastodonTimelineParsers.put(key, new TimelineParserWrapper(hostname, parser));
     }
 
-    public void setNotificationParser(String key, String hostname, MastodonNotificationParser parser){
+    public void putNotificationParser(String key, String hostname, MastodonNotificationParser parser){
         this.mastodonNotificationParsers.put(key, new NotificationParserWrapper(hostname, parser));
+    }
+
+    public void putWriteParser(String hostname, MastodonWriteAPIParser parser){
+        this.writeAPIs.put(hostname, parser);
+    }
+
+    public Optional<MastodonWriteAPIParser> getWriteParser(String host){
+        return writeAPIs.containsKey(host) ?
+                Optional.of(writeAPIs.get(host)) : Optional.empty();
+    }
+
+    public void putAPI(String hostname, MastodonAPI parser){
+        this.APIs.put(hostname, parser);
+    }
+
+    public Optional<MastodonAPI> getAPI(String host){
+        return APIs.containsKey(host) ?
+                Optional.of(APIs.get(host)) : Optional.empty();
+    }
+
+
+    public void addHostName(String hostName){
+        this.hostNames.add(hostName);
+    }
+
+    public List<String> getHostNames(){
+        return new ArrayList<>(hostNames);
     }
 
     public Optional<TimelineParserWrapper> getTimelineParser(String key){

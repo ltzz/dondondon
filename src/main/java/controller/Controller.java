@@ -3,6 +3,7 @@ package controller;
 import javafx.collections.FXCollections;
 import services.*;
 import services.DataStore;
+import timeline.parser.MastodonWriteAPIParser;
 import utils.http.MultipartFormData;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -40,13 +41,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 
 public class Controller implements Initializable {
 
     Stage stage;
 
-    MastodonAPI postMastodonAPI;
     private ReloadTask reloadTask;
     private Settings settings;
     private final String myUserName = "user"; // TODO
@@ -57,7 +58,8 @@ public class Controller implements Initializable {
 
     private ConcurrentHashMap<String, BufferedImage> iconCache;
 
-    private int publishLevelComboBoxIndexOld;
+    private int publishLevelComboBoxIndexOld; //返信モードとかで一時的にvisiblityを変えるとき用
+    // private int targetHostNameComboBoxIndexOld; //返信モードとかで一時的に変えるとき用
 
     public DataStore dataStore;
 
@@ -82,6 +84,8 @@ public class Controller implements Initializable {
 
     @FXML
     private ComboBox<String> publishLevelComboBox;
+    @FXML
+    private ComboBox<String> targetHostNameComboBox;
 
     @FXML
     private CheckMenuItem userIconVisible;
@@ -173,7 +177,13 @@ public class Controller implements Initializable {
         String text = textArea.getText();
         if (!text.isEmpty()) {
             int publishingLevelIndex = publishLevelComboBox.getSelectionModel().getSelectedIndex();
-            postMastodonAPI.postStatus(text, formState, publishingLevelIndex);
+            int targetHostNameIndex = targetHostNameComboBox.getSelectionModel().getSelectedIndex();
+            String hostName = dataStore.getHostNames().get(targetHostNameIndex);
+            Optional<MastodonAPI> postMastodonAPI = dataStore.getAPI(hostName);
+            if(!postMastodonAPI.isPresent()){
+                return;
+            }
+            postMastodonAPI.get().postStatus(text, formState, publishingLevelIndex);
             textArea.setText(""); // TODO: 成功時にのみクリア
             // TODO: ここのレスポンスを見て投稿成功不成功を判断・リストに反映？
             if( formState.getInReplyToId() != null ){
@@ -198,7 +208,15 @@ public class Controller implements Initializable {
             Optional<ButtonType> result = alert.showAndWait();
 
             if( result.isPresent() && result.get() == buttonYes ){
-                String output = postMastodonAPI.uploadMedia(fileDto).result;
+
+                int targetHostNameIndex = targetHostNameComboBox.getSelectionModel().getSelectedIndex();
+                String hostName = dataStore.getHostNames().get(targetHostNameIndex);
+                Optional<MastodonAPI> postMastodonAPI = dataStore.getAPI(hostName);
+                if(!postMastodonAPI.isPresent()){
+                    return;
+                }
+
+                String output = postMastodonAPI.get().uploadMedia(fileDto).result;
                 if (output != null && !output.isEmpty()) { // FIXME: 通信OKかどうかを見る作りにすること
                     MastodonTimelineParser.UploadMediaResponse response = MastodonAPIParser.upload(output);
                     formState.setImageId(response.id);
@@ -226,7 +244,15 @@ public class Controller implements Initializable {
     protected void onMenuItemUploadImage(ActionEvent evt) {
         try {
             MultipartFormData.FileDto fileDto = UploadImageChooser.choose();
-            String output = postMastodonAPI.uploadMedia(fileDto).result;
+
+            int targetHostNameIndex = targetHostNameComboBox.getSelectionModel().getSelectedIndex();
+            String hostName = dataStore.getHostNames().get(targetHostNameIndex);
+            Optional<MastodonAPI> postMastodonAPI = dataStore.getAPI(hostName);
+            if(!postMastodonAPI.isPresent()){
+                return;
+            }
+
+            String output = postMastodonAPI.get().uploadMedia(fileDto).result;
             if (output != null && !output.isEmpty()) { // FIXME: 通信OKかどうかを見る作りにすること
                 MastodonTimelineParser.UploadMediaResponse response = MastodonAPIParser.upload(output);
                 formState.setImageId(response.id);
@@ -291,7 +317,7 @@ public class Controller implements Initializable {
             TimelineViewController timelineViewController = loader.getController();
             tabPane.getTabs().add(tab);
             String hostName = settings.getInstanceSettings().get(0).hostName;
-            dataStore.setTimelineParser(tabKey, hostName, new MastodonTimelineParser(hostname, token, //FIXME: たぶん元のタブからもらってこないと開けない
+            dataStore.putTimelineParser(tabKey, hostName, new MastodonTimelineParser(hostname, token, //FIXME: たぶん元のタブからもらってこないと開けない
                     new UserTimelineGet(hostname, token, userId)
                     , myUserName, iconCache));
             timelineViewController.registerParentControllerObject(this,
@@ -377,9 +403,15 @@ public class Controller implements Initializable {
             for (Settings.InstanceSetting instanceSetting : instanceSettings) {
                 String hostname = instanceSetting.hostName;
                 String accessToken = instanceSetting.accessToken;
+                MastodonWriteAPIParser mastodonWriteAPIParser = new MastodonWriteAPIParser(hostname, accessToken);
+
+                dataStore.putWriteParser(hostname, mastodonWriteAPIParser);
+                dataStore.putAPI(hostname, new MastodonAPI(hostname, accessToken));
+                dataStore.addHostName(hostname);
+
                 {
                     String generatorName = "Home<" + hostname + ">";
-                    dataStore.setTimelineParser(
+                    dataStore.putTimelineParser(
                             generatorName,
                             hostname,
                             new MastodonTimelineParser(hostname, accessToken,
@@ -406,7 +438,7 @@ public class Controller implements Initializable {
                 }
                 {
                     String generatorName = "Notification<" + hostname + ">";
-                    dataStore.setNotificationParser(
+                    dataStore.putNotificationParser(
                             generatorName,
                             hostname,
                             new MastodonNotificationParser(hostname, accessToken, myUserName, iconCache)
@@ -427,7 +459,7 @@ public class Controller implements Initializable {
                 }
                 {
                     String generatorName = "Local<" + hostname + ">";
-                    dataStore.setTimelineParser(
+                    dataStore.putTimelineParser(
                             generatorName,
                             hostname,
                             new MastodonTimelineParser(hostname, accessToken,
@@ -518,9 +550,13 @@ public class Controller implements Initializable {
         publishLevelComboBox.getSelectionModel().select(index);
         publishLevelComboBoxIndexOld = index;
 
-        initSpecificTab();
 
-        postMastodonAPI = new MastodonAPI(settings.getInstanceSettings().get(0).hostName, settings.getInstanceSettings().get(0).accessToken);
+        List<Settings.InstanceSetting> instanceSettings = settings.getInstanceSettings();
+
+        targetHostNameComboBox.setItems(FXCollections.observableArrayList(instanceSettings.stream().map(item -> item.hostName).collect(Collectors.toList())));
+        targetHostNameComboBox.getSelectionModel().select(0);
+
+        initSpecificTab();
 
         initShortcutKey();
 

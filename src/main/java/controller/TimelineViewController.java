@@ -250,6 +250,10 @@ public class TimelineViewController implements Initializable, IContentListContro
             String acct = selectedToot.acct;
             String visiblity = selectedToot.visibility;
 
+            if(rootController.dataStore.getToot(hostname, statusId).isPresent()){
+
+            }
+
             // TODO: データ読み込み元ホストに応じてAPI叩く鯖切り替え
             rootController.userReplyInputStart(statusId, acct, visiblity);
         });
