@@ -204,7 +204,6 @@ public class Controller implements Initializable {
             ButtonType buttonYes = new ButtonType("YES", ButtonBar.ButtonData.OK_DONE);
             ButtonType buttonNo = new ButtonType("NO", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-            // TODO: ここでクリップボードの画像が見れるように
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "画像をアップロードします。", buttonNo, buttonYes);
             Image image = new Image("file:" + fileDto.filePath);
             ImageView imageView = new ImageView(image);
@@ -278,7 +277,6 @@ public class Controller implements Initializable {
         textArea.requestFocus();
         int caretPosition = acct.length() + 2; // @と空白で+2
         textArea.positionCaret(caretPosition);
-        // TODO: 送信時データ読み込み元ホストに応じてAPI叩く鯖切り替えできるように
     }
 
     private void formInitialize() {
