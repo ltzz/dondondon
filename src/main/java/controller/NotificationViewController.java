@@ -93,8 +93,10 @@ public class NotificationViewController implements Initializable, IContentListCo
             contextMenu.getItems().clear();
             NotificationGenerator.RowContent selectedNotification = tableView.getSelectionModel().getSelectedItem();
             String notificationId = selectedNotification.id;
-            Optional<String> statusId = rootController.dataStore.getNotification(hostname, notificationId).get().statusId;
-            if(!statusId.isPresent()) {
+            String notificationType = (String) rootController.dataStore.getNotification(hostname, notificationId).get().instanceSpecificData
+                     .getOrDefault("notification_type","");
+
+            if(!notificationType.equals("mention")) {
                 // 返信できない通知アイテムには返信メニューを出したくない
                 contextMenu.getItems().addAll(menuItemUserTimeline);
             }

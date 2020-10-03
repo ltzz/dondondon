@@ -62,6 +62,7 @@ public class MastodonNotificationParser {
             if (notification.status != null) {
                 notificationText = notificationText + " " + Jsoup.parse(notification.status.content).text();
                 mastodonSpecificData.put("visibility", notification.status.visibility);
+                mastodonSpecificData.put("notification_type", notification.type);
                 statusId = Optional.of(notification.status.id);
             }
 
