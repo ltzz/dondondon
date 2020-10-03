@@ -8,7 +8,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
 
-import services.DateParseService;
+import services.date.DateParseService;
 import services.IconCacheService;
 import timeline.DataStore;
 import timeline.TimelineGenerator;
@@ -17,8 +17,9 @@ import services.MastodonTimelineSource;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static services.Common.validateURL;
 
 public class MastodonTimelineParser {
 
@@ -275,12 +276,5 @@ public class MastodonTimelineParser {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static boolean validateURL(String url) {
-        // URLとしてあり得る記号のみ許可する
-        // TODO: 詳しい人にこれで安全か聞く
-        if(url == null) return false;
-        return Pattern.compile("^https?://[a-zA-Z0-9/:%#&~=_!'\\$\\?\\(\\)\\.\\+\\*\\-]+$").matcher(url).matches();
     }
 }

@@ -2,16 +2,17 @@ package services;
 
 
 import utils.ImageCommons;
-import timeline.parser.MastodonTimelineParser;
 
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static services.Common.validateURL;
+
 public class IconCacheService {
     public static BufferedImage addIcon(ConcurrentHashMap<String, BufferedImage> iconCache, String url){
         BufferedImage avatarIcon = null;
-        if (MastodonTimelineParser.validateURL(url)) {
+        if (validateURL(url)) {
             String avatarURL = url;
             try {
                 // TODO: この実装セキュリティ的に大丈夫かどうか詳しい人に聞く

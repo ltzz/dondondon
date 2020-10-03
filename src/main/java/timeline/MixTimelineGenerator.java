@@ -4,8 +4,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import timeline.parser.ITimelineGenerator;
 
-import java.text.SimpleDateFormat; // FIXME: DateFormatter
 import java.util.*;
+
+import static services.date.DateParseService.dateToJapaneseString;
 
 public class MixTimelineGenerator implements ITimelineGenerator {
     private String generatorName;
@@ -86,10 +87,7 @@ public class MixTimelineGenerator implements ITimelineGenerator {
     public TreeMap<String, Integer> getNumberOfContentByHours() {
         TreeMap<String, Integer> graphData = new TreeMap<String, Integer>();
         for (TimelineGenerator.RowContent fetchedContent : fetchedContents.values()) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd HH:00");
-            simpleDateFormat.setTimeZone(TimeZone.getDefault());
-
-            String dateLabel = simpleDateFormat.format(fetchedContent.date);
+            String dateLabel = dateToJapaneseString(fetchedContent.date);
             if (!graphData.containsKey(dateLabel)) {
                 graphData.put(dateLabel, 0);
             }

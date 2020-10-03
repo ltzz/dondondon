@@ -20,13 +20,12 @@ import timeline.TimelineGenerator;
 import timeline.parser.ITimelineGenerator;
 import timeline.parser.MastodonWriteAPIParser;
 
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import static lib.htmlBuilder.HtmlBuilder.attribute;
 import static lib.htmlBuilder.HtmlBuilder.attributes;
 import static lib.htmlBuilder.Tags.*;
+import static services.date.DateParseService.dateToJapaneseString;
 
 public class TimelineViewController implements Initializable, IContentListController {
     @FXML
@@ -180,12 +179,10 @@ public class TimelineViewController implements Initializable, IContentListContro
                 String imagesInnerHTML = imagesString.toString();
                 String contentHtml = toCharacterReference(tootContent.contentHtml);
 
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
-                simpleDateFormat.setTimeZone(TimeZone.getDefault());
                 String dateString =
                         tootContent.reblogOriginDate != null ?
-                                ("reblogged: " + simpleDateFormat.format(tootContent.date) + "　posted: " + simpleDateFormat.format(tootContent.reblogOriginDate))
-                                : ("posted: " + simpleDateFormat.format(tootContent.date));
+                                ("<br>reblogged: " + dateToJapaneseString(tootContent.date) + "　posted: " + dateToJapaneseString(tootContent.reblogOriginDate))
+                                : ("posted: " + dateToJapaneseString(tootContent.date));
                 final String htmlString = buildHtml(
                         contentHtml + dateString + toCharacterReference(EMOJI_TEST),
                         imagesInnerHTML

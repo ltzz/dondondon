@@ -9,20 +9,20 @@ import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.ImageView;
 
+import services.Common;
 import timeline.parser.ITimelineGenerator;
-import timeline.parser.MastodonTimelineParser;
 import timeline.parser.MastodonWriteAPIParser;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static services.date.DateParseService.dateToJapaneseString;
 
 public class TimelineGenerator implements ITimelineGenerator {
 
     private TreeMap<String, RowContent> fetchedContents;
     private String generatorName;
     private DataStore dataStore;
-    MastodonTimelineParser mastodonParser;
 
     public TimelineGenerator(String generatorName, DataStore dataStore)  {
         this.fetchedContents = new TreeMap<String, RowContent>();
@@ -53,7 +53,7 @@ public class TimelineGenerator implements ITimelineGenerator {
         private String shortCode;
 
         public EmojiData(String shortCode, String imageURL) {
-            if (MastodonTimelineParser.validateURL(imageURL)) {
+            if (Common.validateURL(imageURL)) {
                 this.imageURL = imageURL;
             } else {
                 this.imageURL = "";
@@ -154,10 +154,7 @@ public class TimelineGenerator implements ITimelineGenerator {
             this.date = tlContent.date;
             this.reblogOriginDate = tlContent.reblogDate;
 
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
-            simpleDateFormat.setTimeZone(TimeZone.getDefault());
-
-            this.dateForColumn.set(simpleDateFormat.format(tlContent.date));
+            this.dateForColumn.set(dateToJapaneseString(tlContent.date));
             this.favorited = tlContent.favorited;
             this.reblogged = tlContent.reblogged;
             this.spoilerText = tlContent.spoilerText;
@@ -218,10 +215,7 @@ public class TimelineGenerator implements ITimelineGenerator {
     public TreeMap<String, Integer> getNumberOfContentByHours() {
         TreeMap<String, Integer> graphData = new TreeMap<String, Integer>();
         for (TimelineGenerator.RowContent fetchedContent : fetchedContents.values()) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd HH:00");
-            simpleDateFormat.setTimeZone(TimeZone.getDefault());
-
-            String dateLabel = simpleDateFormat.format(fetchedContent.date);
+            String dateLabel = dateToJapaneseString(fetchedContent.date);
             if (!graphData.containsKey(dateLabel)) {
                 graphData.put(dateLabel, 0);
             }

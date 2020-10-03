@@ -13,7 +13,7 @@ import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.html.HTMLAnchorElement;
 
-import static timeline.parser.MastodonTimelineParser.validateURL;
+import static services.Common.validateURL;
 
 public class BrowserOpenEventListener implements ChangeListener<Worker.State>, EventListener {
     private final WebView webView;

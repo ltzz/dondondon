@@ -9,9 +9,10 @@ import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.ImageView;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static services.date.DateParseService.dateToJapaneseString;
 
 public class NotificationGenerator {
 
@@ -52,10 +53,7 @@ public class NotificationGenerator {
 
             this.date = notificationContent.createdAt;
 
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
-            simpleDateFormat.setTimeZone(TimeZone.getDefault());
-
-            this.dateForColumn.set(simpleDateFormat.format(notificationContent.createdAt));
+            this.dateForColumn.set(dateToJapaneseString(notificationContent.createdAt));
 
             this.contentTextForColumn.set(notificationContent.username + " / " + notificationContent.displayName);
             this.contentText.set(notificationContent.contentText);

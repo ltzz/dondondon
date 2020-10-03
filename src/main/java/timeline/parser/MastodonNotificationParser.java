@@ -3,7 +3,7 @@ package timeline.parser;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import services.DateParseService;
+import services.date.DateParseService;
 import services.IconCacheService;
 import services.MastodonAPI;
 import org.jsoup.Jsoup;
