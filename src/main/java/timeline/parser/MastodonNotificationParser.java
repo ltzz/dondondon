@@ -7,7 +7,7 @@ import services.date.DateParseService;
 import services.IconCacheService;
 import services.MastodonAPI;
 import org.jsoup.Jsoup;
-import timeline.DataStore;
+import services.DataStore;
 import timeline.TimelineGenerator;
 
 import java.awt.image.BufferedImage;

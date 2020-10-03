@@ -8,7 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.util.Callback;
 
-import timeline.DataStore;
+import services.DataStore;
 import timeline.NotificationGenerator;
 import timeline.NotificationGenerator.*;
 

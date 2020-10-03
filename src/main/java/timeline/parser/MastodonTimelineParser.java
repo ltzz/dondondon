@@ -10,7 +10,7 @@ import org.jsoup.safety.Whitelist;
 
 import services.date.DateParseService;
 import services.IconCacheService;
-import timeline.DataStore;
+import services.DataStore;
 import timeline.TimelineGenerator;
 import services.MastodonTimelineSource;
 

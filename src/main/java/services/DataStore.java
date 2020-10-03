@@ -1,5 +1,6 @@
-package timeline;
+package services;
 
+import timeline.TimelineGenerator;
 import timeline.parser.MastodonNotificationParser;
 import timeline.parser.MastodonTimelineParser;
 import timeline.parser.MastodonWriteAPIParser;
@@ -31,7 +32,7 @@ public class DataStore {
 
     private HashMap<String, TreeMap<String, TLContent>> tootsAll; // hostname単位で全Tootを持つ
     private HashMap<String, TreeMap<String, TLContent>> timelines; // タイムライン単位で
-    private HashMap<String, TreeMap<String, NotificationContent>> notificationsAll; // hostname単位で全Tootを持つ
+    private HashMap<String, TreeMap<String, NotificationContent>> notificationsAll; // hostname単位で全通知を持つ
     private HashMap<String, TreeMap<String, NotificationContent>> notifications; // タイムライン単位で
     private HashMap<String, TimelineParserWrapper> mastodonTimelineParsers;
     private HashMap<String, NotificationParserWrapper> mastodonNotificationParsers;
