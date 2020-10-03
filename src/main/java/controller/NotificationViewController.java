@@ -62,7 +62,6 @@ public class NotificationViewController implements Initializable, IContentListCo
     }
 
     private void contextMenuInit() {
-        ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemUserTimeline = new MenuItem("このユーザーのタイムラインを見る");
         MenuItem menuItemReply = new MenuItem("返信");
 
@@ -89,7 +88,19 @@ public class NotificationViewController implements Initializable, IContentListCo
             rootController.userReplyInputStart(hostname, statusId.get(), acct, visiblity);
         });
 
+        ContextMenu contextMenu = new ContextMenu();
         tableView.setOnContextMenuRequested((ContextMenuEvent event) -> {
+            contextMenu.getItems().clear();
+            NotificationGenerator.RowContent selectedNotification = tableView.getSelectionModel().getSelectedItem();
+            String notificationId = selectedNotification.id;
+            Optional<String> statusId = rootController.dataStore.getNotification(hostname, notificationId).get().statusId;
+            if(!statusId.isPresent()) {
+                // 返信できない通知アイテムには返信メニューを出したくない
+                contextMenu.getItems().addAll(menuItemUserTimeline);
+            }
+            else{
+                contextMenu.getItems().addAll(menuItemUserTimeline, menuItemReply);
+            }
             contextMenu.show(tableView, event.getScreenX(), event.getScreenY());
             event.consume();
         });
@@ -98,7 +109,6 @@ public class NotificationViewController implements Initializable, IContentListCo
             contextMenu.hide();
         });
 
-        contextMenu.getItems().addAll(menuItemUserTimeline, menuItemReply);
     }
 
     public void initialize(java.net.URL url, java.util.ResourceBundle bundle) {
