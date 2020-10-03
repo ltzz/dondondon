@@ -1,6 +1,5 @@
 package services;
 
-import utils.http.MultipartFormData;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -10,7 +9,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class UploadImageChooser {
-    public static MultipartFormData.FileDto choose() throws IOException {
+
+    public static final class FileDto {
+        public final String fileName;
+        public final String filePath;
+        public final String mimeType;
+        public final byte[] bytes;
+
+        public FileDto(String fileName, String filePath, String mimeType, byte[] bytes) {
+            this.fileName = fileName;
+            this.filePath = filePath;
+            this.mimeType = mimeType;
+            this.bytes = bytes;
+        }
+    }
+
+    public static FileDto choose() throws IOException {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("アップロード画像を選択");
         fileChooser.getExtensionFilters().addAll(
@@ -21,7 +35,7 @@ public class UploadImageChooser {
         return readFile(file);
     }
 
-    public static MultipartFormData.FileDto readFile(File file) throws IOException {
+    public static FileDto readFile(File file) throws IOException {
         if (file != null && file.isFile()) {
             System.out.println(file.getPath());
             String[] strings = file.getPath().split("\\.");
@@ -39,8 +53,8 @@ public class UploadImageChooser {
             System.out.println(mimeType);
             Path path = FileSystems.getDefault().getPath(file.getAbsolutePath());
             byte[] fileData = Files.readAllBytes(path);
-            return new MultipartFormData.FileDto(file.getName(), mimeType, fileData);
+            return new FileDto(file.getName(), path.toAbsolutePath().toString(), mimeType, fileData);
         }
-        return new MultipartFormData.FileDto("", "", new byte[0]);
+        return new FileDto("", "", "", new byte[0]);
     }
 }

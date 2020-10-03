@@ -1,6 +1,8 @@
 package controller;
 
 import javafx.collections.FXCollections;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import services.*;
 import services.DataStore;
 import timeline.parser.MastodonWriteAPIParser;
@@ -197,18 +199,21 @@ public class Controller implements Initializable {
         File file = ClipboardService.readImage();
         if( file == null ) return;
         try {
-            MultipartFormData.FileDto fileDto = UploadImageChooser.readFile(file);
+            UploadImageChooser.FileDto fileDto = UploadImageChooser.readFile(file);
 
             ButtonType buttonYes = new ButtonType("YES", ButtonBar.ButtonData.OK_DONE);
             ButtonType buttonNo = new ButtonType("NO", ButtonBar.ButtonData.CANCEL_CLOSE);
 
             // TODO: ここでクリップボードの画像が見れるように
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "画像をアップロードします。", buttonNo, buttonYes);
+            Image image = new Image("file:" + fileDto.filePath);
+            ImageView imageView = new ImageView(image);
+            alert.setGraphic(imageView);
             alert.setTitle("画像アップロード");
             Optional<ButtonType> result = alert.showAndWait();
 
             if( result.isPresent() && result.get() == buttonYes ){
-                imageUpload(fileDto);
+                imageUpload(new MultipartFormData.FileDto(fileDto.fileName, fileDto.mimeType, fileDto.bytes));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -228,9 +233,9 @@ public class Controller implements Initializable {
     @FXML
     protected void onMenuItemUploadImage(ActionEvent evt) {
         try {
-            MultipartFormData.FileDto fileDto = UploadImageChooser.choose();
+            UploadImageChooser.FileDto fileDto = UploadImageChooser.choose();
 
-            imageUpload(fileDto);
+            imageUpload(new MultipartFormData.FileDto(fileDto.fileName, fileDto.mimeType, fileDto.bytes));
         } catch (Exception e) {
             e.printStackTrace();
         }
