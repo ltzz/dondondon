@@ -208,22 +208,7 @@ public class Controller implements Initializable {
             Optional<ButtonType> result = alert.showAndWait();
 
             if( result.isPresent() && result.get() == buttonYes ){
-
-                int targetHostNameIndex = targetHostNameComboBox.getSelectionModel().getSelectedIndex();
-                String hostName = dataStore.getHostNames().get(targetHostNameIndex);
-                Optional<MastodonAPI> postMastodonAPI = dataStore.getAPI(hostName);
-                if(!postMastodonAPI.isPresent()){
-                    return;
-                }
-
-                String output = postMastodonAPI.get().uploadMedia(fileDto).result;
-                if (output != null && !output.isEmpty()) { // FIXME: 通信OKかどうかを見る作りにすること
-                    MastodonTimelineParser.UploadMediaResponse response = MastodonAPIParser.upload(output);
-                    formState.setImageId(response.id);
-                    formState.getStatusTexts().add("画像");
-                    inputTextStatus.setText(formState.getStatusDisplayText());
-                    textArea.setText(textArea.getText() + " " + response.text_url);
-                }
+                imageUpload(fileDto);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -245,32 +230,42 @@ public class Controller implements Initializable {
         try {
             MultipartFormData.FileDto fileDto = UploadImageChooser.choose();
 
-            int targetHostNameIndex = targetHostNameComboBox.getSelectionModel().getSelectedIndex();
-            String hostName = dataStore.getHostNames().get(targetHostNameIndex);
-            Optional<MastodonAPI> postMastodonAPI = dataStore.getAPI(hostName);
-            if(!postMastodonAPI.isPresent()){
-                return;
-            }
-
-            String output = postMastodonAPI.get().uploadMedia(fileDto).result;
-            if (output != null && !output.isEmpty()) { // FIXME: 通信OKかどうかを見る作りにすること
-                MastodonTimelineParser.UploadMediaResponse response = MastodonAPIParser.upload(output);
-                formState.setImageId(response.id);
-                formState.getStatusTexts().add("画像");
-                inputTextStatus.setText(formState.getStatusDisplayText());
-                textArea.setText(textArea.getText() + " " + response.text_url);
-            }
+            imageUpload(fileDto);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void userReplyInputStart(String inReplyToStatusId, String acct, String visibility) {
+    private void imageUpload(MultipartFormData.FileDto fileDto){
+        int targetHostNameIndex = targetHostNameComboBox.getSelectionModel().getSelectedIndex();
+        String hostName = dataStore.getHostNames().get(targetHostNameIndex);
+        Optional<MastodonAPI> postMastodonAPI = dataStore.getAPI(hostName);
+        if(!postMastodonAPI.isPresent()){
+            return;
+        }
+
+        String output = postMastodonAPI.get().uploadMedia(fileDto).result;
+        if (output != null && !output.isEmpty()) { // FIXME: 通信OKかどうかを見る作りにすること
+            MastodonTimelineParser.UploadMediaResponse response = MastodonAPIParser.upload(output);
+            targetHostNameComboBox.setDisable(true);
+            formState.setImageId(response.id);
+            formState.getStatusTexts().add("画像");
+            inputTextStatus.setText(formState.getStatusDisplayText());
+            textArea.setText(textArea.getText() + " " + response.text_url);
+        }
+    }
+
+    public void userReplyInputStart(String hostName, String inReplyToStatusId, String acct, String visibility) {
         textArea.setText("@" + acct + " ");
 
         publishLevelComboBoxIndexOld = publishLevelComboBox.getSelectionModel().getSelectedIndex();
         int index = MastodonConstant.publishingLevels.indexOf(visibility);
         publishLevelComboBox.getSelectionModel().select(index);
+
+        int hostNameIndex = dataStore.getHostNames().indexOf(hostName);
+        targetHostNameComboBox.getSelectionModel().select(hostNameIndex);
+        targetHostNameComboBox.setDisable(true);
+
         formState.setInReplyToId(inReplyToStatusId);
         textArea.lookup(".content").getStyleClass().add("u-bgLightPinkColor");
         formState.getStatusTexts().add("返信");
@@ -283,12 +278,14 @@ public class Controller implements Initializable {
 
     private void formInitialize() {
         formState.initialize();
+        targetHostNameComboBox.setDisable(false);
         textArea.lookup(".content").getStyleClass().remove("u-bgLightPinkColor");
         inputTextStatus.setText(formState.getStatusDisplayText());
     }
 
     private void replyModeCancel() {
         publishLevelComboBox.getSelectionModel().select(publishLevelComboBoxIndexOld);
+        targetHostNameComboBox.setDisable(false);
         formState.setInReplyToId(null);
         formState.getStatusTexts().remove("返信");
         textArea.lookup(".content").getStyleClass().remove("u-bgLightPinkColor");

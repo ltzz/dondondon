@@ -86,7 +86,7 @@ public class NotificationViewController implements Initializable, IContentListCo
             String acct = toot.get().acct;
             String visiblity = (String) toot.get().instanceSpecificData.getOrDefault("visibility", (Object)"");
 
-            rootController.userReplyInputStart(statusId.get(), acct, visiblity);
+            rootController.userReplyInputStart(hostname, statusId.get(), acct, visiblity);
         });
 
         tableView.setOnContextMenuRequested((ContextMenuEvent event) -> {
