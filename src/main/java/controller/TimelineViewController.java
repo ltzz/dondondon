@@ -1,5 +1,9 @@
 package controller;
 
+import javafx.event.EventHandler;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.WindowEvent;
 import services.MastodonAPI;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -20,6 +24,7 @@ import timeline.TimelineGenerator;
 import timeline.parser.ITimelineGenerator;
 import timeline.parser.MastodonWriteAPIParser;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static lib.htmlBuilder.HtmlBuilder.attribute;
@@ -213,6 +218,7 @@ public class TimelineViewController implements Initializable, IContentListContro
         MenuItem menuItemReblog = new MenuItem("リブログ");
         MenuItem menuItemUserTimeline = new MenuItem("このユーザーのタイムラインを見る");
         MenuItem menuItemReply = new MenuItem("返信");
+        MenuItem menuItemImage = new MenuItem("画像を見る");
         MenuItem menuItemStatusURL = new MenuItem("この投稿をブラウザで開く");
         MenuItem menuItemInfo = new MenuItem("情報");
         menuItemFavorite.setOnAction((ActionEvent t) -> {
@@ -242,6 +248,27 @@ public class TimelineViewController implements Initializable, IContentListContro
         menuItemUserTimeline.setOnAction((ActionEvent t) -> {
             TimelineGenerator.RowContent selectedToot = tableView.getSelectionModel().getSelectedItem();
             rootController.addUserTab(selectedToot.userId, selectedToot.userName, selectedToot.dataOriginInfo.hostname, selectedToot.dataOriginInfo.getToken());
+        });
+
+        menuItemImage.setOnAction((ActionEvent t) -> {
+            TimelineGenerator.RowContent selectedToot = tableView.getSelectionModel().getSelectedItem();
+            Alert alert = new Alert(Alert.AlertType.NONE, "画像");
+            if(selectedToot.contentImageURL.isEmpty()) return;
+            // FIXME:ここはビューアなのでほんとはもっと高解像度のURLから取ってきたい
+            Image image = new Image(selectedToot.contentImageURL.stream().findFirst().get());
+            ImageView imageView = new ImageView(image);
+            alert.setGraphic(imageView);
+            alert.setTitle("画像");
+            alert.getDialogPane().getScene().getWindow().setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (alert.getResult() == null) {
+                        alert.close();
+                    }
+                }
+            });
+            Optional<ButtonType> result = alert.showAndWait();
+            alert.close();
         });
 
         menuItemReply.setOnAction((ActionEvent t) -> {
@@ -282,11 +309,15 @@ public class TimelineViewController implements Initializable, IContentListContro
             System.out.println(button.toString());
         });
 
-        contextMenu.getItems().addAll(menuItemFavorite, menuItemReblog, menuItemUserTimeline, menuItemReply, menuItemStatusURL, menuItemInfo);
-
         tableView.setOnContextMenuRequested((ContextMenuEvent event) -> {
-            contextMenu.show(tableView, event.getScreenX(), event.getScreenY());
             TimelineGenerator.RowContent selectedToot = tableView.getSelectionModel().getSelectedItem();
+            contextMenu.getItems().clear();
+            if(!selectedToot.contentImageURL.isEmpty()){
+                contextMenu.getItems().addAll(menuItemFavorite, menuItemReblog, menuItemUserTimeline, menuItemReply, menuItemImage, menuItemStatusURL, menuItemInfo);
+            }
+            else {
+                contextMenu.getItems().addAll(menuItemFavorite, menuItemReblog, menuItemUserTimeline, menuItemReply, menuItemStatusURL, menuItemInfo);
+            }contextMenu.show(tableView, event.getScreenX(), event.getScreenY());
             if (selectedToot == null) contextMenu.hide();
             event.consume();
         });
