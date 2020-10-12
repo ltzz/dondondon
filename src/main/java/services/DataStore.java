@@ -7,6 +7,7 @@ import timeline.parser.MastodonWriteAPIParser;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class DataStore {
@@ -31,27 +32,27 @@ public class DataStore {
         }
     }
 
-    private final HashMap<String, TreeMap<String, TLContent>> tootsAll; // hostname単位で全Tootを持つ
-    private final HashMap<String, TreeMap<String, TLContent>> timelines; // タイムライン単位で
-    private final HashMap<String, TreeMap<String, NotificationContent>> notificationsAll; // hostname単位で全通知を持つ
-    private final HashMap<String, TreeMap<String, NotificationContent>> notifications; // タイムライン単位で
-    private final HashMap<String, TimelineParserWrapper> mastodonTimelineParsers;
-    private final HashMap<String, NotificationParserWrapper> mastodonNotificationParsers;
+    private final ConcurrentHashMap<String, TreeMap<String, TLContent>> tootsAll; // hostname単位で全Tootを持つ
+    private final ConcurrentHashMap<String, TreeMap<String, TLContent>> timelines; // タイムライン単位で
+    private final ConcurrentHashMap<String, TreeMap<String, NotificationContent>> notificationsAll; // hostname単位で全通知を持つ
+    private final ConcurrentHashMap<String, TreeMap<String, NotificationContent>> notifications; // タイムライン単位で
+    private final ConcurrentHashMap<String, TimelineParserWrapper> mastodonTimelineParsers;
+    private final ConcurrentHashMap<String, NotificationParserWrapper> mastodonNotificationParsers;
 
     private final List<String> hostNames;
-    private final HashMap<String, MastodonWriteAPIParser> writeAPIs; // hostname単位で書き込み用APIを持つ
-    private final HashMap<String, MastodonAPI> APIs; // hostname単位でAPIを持つ
+    private final ConcurrentHashMap<String, MastodonWriteAPIParser> writeAPIs; // hostname単位で書き込み用APIを持つ
+    private final ConcurrentHashMap<String, MastodonAPI> APIs; // hostname単位でAPIを持つ
 
     public DataStore(){
-        this.tootsAll = new HashMap<>();
-        this.timelines = new HashMap<>();
-        this.notificationsAll = new HashMap<>();
-        this.notifications = new HashMap<>();
-        this.mastodonTimelineParsers = new HashMap<>();
-        this.mastodonNotificationParsers = new HashMap<>();
+        this.tootsAll = new ConcurrentHashMap<>();
+        this.timelines = new ConcurrentHashMap<>();
+        this.notificationsAll = new ConcurrentHashMap<>();
+        this.notifications = new ConcurrentHashMap<>();
+        this.mastodonTimelineParsers = new ConcurrentHashMap<>();
+        this.mastodonNotificationParsers = new ConcurrentHashMap<>();
         this.hostNames = new ArrayList<>();
-        this.writeAPIs = new HashMap<>();
-        this.APIs = new HashMap<>();
+        this.writeAPIs = new ConcurrentHashMap<>();
+        this.APIs = new ConcurrentHashMap<>();
     }
 
     public void putTimelineParser(String key, String hostname, MastodonTimelineParser parser){
